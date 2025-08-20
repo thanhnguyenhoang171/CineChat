@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,8 +11,9 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
 
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
+  app.useGlobalFilters(new HttpExceptionFilter());
 
-  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe());
 
   // versioning
   app.enableVersioning({
