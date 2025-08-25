@@ -11,5 +11,6 @@
     "tailwind-css-language-mode-formatter.useTabs": false,
     "tailwind-css-language-mode-formatter.autoClassSorting": true,
     "tailwind-css-language-mode-formatter.spaceAroundSelectorSeparator": true,
-    "tailwind-css-language-mode-formatter.applyMaxLineLength": 80
+    "tailwind-css-language-mode-formatter.applyMaxLineLength": 80,
+    "git.ignoreLimitWarning": true
 }
