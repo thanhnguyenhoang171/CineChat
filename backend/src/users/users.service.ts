@@ -21,8 +21,8 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findUserByUsername(username: string) {
+    return this.userModel.findOne({ username });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -57,7 +57,7 @@ export class UsersService {
         role: 'user', // hardcode role
       });
 
-      return result;
+      return result.id.toString();
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
