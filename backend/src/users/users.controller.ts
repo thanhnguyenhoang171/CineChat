@@ -18,8 +18,9 @@ import { ResponseMessage } from 'src/decorators/response_message.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // only super admin can create user
   @Post()
-  @ResponseMessage('Create a new user successfully')
+  @ResponseMessage('Tạo người dùng thành công')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -30,9 +31,10 @@ export class UsersController {
     throw new HttpException('Không tìm thấy người dùng', HttpStatus.NOT_FOUND);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':username')
+  @ResponseMessage('Lấy thông tin người dùng thành công')
+  getUserByUsername(@Param('username') username: string) {
+    return this.usersService.findUserByUsername(username);
   }
 
   @Patch(':id')

@@ -42,3 +42,14 @@ export class RegisterAccountDto {
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;
 }
+
+export class LoginAccountDto {
+  @IsString({ message: 'Tên đăng nhập phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
+  username: string;
+
+  @IsString({ message: 'Mật khẩu phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
+  password: string;
+}
+

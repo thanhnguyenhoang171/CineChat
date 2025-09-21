@@ -9,4 +9,17 @@ export class AuthService {
   async register(registerAccountDto: RegisterAccountDto) {
     return this.userService.registerAccount(registerAccountDto);
   }
+
+  // validate user
+  async validateUser(username: string, pass: string): Promise<any>   {
+    // get user info by username:
+    const user = await this.userService.findUserByUsername(username);
+    // validate user pass
+    if (user?.password === pass) {
+      // remove password before return
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
 }
