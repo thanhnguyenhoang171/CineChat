@@ -8,11 +8,13 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseMessage } from 'src/decorators/response_message.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -31,6 +33,7 @@ export class UsersController {
     throw new HttpException('Không tìm thấy người dùng', HttpStatus.NOT_FOUND);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':username')
   @ResponseMessage('Lấy thông tin người dùng thành công')
   getUserByUsername(@Param('username') username: string) {

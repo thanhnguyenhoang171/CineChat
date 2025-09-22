@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
-import { getClientIp } from 'src/helpers/getClientIp';
+import { getClientIp } from 'src/utils/getClientIp';
 
 @Injectable()
 export class AppLoggerMiddleware implements NestMiddleware {
