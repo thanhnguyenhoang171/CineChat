@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
-import { passwordHashing } from 'src/helpers/passwordHasing';
+import { passwordHashing } from 'src/utils/passwordBcrypt';
 
 @Injectable()
 export class UsersService {

@@ -7,3 +7,7 @@ export async function passwordHashing(passwordInput: string) {
   //   console.log('Check hashed password: ', hashedPassword);
   return hashedPassword;
 }
+
+export async function passwordCompare(passwordInput: string, hashedPassword: string) {
+  return bcrypt.compareSync(passwordInput, hashedPassword);
+}

@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ResponseMessage } from 'src/decorators/response_message.decorator';
 import { LoginAccountDto, RegisterAccountDto } from 'src/users/dto/create-user.dto';
+import { LocalAuthGuard } from './local/local-auth-guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +25,19 @@ export class AuthController {
   }
 
   
-  // @Post('/login')
-  // @ResponseMessage('Đăng nhập thành công')
-  // async lginAccount(@Body() loginAccountDto: LoginAccountDto) {
-  //   return this.authService.login(loginAccountDto);
-  // }
+  @Post('/login')
+  @UseGuards(LocalAuthGuard)
+  @ResponseMessage('Đăng nhập thành công')
+  async lginAccount(@Request() req): Promise<any> {
+    return this.authService.login(req.user);
+  }
+
+  
+  @UseGuards(LocalAuthGuard)
+  @ResponseMessage('Đăng xuất thành công')
+  @Post('/logout')
+  async logout(@Request() req) {
+    return req.logout();
+  }
+
 }
