@@ -8,44 +8,47 @@ import {
   Delete,
   HttpException,
   HttpStatus,
-  UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ResponseMessage } from 'src/decorators/response_message.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
+import { ResponseStatus } from 'src/decorators/response_message.decorator';
+import { HttpStatusCode } from 'src/types/http-status/http-status-code';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // only super admin can create user
   @Post()
-  @ResponseMessage('Tạo người dùng thành công')
+  @ResponseStatus(HttpStatusCode.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @ResponseMessage('Lấy tất cả người dùng có phân trang thành công')
+  @ResponseStatus(HttpStatusCode.OK)
   findAll() {
-    throw new HttpException('Không tìm thấy người dùng', HttpStatus.NOT_FOUND);
+    return this.usersService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':username')
-  @ResponseMessage('Lấy thông tin người dùng thành công')
+  @ResponseStatus(HttpStatusCode.OK)
   getUserByUsername(@Param('username') username: string) {
     return this.usersService.findUserByUsername(username);
   }
 
   @Patch(':id')
+  @ResponseStatus(HttpStatusCode.OK)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @ResponseStatus(HttpStatusCode.OK)
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }

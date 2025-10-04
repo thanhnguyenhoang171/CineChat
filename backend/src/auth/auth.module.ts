@@ -7,7 +7,7 @@ import { LocalStrategy } from './local/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt/jwt.strategy';
-
+import ms from 'ms';
 @Module({
   imports: [UsersModule, PassportModule, JwtModule.registerAsync({
     imports: [ConfigModule],
@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
       publicKey: configService.get<string>('JWT_PUBLIC_KEY')?.replace(/\\n/g, '\n'),
       signOptions: {
         algorithm: 'RS256',
-        expiresIn: '3600s'
+        expiresIn: Math.floor(ms(configService.get<string>('JWT_EXPIRES_IN')) / 1000) || 3600,
       }
     }),
      inject: [ConfigService],
