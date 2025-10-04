@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { AppLoggerMiddleware } from './middlewares/app_logger.middleware';
+import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -44,10 +45,16 @@ import { AppLoggerMiddleware } from './middlewares/app_logger.middleware';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_GUARD',
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+    consumer.apply(AppLoggerMiddleware).forRoutes('*path');
   }
 }

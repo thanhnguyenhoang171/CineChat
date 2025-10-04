@@ -52,10 +52,14 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
             {toasts.map((toast) => (
               <motion.div
                 key={toast.id}
+                layout
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                transition={{ duration: 0.3 }}
+                transition={{
+                  duration: 0.3,
+                  layout: { duration: 0.3, ease: "easeInOut" },
+                }}
               >
                 <Toast>
                   <div

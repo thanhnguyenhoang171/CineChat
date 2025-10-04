@@ -1,0 +1,20 @@
+export enum BusinessCode {
+  // MongoDB
+  INVALID_MONGODB_ID = 'MDB_001',
+
+  // User Module
+  SUCCESS = 'USR_000',
+  USER_CREATED = 'USR_001',
+  DUPLICATE_USERNAME = 'USR_002',
+  DUPLICATE_EMAIL = 'USR_003',
+  USER_NOT_FOUND = 'USR_004',
+  USER_UPDATED = 'USR_005',
+  USER_DELETED = 'USR_006',
+
+  NO_FIELD_UPDATED = 'VAL_001',
+  INVALID_FIELD = 'VAL_002',
+  VALIDATION_FAILED = 'VAL_003',
+
+  // System / Generic
+  INTERNAL_ERROR = 'SYS_001',
+}
