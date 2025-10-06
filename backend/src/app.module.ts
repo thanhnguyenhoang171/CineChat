@@ -1,52 +1,31 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Connection } from 'mongoose';
-import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
-import { AppLoggerMiddleware } from './middlewares/app_logger.middleware';
-import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
+import { DatabaseConfig } from '@config/database.config';
+import { PermissionsModule } from '@modules/permissions/permissions.module';
+import { UsersModule } from '@modules/users/users.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { RolesModule } from '@modules/roles/roles.module';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { AppLoggerMiddleware } from '@middlewares/app-logger.middleware';
+import envConfig, { envValidationSchema } from '@config/env.config';
+import { DatabaseModule } from '@database/mongoose.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
+      envFilePath: '.env',
+      load: [envConfig],
+      validationSchema: envValidationSchema, // validate biến môi trường
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-        onConnectionCreate: (connection: Connection) => {
-          connection.on('connected', () => console.log('DB connected'));
-          connection.on('open', () => console.log('DB open'));
-          connection.on('disconnected', () => console.log('DB disconnected'));
-          connection.on('reconnected', () => console.log('DB reconnected'));
-          connection.on('disconnecting', () => console.log('DB disconnecting'));
-
-          return connection;
-        },
-        connectionFactory: (connection) => {
-          connection.plugin(softDeletePlugin);
-          return connection;
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    DatabaseModule,
     UsersModule,
     AuthModule,
+    RolesModule,
+    PermissionsModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: 'APP_GUARD',
       useClass: JwtAuthGuard,
