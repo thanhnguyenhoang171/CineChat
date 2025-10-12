@@ -1,3 +1,4 @@
+import { BusinessCode } from '@common/constants/business-code';
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -12,7 +13,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     const exceptionResponse = exception.getResponse();
-    let code = 'SYS_001';
+    let code = BusinessCode.INTERNAL_ERROR;
     let errors: string | any = exception.message;
 
     if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {

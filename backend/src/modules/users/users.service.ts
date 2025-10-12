@@ -55,7 +55,7 @@ export class UsersService {
 
   async findAll() {
     return {
-      code: BusinessCode.SUCCESS,
+      code: BusinessCode.USER_SUCCESS,
       data: await this.userModel.find(),
     };
   }
