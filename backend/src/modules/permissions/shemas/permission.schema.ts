@@ -23,7 +23,7 @@ export class Permission {
     email?: string;
   };
   @Prop({ type: Object })
-  udpatedBy: {
+  updatedBy: {
     _id: mongoose.Schema.Types.ObjectId;
     username?: string;
     email?: string;

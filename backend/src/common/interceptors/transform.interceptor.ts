@@ -7,7 +7,6 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  HttpException,
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -73,36 +72,6 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
         this.logger.log(`[${request.method}] ${request.url} -> ${httpCode}`);
         return res;
       }),
-
-      // catchError((err) => {
-      //   let status = HttpStatusCode.INTERNAL_SERVER_ERROR;
-      //   let code = BusinessCode.INTERNAL_ERROR;
-      //   let errors = ResponseMessage[BusinessCode.INTERNAL_ERROR];
-
-      //   if (err instanceof HttpException) {
-      //     const res: any = err.getResponse();
-      //     status = err.getStatus();
-      //     code = res.code || code;
-      //     errors =
-      //       res.errors ||
-      //       res.message ||
-      //       ResponseMessage[code] ||
-      //       'Unknown error';
-      //   }
-
-      //   this.logger.error(
-      //     `[${request.method}] ${request.url} -> ${status}`,
-      //     err.stack,
-      //   );
-
-      //   response.status(status).json({
-      //     status,
-      //     code,
-      //     errors,
-      //   });
-
-      //   return new Observable<never>();
-      // }),
     );
   }
 }
