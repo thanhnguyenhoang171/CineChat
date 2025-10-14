@@ -18,6 +18,7 @@ export class PermissionsController {
 
   @Post()
   @ResponseStatus(HttpStatusCode.CREATED)
+  @ApiOperation({ summary: 'Create new permission' })
   createPermissionController(
     @Body() createPermissionDto: CreatePermissionDto,
     @User() user: IUser,
@@ -34,11 +35,13 @@ export class PermissionsController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get permission by id' })
   findPermissionByIdController(@Param('id') id: string) {
     return this.permissionsService.findPermissionById(id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update permission by id' })
   updatePermissionByIdController(
     @Param('id') id: string,
     @Body() updatePermissionDto: UpdatePermissionDto,
@@ -48,6 +51,7 @@ export class PermissionsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete permission by id' })
   removePermissionByIdController(@Param('id') id: string, @User() user: IUser) {
     return this.permissionsService.removePermisionById(id, user);
   }

@@ -2,14 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { User } from '@common/decorators/user.decorator';
+import type { IUser } from '@interfaces/user.interface';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('roles')
+@ApiBearerAuth('jwt')
+@ApiTags('Roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.rolesService.create(createRoleDto);
+  createRoleController(@Body() createRoleDto: CreateRoleDto, @User() user: IUser) {
+    return this.rolesService.createRole(createRoleDto, user);
   }
 
   @Get()

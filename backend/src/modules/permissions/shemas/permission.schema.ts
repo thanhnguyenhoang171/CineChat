@@ -1,6 +1,5 @@
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-export type PermissionDocument = HydratedDocument<Permission>;
 
 @Schema({ timestamps: true })
 export class Permission {
@@ -35,14 +34,12 @@ export class Permission {
     email?: string;
   };
 
-  @Prop()
   createdAt: Date;
-
-  @Prop()
   updatedAt: Date;
 
-  @Prop()
-  deletedAt: Date;
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
+export type PermissionDocument = HydratedDocument<Permission>;
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission);

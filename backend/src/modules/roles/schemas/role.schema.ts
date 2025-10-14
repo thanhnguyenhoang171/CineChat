@@ -1,5 +1,6 @@
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Permission } from '@modules/permissions/shemas/permission.schema';
 export type RoleDocument = HydratedDocument<Role>;
 
 @Schema({ timestamps: true })
@@ -11,10 +12,10 @@ export class Role {
   description: string;
 
   @Prop({ default: true })
-  isActivce: boolean;
-  
-  @Prop()
-  permissions: string[];
+  isActive: boolean;
+
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: Permission.name })
+  permissions: Permission[];
 
   @Prop({ type: Object })
   createdBy: {
@@ -35,14 +36,11 @@ export class Role {
     email?: string;
   };
 
-  @Prop()
   createdAt: Date;
-
-  @Prop()
   updatedAt: Date;
 
-  @Prop()
-  deletedAt: Date;
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

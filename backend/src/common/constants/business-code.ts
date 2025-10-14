@@ -1,35 +1,51 @@
 export enum BusinessCode {
-  // Generic / System
+  // =========================================================
+  // === SYS: GENERIC / SYSTEM CODES =========================
+  // =========================================================
+
+  // --- 0xx: Success ---
   SUCCESS = 'SYS_000',
-  INTERNAL_ERROR = 'SYS_INT',
 
-  // MongoDB
-  INVALID_MONGODB_ID = 'MDB_100',
+  // --- 1xx: Client Errors ---
+  VALIDATION_FAILED = 'SYS_100', // Lỗi chung cho class-validator
+  INVALID_MONGODB_ID = 'SYS_101', // ID không đúng định dạng
+  NO_FIELD_UPDATED = 'SYS_102', // Gửi request update nhưng không có gì thay đổi
+  EMPTY_UPDATE_DTO = 'SYS_103', // Gửi request update nhưng DTO rỗng
 
-  // User Module
-  USER_SUCCESS = 'USR_000',
-  USER_CREATED = 'USR_001',
-  USER_UPDATED = 'USR_002',
-  USER_DELETED = 'USR_003',
+  // --- 2xx: Authentication & Authorization Errors ---
+  UNAUTHORIZED = 'SYS_200', // Chưa đăng nhập, thiếu token
+  FORBIDDEN = 'SYS_201', // Đã đăng nhập nhưng không có quyền
+
+  // --- 5xx: Server Errors ---
+  INTERNAL_SERVER_ERROR = 'SYS_500',
+
+  // =========================================================
+  // === USR: USER MODULE ====================================
+  // =========================================================
+
+  // --- 0xx: Success ---
+  USER_GET_SUCCESS = 'USR_000',
+  USER_CREATED_SUCCESS = 'USR_001',
+  USER_UPDATED_SUCCESS = 'USR_002',
+  USER_DELETED_SUCCESS = 'USR_003',
+
+  // --- 1xx: Client Errors ---
   USER_NOT_FOUND = 'USR_100',
   DUPLICATE_USERNAME = 'USR_101',
   DUPLICATE_EMAIL = 'USR_102',
 
-  // Permission Module
-  PERMISSION_SUCCESS = 'PER_000',
-  PERMISSION_CREATED = 'PER_001',
-  PERMISSION_UPDATED = 'PER_002',
-  PERMISSION_DELETED = 'PER_003',
-  PERMISSION_EXIST = 'PER_100',
+  // =========================================================
+  // === PER: PERMISSION MODULE ==============================
+  // =========================================================
+
+  // --- 0xx: Success ---
+  PERMISSION_GET_SUCCESS = 'PER_000', // Gộp cả get-one và get-all
+  PERMISSION_CREATED_SUCCESS = 'PER_001',
+  PERMISSION_UPDATED_SUCCESS = 'PER_002',
+  PERMISSION_DELETED_SUCCESS = 'PER_003',
+  PERMISSION_RESTORED_SUCCESS = 'PER_004',
+
+  // --- 1xx: Client Errors ---
+  PERMISSION_ALREADY_EXISTS = 'PER_100', // Trùng lặp apiPath & method
   PERMISSION_NOT_FOUND = 'PER_101',
-  PERMISSION_UPDATED_FAIL = 'PER_102',
-  PERMISSION_DELETED_FAIL = 'PER_103',
-
-  PERMISSION_GET_ALL_SUCCESS = 'PER_200',
-
-  // Validation / Input
-  NO_FIELD_UPDATED = 'VAL_001',
-  INVALID_FIELD = 'VAL_002',
-  VALIDATION_FAILED = 'VAL_100',
-
 }
