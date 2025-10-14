@@ -48,14 +48,14 @@ export class UsersService {
     const createdUser = await this.userModel.create(createUserDto);
 
     return {
-      code: BusinessCode.USER_CREATED,
+      code: BusinessCode.USER_CREATED_SUCCESS,
       data: createdUser,
     };
   }
 
   async findAll() {
     return {
-      code: BusinessCode.USER_SUCCESS,
+      code: BusinessCode.USER_GET_SUCCESS,
       data: await this.userModel.find(),
     };
   }
@@ -92,7 +92,7 @@ export class UsersService {
       });
 
       return {
-        code: BusinessCode.USER_UPDATED,
+        code: BusinessCode.USER_UPDATED_SUCCESS,
         data: result,
       };
     } catch (error) {
@@ -103,8 +103,8 @@ export class UsersService {
       if (error instanceof mongoose.Error.StrictModeError) {
         throw new HttpException(
           {
-            code: BusinessCode.INVALID_FIELD,
-            errors: ResponseMessage[BusinessCode.INVALID_FIELD],
+            code: BusinessCode.VALIDATION_FAILED,
+            errors: ResponseMessage[BusinessCode.VALIDATION_FAILED],
           },
           HttpStatusCode.BAD_REQUEST,
         );
@@ -124,8 +124,8 @@ export class UsersService {
       // Các lỗi khác → 500
       throw new HttpException(
         {
-          code: BusinessCode.INTERNAL_ERROR,
-          errors: ResponseMessage[BusinessCode.INTERNAL_ERROR],
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
         HttpStatusCode.INTERNAL_SERVER_ERROR,
       );

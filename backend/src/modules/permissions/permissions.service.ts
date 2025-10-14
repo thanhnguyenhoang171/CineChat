@@ -30,8 +30,8 @@ export class PermissionsService {
     if (existPermission) {
       throw new HttpException(
         {
-          code: BusinessCode.PERMISSION_EXIST,
-          errors: ResponseMessage[BusinessCode.PERMISSION_EXIST],
+          code: BusinessCode.PERMISSION_ALREADY_EXISTS,
+          errors: ResponseMessage[BusinessCode.PERMISSION_ALREADY_EXISTS],
         },
         HttpStatus.CONFLICT,
       );
@@ -47,7 +47,7 @@ export class PermissionsService {
     });
 
     return {
-      code: BusinessCode.PERMISSION_CREATED,
+      code: BusinessCode.PERMISSION_CREATED_SUCCESS,
       data: {
         _id: createdPermission._id,
         createAt: createdPermission.createdAt,
@@ -126,8 +126,8 @@ export class PermissionsService {
         .populate(options.populate || [])
         .lean();
       return {
-        code: BusinessCode.PERMISSION_GET_ALL_SUCCESS,
-        message: ResponseMessage[BusinessCode.PERMISSION_GET_ALL_SUCCESS],
+        code: BusinessCode.PERMISSION_GET_SUCCESS,
+        message: ResponseMessage[BusinessCode.PERMISSION_GET_SUCCESS],
         data,
         meta: {
           total,
@@ -139,8 +139,8 @@ export class PermissionsService {
     } catch (error) {
       throw new HttpException(
         {
-          code: BusinessCode.INTERNAL_ERROR,
-          errors: ResponseMessage[BusinessCode.INTERNAL_ERROR],
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
         HttpStatusCode.INTERNAL_SERVER_ERROR,
       );
@@ -161,7 +161,7 @@ export class PermissionsService {
       );
     }
     return {
-      code: BusinessCode.PERMISSION_SUCCESS,
+      code: BusinessCode.PERMISSION_GET_SUCCESS,
       data: permissison,
     };
   }
@@ -173,43 +173,73 @@ export class PermissionsService {
     // check exist permission
     const permission = await ensurePermissionExists(this.permissionModel, id);
 
-    // Validate update fields
+    // Check and validate update fields is new value ?
     validateUpdateFields(updatePermissionDto, permission);
 
-    //update
-    const result = await this.permissionModel.findByIdAndUpdate(
-      id,
-      {
-        ...updatePermissionDto,
-        updatedBy: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-      },
-      {
-        new: true, // return document after update
-        runValidators: true,
-      },
-    );
+    // Check update duplicate apiPath + method
+    if (updatePermissionDto.apiPath || updatePermissionDto.method) {
+      const duplicatedPermission = await this.permissionModel.findOne({
+        apiPath: updatePermissionDto.apiPath || permission.apiPath,
+        method: updatePermissionDto.method || permission.method,
+        _id: { $ne: id }, // exclude current permission
+      });
 
-    if (!result) {
-      throw new HttpException(
-        {
-          code: BusinessCode.PERMISSION_UPDATED_FAIL,
-          errors: ResponseMessage[BusinessCode.PERMISSION_UPDATED_FAIL],
-        },
-        HttpStatusCode.BAD_REQUEST,
-      );
+      if (duplicatedPermission) {
+        throw new HttpException(
+          {
+            code: BusinessCode.PERMISSION_ALREADY_EXISTS,
+            errors: ResponseMessage[BusinessCode.PERMISSION_ALREADY_EXISTS],
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
     }
 
-    return {
-      code: BusinessCode.PERMISSION_UPDATED,
-      data: {
-        _id: result._id,
-        updatedAt: result.updatedAt,
-      },
-    };
+    try {
+      //update
+      const result = await this.permissionModel.findByIdAndUpdate(
+        id,
+        {
+          ...updatePermissionDto,
+          updatedBy: {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+          },
+        },
+        {
+          new: true, // return document after update
+          runValidators: true,
+        },
+      );
+
+      if (!result) {
+        throw new HttpException(
+          {
+            code: BusinessCode.PERMISSION_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.PERMISSION_NOT_FOUND],
+          },
+          HttpStatusCode.NOT_FOUND,
+        );
+      }
+
+      return {
+        code: BusinessCode.PERMISSION_UPDATED_SUCCESS,
+        data: {
+          _id: result._id,
+          updatedAt: result.updatedAt,
+        },
+      };
+    } catch (error) {
+      // Bắt các lỗi không lường trước được từ database
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          message: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async removePermisionById(id: string, user: IUser) {
@@ -222,10 +252,10 @@ export class PermissionsService {
     if (!result || result.deleted !== 1) {
       throw new HttpException(
         {
-          code: BusinessCode.PERMISSION_DELETED_FAIL,
-          errors: ResponseMessage[BusinessCode.PERMISSION_DELETED_FAIL],
+          code: BusinessCode.PERMISSION_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.PERMISSION_NOT_FOUND],
         },
-        HttpStatusCode.BAD_REQUEST,
+        HttpStatusCode.NOT_FOUND,
       );
     }
 
@@ -241,18 +271,8 @@ export class PermissionsService {
       { new: true },
     );
 
-    if (!deletedPermission) {
-      throw new HttpException(
-        {
-          code: BusinessCode.PERMISSION_DELETED_FAIL,
-          errors: ResponseMessage[BusinessCode.PERMISSION_DELETED_FAIL],
-        },
-        HttpStatusCode.BAD_REQUEST,
-      );
-    }
-
     return {
-      code: BusinessCode.PERMISSION_DELETED,
+      code: BusinessCode.PERMISSION_DELETED_SUCCESS,
       data: {
         _id: id,
       },

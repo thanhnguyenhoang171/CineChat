@@ -4,7 +4,18 @@ import { ResponseMessage } from '@common/constants/response-message';
 import { HttpException } from '@nestjs/common';
 
 export function validateUpdateFields(dto: any, schema: any) {
-  // So sánh giá trị mới với cũ
+  // Check DTO rỗng
+  if (!dto || Object.keys(dto).length === 0) {
+    throw new HttpException(
+      {
+        code: BusinessCode.EMPTY_UPDATE_DTO,
+        errors: ResponseMessage[BusinessCode.EMPTY_UPDATE_DTO],
+      },
+      HttpStatusCode.BAD_REQUEST,
+    );
+  }
+
+  // So sánh giá trị mới với giá trị cũ
   const isDifferent = Object.keys(dto).some((key) => schema[key] !== dto[key]);
 
   if (!isDifferent) {

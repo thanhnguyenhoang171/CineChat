@@ -13,7 +13,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     const exceptionResponse = exception.getResponse();
-    let code = BusinessCode.INTERNAL_ERROR;
+    let code = BusinessCode.INTERNAL_SERVER_ERROR;
     let errors: string | any = exception.message;
 
     if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
