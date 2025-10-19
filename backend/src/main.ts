@@ -6,15 +6,16 @@ import { setupGlobalConfigs } from '@config/global.config';
 import { setupCors } from '@config/cors.config';
 import { setupVersioning } from '@config/versioning.config';
 import { setupSwagger } from '@config/swagger.config';
-
+import { globalValidationPipe } from '@common/pipes/validation.pipe';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  
+
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
 
+  globalValidationPipe(app);
   setupGlobalConfigs(app);
   setupCors(app);
   setupVersioning(app);
@@ -29,7 +30,8 @@ async function bootstrap() {
   const HOST = configService.get<string>('HOST') || '0.0.0.0'; // always listen all interfaces
 
   await app.listen(PORT, HOST, () => {
-    const url = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
+    const url =
+      process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
 
     logger.log(`🚀 Server is running on ${url}`);
     logger.log(`📚 Swagger docs available at ${url}/api/docs`);

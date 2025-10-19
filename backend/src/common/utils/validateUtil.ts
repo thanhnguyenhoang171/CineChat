@@ -30,3 +30,27 @@ export const ensureUserExists = async (userModel: any, id: string) => {
 
   return user;
 };
+
+export const ensureModuleExists = async (
+  Module: any,
+  key: string = '_id',
+  filter: Record<string, any> | string,
+  code: string,
+  errors: string,
+  statusCode: number,
+) => {
+  // nếu filter là string → tự động tạo object
+  const condition = typeof filter === 'string' ? { [key]: filter } : filter;
+
+  const existedModule = await Module.findOne(condition);
+  if (!existedModule) {
+    throw new HttpException(
+      {
+        code: code,
+        errors: errors,
+      },
+      statusCode,
+    );
+  }
+  return existedModule;
+};

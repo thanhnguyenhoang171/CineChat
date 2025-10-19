@@ -33,4 +33,15 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.PERMISSION_RESTORED_SUCCESS]: 'Khôi phục quyền thành công.',
   [BusinessCode.PERMISSION_ALREADY_EXISTS]: 'Quyền với API Path và Method này đã tồn tại.',
   [BusinessCode.PERMISSION_NOT_FOUND]: 'Không tìm thấy quyền này.',
+
+  //=========================================================
+  // === ROL: ROLE MODULE MESSAGES =====================
+  // =========================================================
+  [BusinessCode.ROLE_GET_SUCCESS]: 'Lấy thông tin vai trò thành công.',
+  [BusinessCode.ROLE_CREATED_SUCCESS]: 'Tạo vai trò mới thành công.',
+  [BusinessCode.ROLE_UPDATED_SUCCESS]: 'Cập nhật vai trò thành công.',
+  [BusinessCode.ROLE_DELETED_SUCCESS]: 'Xóa vai trò thành công.',
+  [BusinessCode.ROLE_RESTORED_SUCCESS]: 'Khôi phục vai trò thành công.',
+  [BusinessCode.ROLE_ALREADY_EXISTS]: 'Vai trò này đã tồn tại.',
+  [BusinessCode.ROLE_NOT_FOUND]: 'Không tìm thấy vai trò này.',
 };

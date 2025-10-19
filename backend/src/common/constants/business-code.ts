@@ -48,4 +48,19 @@ export enum BusinessCode {
   // --- 1xx: Client Errors ---
   PERMISSION_ALREADY_EXISTS = 'PER_100', // Trùng lặp apiPath & method
   PERMISSION_NOT_FOUND = 'PER_101',
+
+  // =========================================================
+  // === ROL: ROLE MODULE ==============================
+  // =========================================================
+
+  // --- 0xx: Success ---
+  ROLE_GET_SUCCESS = 'ROLE_000', // Gộp cả get-one và get-all
+  ROLE_CREATED_SUCCESS = 'ROL_001',
+  ROLE_UPDATED_SUCCESS = 'ROL_002',
+  ROLE_DELETED_SUCCESS = 'ROL_003',
+  ROLE_RESTORED_SUCCESS = 'ROL_004',
+
+  // --- 1xx: Client Errors ---
+  ROLE_ALREADY_EXISTS = 'ROL_100', // Trùng lặp 
+  ROLE_NOT_FOUND = 'ROL_101',
 }
