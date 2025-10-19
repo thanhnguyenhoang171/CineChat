@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import { ensureUserExists, validateMongoId } from '@common/utils/validateUtil';
+import { ensureModuleExists, validateMongoId } from '@common/utils/validateUtil';
 import { passwordHashing } from '@common/utils/passwordBcrypt';
 
 @Injectable()
@@ -69,7 +69,14 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     validateMongoId(id);
-    const user = await ensureUserExists(this.userModel, id);
+    const user = await ensureModuleExists(
+      this.userModel,
+      '_id',
+      id,
+      BusinessCode.USER_NOT_FOUND,
+      ResponseMessage[BusinessCode.USER_NOT_FOUND],
+      HttpStatusCode.NOT_FOUND,
+    );
     try {
       // So sánh giá trị mới với cũ
       const isDifferent = Object.keys(updateUserDto).some(
