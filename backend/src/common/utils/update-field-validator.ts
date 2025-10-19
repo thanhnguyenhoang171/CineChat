@@ -4,7 +4,7 @@ import { ResponseMessage } from '@common/constants/response-message';
 import { HttpException } from '@nestjs/common';
 
 export function validateUpdateFields(dto: any, schema: any) {
-  // Check DTO rỗng
+  //Check empty DTO
   if (!dto || Object.keys(dto).length === 0) {
     throw new HttpException(
       {
@@ -15,7 +15,7 @@ export function validateUpdateFields(dto: any, schema: any) {
     );
   }
 
-  // So sánh giá trị mới với giá trị cũ
+  // Compare old and new values
   const isDifferent = Object.keys(dto).some((key) => schema[key] !== dto[key]);
 
   if (!isDifferent) {

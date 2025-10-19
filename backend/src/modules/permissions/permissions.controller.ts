@@ -35,12 +35,14 @@ export class PermissionsController {
   }
 
   @Get(':id')
+  @ResponseStatus(HttpStatusCode.OK)
   @ApiOperation({ summary: 'Get permission by id' })
   findPermissionByIdController(@Param('id') id: string) {
     return this.permissionsService.findPermissionById(id);
   }
 
   @Patch(':id')
+  @ResponseStatus(HttpStatusCode.OK)
   @ApiOperation({ summary: 'Update permission by id' })
   updatePermissionByIdController(
     @Param('id') id: string,
@@ -51,6 +53,7 @@ export class PermissionsController {
   }
 
   @Delete(':id')
+  @ResponseStatus(HttpStatusCode.OK)
   @ApiOperation({ summary: 'Delete permission by id' })
   removePermissionByIdController(@Param('id') id: string, @User() user: IUser) {
     return this.permissionsService.removePermisionById(id, user);

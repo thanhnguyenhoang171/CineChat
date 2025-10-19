@@ -4,7 +4,9 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '@common/decorators/user.decorator';
 import type { IUser } from '@interfaces/user.interface';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ResponseStatus } from '@common/decorators/response_message.decorator';
+import { HttpStatusCode } from '@common/constants/http-status-code';
 
 @Controller('roles')
 @ApiBearerAuth('jwt')
@@ -13,7 +15,10 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new role' })
+  @ResponseStatus(HttpStatusCode.CREATED)
   createRoleController(@Body() createRoleDto: CreateRoleDto, @User() user: IUser) {
+    console.log(createRoleDto);
     return this.rolesService.createRole(createRoleDto, user);
   }
 

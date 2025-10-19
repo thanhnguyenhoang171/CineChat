@@ -9,7 +9,7 @@ import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { GetPermissionDto } from './dto/get-permissions.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import { parseSort } from './utils/parse-sort-string';
+import { parseSort } from '../../common/utils/parse-sort-string';
 import { validateMongoId } from '@common/utils/validateUtil';
 import { ensurePermissionExists } from './utils/permission-validator';
 import { validateUpdateFields } from '@common/utils/update-field-validator';
