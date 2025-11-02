@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { RolesService } from './roles.service';
+import RolesService from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '@common/decorators/user.decorator';
@@ -28,8 +28,10 @@ export class RolesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rolesService.findOne(+id);
+  @ApiOperation({summary: 'Get a role with id of the role' })
+  @ResponseStatus(HttpStatusCode.OK)
+  findOne(@Param('id') _id: string) {
+    return this.rolesService.findRoleById(_id);
   }
 
   @Patch(':id')
