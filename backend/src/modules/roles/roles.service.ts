@@ -195,7 +195,7 @@ class RolesService {
     };
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
+  updateRole(id: number, updateRoleDto: UpdateRoleDto) {
     return `This action updates a #${id} role`;
   }
 
