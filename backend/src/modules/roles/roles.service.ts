@@ -15,6 +15,8 @@ import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { Permission, PermissionDocument } from '@modules/permissions/shemas/permission.schema';
+import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
+import { parseSort } from '@common/utils/parse-sort-string';
 
 @Injectable()
 class RolesService {
@@ -68,8 +70,110 @@ class RolesService {
     };
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAllRoleWithPagination(getRoleDto: GetRoleDto) {
+    const { page, limit, search, filters, sort, projections, populate } = getRoleDto;
+
+    let query: any = {};
+    let options: any = {
+      skip: (page - 1) * limit,
+      limit: limit,
+    };
+
+    const aqp = (await import('api-query-params')).default;
+
+    if (filters) {
+      const parsedFilters = aqp(filters, {
+        skipKey: 'skip',
+        limitKey: 'limit',
+        projectionKey: 'projection',
+        sortKey: 'sort',
+      });
+      query = { ...query, ...parsedFilters.filter };
+      if (parsedFilters.sort) {
+        options.sort = parsedFilters.sort;
+      }
+
+      if (parsedFilters.projection) {
+        options.projection = parsedFilters.projection;
+      }
+    }
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    if (projections) {
+      const fields = projections.split(',').map((field) => field.trim());
+      options.projection = fields.reduce((acc, field) => {
+        acc[field] = 1;
+        return acc;
+      }, {});
+    }
+
+    if (!options.sort) {
+      options.sort = sort ? parseSort(sort) : { createdAt: -1 };
+    }
+
+    if (populate) {
+      // Tách chuỗi populate thành mảng, ví dụ: "permissions,user" -> ["permissions", "user"]
+      const fieldsToPopulate = populate.split(',').map((field) => field.trim());
+
+      const populateOptions: any[] = [];
+
+      fieldsToPopulate.forEach((field) => {
+        if (field === 'permissions') {
+          // Nếu là 'permissions', dùng rule select cụ thể
+          populateOptions.push({
+            path: 'permissions',
+            select: 'name method apiPath module description',
+          });
+        } else {
+          // Với các trường khác, populate bình thường
+          populateOptions.push({ path: field });
+          // Hoặc đơn giản là: populateOptions.push(field);
+        }
+      });
+
+      options.populate = populateOptions;
+    }
+
+    console.log('--- Final Role Mongoose Query ---');
+    console.log('Query:', JSON.stringify(query, null, 2));
+    console.log('Options:', JSON.stringify(options, null, 2));
+
+    try {
+      const total = await this.roleModel.countDocuments(query);
+      const data = await this.roleModel
+        .find(query, options.projection || {})
+        .sort(options.sort)
+        .skip(options.skip)
+        .limit(options.limit)
+        .populate(options.populate || [])
+        .lean();
+
+      return {
+        code: BusinessCode.ROLE_GET_SUCCESS,
+        message: ResponseMessage[BusinessCode.ROLE_GET_SUCCESS],
+        data,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findRoleById(_id: string) {
@@ -84,7 +188,7 @@ class RolesService {
         HttpStatusCode.NOT_FOUND,
       );
     }
-    console.log("Check role: ", role);
+    console.log('Check role: ', role);
     return {
       code: BusinessCode.ROLE_ALREADY_EXISTS,
       data: role,

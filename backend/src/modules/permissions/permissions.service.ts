@@ -7,7 +7,7 @@ import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
 import type { IUser } from '@interfaces/user.interface';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { GetPermissionDto } from './dto/get-permissions.dto';
+import { GetPermissionDto } from './dto/get-permission.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { parseSort } from '../../common/utils/parse-sort-string';
 import { validateMongoId } from '@common/utils/validateUtil';
@@ -55,8 +55,8 @@ export class PermissionsService {
     };
   }
 
-  async findAllPermissionWithPagination(getPermissionsDto: GetPermissionDto) {
-    const { page, limit, search, filters, sort, projections } = getPermissionsDto;
+  async findAllPermissionWithPagination(getPermissionDto: GetPermissionDto) {
+    const { page, limit, search, filters, sort, projections } = getPermissionDto;
     // create basic query
     let query: any = {};
     let options: any = {
@@ -66,7 +66,7 @@ export class PermissionsService {
 
     const aqp = (await import('api-query-params')).default;
 
-    console.log('Input DTO:', getPermissionsDto);
+    console.log('Input DTO:', getPermissionDto);
 
     // use aqp to parse filters, sort, projections
     if (filters) {

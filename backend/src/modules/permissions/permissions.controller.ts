@@ -7,7 +7,7 @@ import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { User } from '@common/decorators/user.decorator';
 import type { IUser } from '@interfaces/user.interface';
-import { GetPermissionDto } from './dto/get-permissions.dto';
+import { GetPermissionDto } from './dto/get-permission.dto';
 import { JwtPublic } from '@common/decorators/jwt_public.decorator';
 
 @Controller('permissions')
@@ -28,7 +28,7 @@ export class PermissionsController {
 
   @Get()
   @JwtPublic()
-  @ApiOperation({ summary: 'Get permissions with paginations' })
+  @ApiOperation({ summary: 'Get permissions with pagination' })
   @ResponseStatus(HttpStatusCode.OK)
   getAllPermissionWithPaginationController(@Query() getPermissionDto: GetPermissionDto) {
     return this.permissionsService.findAllPermissionWithPagination(getPermissionDto);
