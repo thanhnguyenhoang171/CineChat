@@ -21,7 +21,7 @@ async function bootstrap() {
   setupVersioning(app);
   setupSwagger(app);
 
-  // Trust proxy (for IP & load balancer support) 
+  // Trust proxy (for IP & load balancer support)
   app.getHttpAdapter().getInstance().set('trust proxy', true);
 
   // get port from .env
