@@ -5,14 +5,19 @@ import { IUser } from '@interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role, RoleDocument } from './schemas/role.schema';
 import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
-import { ensureAllModuleExist, ensureModuleExists, isModuleExist, validateMongoId } from '@common/utils/validateUtil';
+import {
+  ensureAllModulesExist,
+  findModuleOrThrow,
+  isModuleExist,
+  validateMongoId,
+} from '@common/utils/validateUtil';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { Permission, PermissionDocument } from '@modules/permissions/shemas/permission.schema';
 
 @Injectable()
-export class RolesService {
+class RolesService {
   constructor(
     @InjectModel(Role.name)
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
@@ -32,9 +37,19 @@ export class RolesService {
         HttpStatus.CONFLICT,
       );
     }
+
     // Check valid permission
     // 1st valid mongoId
     validateMongoId(createRoleDto.permissions);
+
+    // 2nd check existed permission
+    await ensureAllModulesExist(
+      this.permissionModel,
+      createRoleDto.permissions,
+      BusinessCode.PERMISSION_NOT_FOUND,
+      HttpStatusCode.NOT_FOUND,
+    );
+
     const createdRole = await this.roleModel.create({
       ...createRoleDto,
       createdBy: {
@@ -43,14 +58,6 @@ export class RolesService {
         email: user.email,
       },
     });
-    // 2nd check existed permission
-    // best pratice (reduce query DB)
-    await ensureAllModuleExist(
-      this.permissionModel,
-      createRoleDto.permissions,
-      BusinessCode.PERMISSION_NOT_FOUND,
-      HttpStatusCode.NOT_FOUND,
-    );
 
     return {
       code: BusinessCode.ROLE_CREATED_SUCCESS,
@@ -65,8 +72,23 @@ export class RolesService {
     return `This action returns all roles`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findRoleById(_id: string) {
+    validateMongoId(_id);
+    const role = await this.roleModel.findById(_id);
+    if (!role) {
+      throw new HttpException(
+        {
+          code: BusinessCode.ROLE_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+        },
+        HttpStatusCode.NOT_FOUND,
+      );
+    }
+    console.log("Check role: ", role);
+    return {
+      code: BusinessCode.ROLE_ALREADY_EXISTS,
+      data: role,
+    };
   }
 
   update(id: number, updateRoleDto: UpdateRoleDto) {
@@ -77,3 +99,5 @@ export class RolesService {
     return `This action removes a #${id} role`;
   }
 }
+
+export default RolesService;

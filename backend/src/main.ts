@@ -26,8 +26,8 @@ async function bootstrap() {
 
   // get port from .env
   const configService = app.get(ConfigService);
-  const PORT = parseInt(configService.get('PORT') || '3000', 10);
-  const HOST = configService.get<string>('HOST') || '0.0.0.0'; // always listen all interfaces
+  const PORT = parseInt(configService.get('port') || '3000', 10);
+  const HOST = configService.get<string>('host') || '0.0.0.0'; // always listen all interfaces
 
   await app.listen(PORT, HOST, () => {
     const url =

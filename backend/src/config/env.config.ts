@@ -1,7 +1,7 @@
 import * as Joi from 'joi';
 
 export default () => ({
-  host: process.env.HOST || 'localhost',
+  host: process.env.HOST || '0.0.0.0',
   port: parseInt(process.env.PORT || '3000', 10),
 
   mongodbUri: process.env.MONGODB_URI,
@@ -16,7 +16,7 @@ export default () => ({
 
 // Schema validation để kiểm tra biến môi trường khi khởi động
 export const envValidationSchema = Joi.object({
-  HOST: Joi.string().default('localhost'),
+  HOST: Joi.string().default('0.0.0.0'),
   PORT: Joi.number().default(3000),
   MONGODB_URI: Joi.string().uri().required().messages({
     'any.required': 'MONGODB_URI is required in your .env file',

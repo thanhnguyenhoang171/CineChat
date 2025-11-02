@@ -1,8 +1,7 @@
 import { BusinessCode } from '@common/constants/business-code';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { boolean } from 'joi';
+import { HttpException } from '@nestjs/common';
 import mongoose from 'mongoose';
 
 export const validateMongoId = (
@@ -29,7 +28,7 @@ export const validateMongoId = (
   }
 };
 
-export const ensureModuleExists = async (
+export const findModuleOrThrow = async (
   Module: any,
   key: string = '_id',
   filter: Record<string, any> | string,
@@ -52,7 +51,7 @@ export const ensureModuleExists = async (
   return module;
 };
 
-export const ensureAllModuleExist = async (
+export const ensureAllModulesExist = async (
   Model: any,
   ids: string[] | mongoose.Types.ObjectId[] | mongoose.Schema.Types.ObjectId[],
   code: string,

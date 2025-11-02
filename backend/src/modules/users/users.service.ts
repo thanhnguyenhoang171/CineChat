@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import { ensureModuleExists, validateMongoId } from '@common/utils/validateUtil';
+import {findModuleOrThrow ,validateMongoId } from '@common/utils/validateUtil';
 import { passwordHashing } from '@common/utils/passwordBcrypt';
 
 @Injectable()
@@ -69,7 +69,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     validateMongoId(id);
-    const user = await ensureModuleExists(
+    const user = await findModuleOrThrow(
       this.userModel,
       '_id',
       id,
