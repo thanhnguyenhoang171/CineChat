@@ -48,4 +48,13 @@ export class PaginationQueryDto {
   @IsOptional()
   @IsString()
   projections?: string;
+
+  @ApiProperty({
+    description: 'Các trường quan hệ cần lấy thông tin chi tiết (populate). Ví dụ: `permissions` hoặc `permissions,user`',
+    required: false,
+    example: 'permissions',
+  })
+  @IsOptional()
+  @IsString()
+  populate?: string;
 }

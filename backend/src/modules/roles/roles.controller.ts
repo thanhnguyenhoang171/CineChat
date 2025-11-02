@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import RolesService from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -7,6 +7,8 @@ import type { IUser } from '@interfaces/user.interface';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { HttpStatusCode } from '@common/constants/http-status-code';
+import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
+import { JwtPublic } from '@common/decorators/jwt_public.decorator';
 
 @Controller('roles')
 @ApiBearerAuth('jwt')
@@ -23,8 +25,11 @@ export class RolesController {
   }
 
   @Get()
-  findAll() {
-    return this.rolesService.findAll();
+  @JwtPublic()
+  @ApiOperation({ summary: 'Get all roles with pagination' })
+  @ResponseStatus(HttpStatusCode.OK)
+  findAll(@Query() getRoleDto: GetRoleDto) {
+    return this.rolesService.findAllRoleWithPagination(getRoleDto);
   }
 
   @Get(':id')
