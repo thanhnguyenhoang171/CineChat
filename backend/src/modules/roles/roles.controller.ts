@@ -28,24 +28,28 @@ export class RolesController {
   @JwtPublic()
   @ApiOperation({ summary: 'Get all roles with pagination' })
   @ResponseStatus(HttpStatusCode.OK)
-  findAll(@Query() getRoleDto: GetRoleDto) {
-    return this.rolesService.findAllRoleWithPagination(getRoleDto);
+  findAllRolesWithPaginationController(@Query() getRoleDto: GetRoleDto) {
+    return this.rolesService.findAllRolesWithPagination(getRoleDto);
   }
 
   @Get(':id')
   @ApiOperation({summary: 'Get a role with id of the role' })
   @ResponseStatus(HttpStatusCode.OK)
-  findOne(@Param('id') _id: string) {
+  findRoleByIdController(@Param('id') _id: string) {
     return this.rolesService.findRoleById(_id);
   }
 
   @Patch(':id')
-  updateRole(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.updateRole(+id, updateRoleDto);
+  @ApiOperation({summary: 'Patch a role with id of the role' })
+  @ResponseStatus(HttpStatusCode.OK)
+  updateRoleByIdController(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto, @User() user: IUser) {
+    return this.rolesService.updateRoleById(id, updateRoleDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rolesService.remove(+id);
+  @ApiOperation({summary: 'Delete a role with id of the role' })
+  @ResponseStatus(HttpStatusCode.OK)
+  removeRoleByIdController(@Param('id') id: string, @User() user: IUser) {
+    return this.rolesService.removeRoleById(id, user);
   }
 }

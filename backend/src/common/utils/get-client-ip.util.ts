@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-export function getClientIp(request: Request) {
+export function getClientIpUtil(request: Request) {
   // Kiểm tra danh sách IP
   const xForwardedFor = request.headers['x-forwarded-for'] as string;
   if (xForwardedFor) {

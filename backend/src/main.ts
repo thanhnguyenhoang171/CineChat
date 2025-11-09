@@ -33,9 +33,9 @@ async function bootstrap() {
     const url =
       process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || `http://localhost:${PORT}`;
 
-    logger.log(`🚀 Server is running on ${url}`);
-    logger.log(`📚 Swagger docs available at ${url}/api/docs`);
-    logger.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.log(`Server is running on ${url}`);
+    logger.log(`Swagger docs available at ${url}/api/docs`);
+    logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   });
 }
 

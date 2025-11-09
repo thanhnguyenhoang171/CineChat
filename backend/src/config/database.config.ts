@@ -11,11 +11,11 @@ export const DatabaseConfig: MongooseModuleAsyncOptions = {
   useFactory: async (configService: ConfigService) => ({
     uri: configService.get<string>('MONGODB_URI'),
     onConnectionCreate: (connection: Connection) => {
-     connection.on('connected', () => logger.log('✅ MongoDB connected'));
-     connection.on('open', () => logger.log('🔓 MongoDB connection open'));
-     connection.on('disconnected', () => logger.warn('⚠️ MongoDB disconnected'));
-     connection.on('reconnected', () => logger.log('♻️ MongoDB reconnected'));
-     connection.on('disconnecting', () => logger.log('⏳ MongoDB disconnecting'));
+     connection.on('connected', () => logger.log('MongoDB connected'));
+     connection.on('open', () => logger.log('MongoDB connection open'));
+     connection.on('disconnected', () => logger.warn('MongoDB disconnected'));
+     connection.on('reconnected', () => logger.log('MongoDB reconnected'));
+     connection.on('disconnecting', () => logger.log('MongoDB disconnecting'));
      return connection;
     },
     connectionFactory: (connection) => {

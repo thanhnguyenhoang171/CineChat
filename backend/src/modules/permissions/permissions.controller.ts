@@ -31,7 +31,7 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Get permissions with pagination' })
   @ResponseStatus(HttpStatusCode.OK)
   getAllPermissionWithPaginationController(@Query() getPermissionDto: GetPermissionDto) {
-    return this.permissionsService.findAllPermissionWithPagination(getPermissionDto);
+    return this.permissionsService.findAllPermissionsWithPagination(getPermissionDto);
   }
 
   @Get(':id')

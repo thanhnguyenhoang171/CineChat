@@ -1,0 +1,1 @@
+export const INVALID_INPUT = 'SYS_104'; // Lỗi đến từ Mongo Schema
