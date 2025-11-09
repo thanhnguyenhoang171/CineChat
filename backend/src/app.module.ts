@@ -10,6 +10,8 @@ import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { AppLoggerMiddleware } from '@middlewares/app-logger.middleware';
 import envConfig, { envValidationSchema } from '@config/env.config';
 import { DatabaseModule } from '@database/mongoose.module';
+import { PaginationService } from '@common/services/pagination.service';
+import { CommonModule } from '@common/common.module';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { DatabaseModule } from '@database/mongoose.module';
     AuthModule,
     RolesModule,
     PermissionsModule,
+    CommonModule
   ],
   providers: [
     {

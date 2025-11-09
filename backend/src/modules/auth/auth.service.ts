@@ -1,4 +1,4 @@
-import { passwordCompare } from '@common/utils/passwordBcrypt';
+import { passwordCompare } from '@common/utils/password-bcrypt.util';
 import { IUser } from '@interfaces/user.interface';
 import { RegisterAccountDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';

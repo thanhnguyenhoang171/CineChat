@@ -8,8 +8,8 @@ import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import {findModuleOrThrow ,validateMongoId } from '@common/utils/validateUtil';
-import { passwordHashing } from '@common/utils/passwordBcrypt';
+import {findModuleOrThrow ,validateMongoId } from '@common/utils/validate.util';
+import { passwordHashing } from '@common/utils/password-bcrypt.util';
 
 @Injectable()
 export class UsersService {

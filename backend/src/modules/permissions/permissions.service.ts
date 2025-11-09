@@ -9,16 +9,18 @@ import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { GetPermissionDto } from './dto/get-permission.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import { parseSort } from '../../common/utils/parse-sort-string';
-import { validateMongoId } from '@common/utils/validateUtil';
+import { validateMongoId } from '@common/utils/validate.util';
 import { ensurePermissionExists } from './utils/permission-validator';
 import { validateUpdateFields } from '@common/utils/update-field-validator';
+import { PaginationService } from '@common/services/pagination.service';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class PermissionsService {
   constructor(
     @InjectModel(Permission.name)
     private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
+    private readonly paginationService: PaginationService,
   ) {}
 
   async createPermission(createPermissionDto: CreatePermissionDto, user: IUser) {
@@ -55,86 +57,113 @@ export class PermissionsService {
     };
   }
 
-  async findAllPermissionWithPagination(getPermissionDto: GetPermissionDto) {
-    const { page, limit, search, filters, sort, projections } = getPermissionDto;
-    // create basic query
-    let query: any = {};
-    let options: any = {
-      skip: (page - 1) * limit,
-      limit: limit,
-    };
+  // async findAllPermissionWithPagination(getPermissionDto: GetPermissionDto) {
+  //   const { page, limit, search, filters, sort, projections } = getPermissionDto;
+  //   // create basic query
+  //   let query: any = {};
+  //   let options: any = {
+  //     skip: (page - 1) * limit,
+  //     limit: limit,
+  //   };
+  //
+  //   const aqp = (await import('api-query-params')).default;
+  //
+  //   console.log('Input DTO:', getPermissionDto);
+  //
+  //   // use aqp to parse filters, sort, projections
+  //   if (filters) {
+  //     const parsedFilters = aqp(filters, {
+  //       skipKey: 'skip',
+  //       limitKey: 'limit',
+  //       projectionKey: 'projection',
+  //       sortKey: 'sort',
+  //     });
+  //     query = { ...query, ...parsedFilters.filter };
+  //
+  //     // If has merge sort
+  //     if (parsedFilters.sort) {
+  //       options.sort = parsedFilters.sort;
+  //     }
+  //
+  //     // If has merge projections
+  //     if (parsedFilters.projection) {
+  //       options.projection = parsedFilters.projection;
+  //     }
+  //   }
+  //
+  //   // Handle search (fuzzy search)
+  //   if (search) {
+  //     query.$or = [
+  //       { apiPath: { $regex: search, $options: 'i' } },
+  //       { method: { $regex: search, $options: 'i' } },
+  //       { module: { $regex: search, $options: 'i' } },
+  //     ];
+  //   }
+  //
+  //   // Handle projections
+  //   if (projections) {
+  //     const fields = projections.split(',').map((field) => field.trim());
+  //     options.projection = fields.reduce((acc, field) => {
+  //       acc[field] = 1;
+  //       return acc;
+  //     }, {});
+  //   }
+  //
+  //   // Handle default sort if not have sort in filters
+  //   if (!options.sort) {
+  //     options.sort = sort ? parseSort(sort) : { createdAt: -1 };
+  //   }
+  //
+  //   console.log('--- Final Mongoose Query ---');
+  //   console.log('Query:', JSON.stringify(query, null, 2));
+  //   console.log('Options:', JSON.stringify(options, null, 2));
+  //
+  //   try {
+  //     const total = await this.permissionModel.countDocuments(query);
+  //     const data = await this.permissionModel
+  //       .find(query, options.projection || {})
+  //       .sort(options.sort)
+  //       .skip(options.skip)
+  //       .limit(options.limit)
+  //       .populate(options.populate || [])
+  //       .lean();
+  //     return {
+  //       code: BusinessCode.PERMISSION_GET_SUCCESS,
+  //       message: ResponseMessage[BusinessCode.PERMISSION_GET_SUCCESS],
+  //       data,
+  //       meta: {
+  //         total,
+  //         page,
+  //         limit,
+  //         totalPages: Math.ceil(total / limit),
+  //       },
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
+  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+  //       },
+  //       HttpStatusCode.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 
-    const aqp = (await import('api-query-params')).default;
-
-    console.log('Input DTO:', getPermissionDto);
-
-    // use aqp to parse filters, sort, projections
-    if (filters) {
-      const parsedFilters = aqp(filters, {
-        skipKey: 'skip',
-        limitKey: 'limit',
-        projectionKey: 'projection',
-        sortKey: 'sort',
-      });
-      query = { ...query, ...parsedFilters.filter };
-
-      // If has merge sort
-      if (parsedFilters.sort) {
-        options.sort = parsedFilters.sort;
-      }
-
-      // If has merge projections
-      if (parsedFilters.projection) {
-        options.projection = parsedFilters.projection;
-      }
-    }
-
-    // Handle search (fuzzy search)
-    if (search) {
-      query.$or = [
-        { apiPath: { $regex: search, $options: 'i' } },
-        { method: { $regex: search, $options: 'i' } },
-        { module: { $regex: search, $options: 'i' } },
-      ];
-    }
-
-    // Handle projections
-    if (projections) {
-      const fields = projections.split(',').map((field) => field.trim());
-      options.projection = fields.reduce((acc, field) => {
-        acc[field] = 1;
-        return acc;
-      }, {});
-    }
-
-    // Handle default sort if not have sort in filters
-    if (!options.sort) {
-      options.sort = sort ? parseSort(sort) : { createdAt: -1 };
-    }
-
-    console.log('--- Final Mongoose Query ---');
-    console.log('Query:', JSON.stringify(query, null, 2));
-    console.log('Options:', JSON.stringify(options, null, 2));
-
+  async findAllPermissionsWithPagination(getPermissionDto: GetPermissionDto) {
+    // Define search fields for permissions
+    const searchFields = ['apiPath', 'method', 'module'];
     try {
-      const total = await this.permissionModel.countDocuments(query);
-      const data = await this.permissionModel
-        .find(query, options.projection || {})
-        .sort(options.sort)
-        .skip(options.skip)
-        .limit(options.limit)
-        .populate(options.populate || [])
-        .lean();
+      const { data, meta } = await this.paginationService.paginate(
+        this.permissionModel,
+        getPermissionDto,
+        searchFields,
+      );
+
       return {
         code: BusinessCode.PERMISSION_GET_SUCCESS,
         message: ResponseMessage[BusinessCode.PERMISSION_GET_SUCCESS],
         data,
-        meta: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
-        },
+        meta,
       };
     } catch (error) {
       throw new HttpException(
@@ -142,11 +171,10 @@ export class PermissionsService {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
-
   async findPermissionById(id: string) {
     // Check valid id
     validateMongoId(id);
@@ -231,11 +259,36 @@ export class PermissionsService {
         },
       };
     } catch (error) {
-      // Bắt các lỗi không lường trước được từ database
+      if (error instanceof HttpException) {
+        //  Ném lại lỗi nghiệp vụ
+        throw error;
+      }
+      if (error instanceof mongoose.Error.StrictModeError) {
+        throw new HttpException(
+          {
+            code: BusinessCode.VALIDATION_FAILED,
+            errors: ResponseMessage[BusinessCode.VALIDATION_FAILED],
+          },
+          HttpStatusCode.BAD_REQUEST,
+        );
+      }
+
+      //  Nếu là lỗi validation khác
+      if (error instanceof mongoose.Error.ValidationError) {
+        throw new HttpException(
+          {
+            code: BusinessCode.VALIDATION_FAILED,
+            errors: error.message,
+          },
+          HttpStatusCode.BAD_REQUEST,
+        );
+      }
+
+      // Các lỗi khác → 500
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
-          message: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
         HttpStatusCode.INTERNAL_SERVER_ERROR,
       );
@@ -258,8 +311,7 @@ export class PermissionsService {
         HttpStatusCode.NOT_FOUND,
       );
     }
-
-    const deletedPermission = await this.permissionModel.findByIdAndUpdate(
+    await this.permissionModel.findByIdAndUpdate(
       id,
       {
         deletedBy: {

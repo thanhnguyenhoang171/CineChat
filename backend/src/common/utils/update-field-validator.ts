@@ -15,16 +15,16 @@ export function validateUpdateFields(dto: any, schema: any) {
     );
   }
 
-  // Compare old and new values
-  const isDifferent = Object.keys(dto).some((key) => schema[key] !== dto[key]);
-
-  if (!isDifferent) {
-    throw new HttpException(
-      {
-        code: BusinessCode.NO_FIELD_UPDATED,
-        errors: ResponseMessage[BusinessCode.NO_FIELD_UPDATED],
-      },
-      HttpStatusCode.BAD_REQUEST,
-    );
-  }
+  // // Compare old and new values
+  // const isDifferent = Object.keys(dto).some((key) => schema[key] !== dto[key]);
+  //
+  // if (!isDifferent) {
+  //   throw new HttpException(
+  //     {
+  //       code: BusinessCode.NO_FIELD_UPDATED,
+  //       errors: ResponseMessage[BusinessCode.NO_FIELD_UPDATED],
+  //     },
+  //     HttpStatusCode.BAD_REQUEST,
+  //   );
+  // }
 }

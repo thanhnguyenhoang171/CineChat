@@ -10,13 +10,15 @@ import {
   findModuleOrThrow,
   isModuleExist,
   validateMongoId,
-} from '@common/utils/validateUtil';
+} from '@common/utils/validate.util';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { Permission, PermissionDocument } from '@modules/permissions/shemas/permission.schema';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
-import { parseSort } from '@common/utils/parse-sort-string';
+import { PaginationService } from '@common/services/pagination.service';
+import { validateUpdateFields } from '@common/utils/update-field-validator';
+import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 
 @Injectable()
 class RolesService {
@@ -25,6 +27,7 @@ class RolesService {
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
     @InjectModel(Permission.name)
     private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
+    private readonly paginationService: PaginationService,
   ) {}
 
   async createRole(createRoleDto: CreateRoleDto, user: IUser) {
@@ -70,100 +73,149 @@ class RolesService {
     };
   }
 
-  async findAllRoleWithPagination(getRoleDto: GetRoleDto) {
-    const { page, limit, search, filters, sort, projections, populate } = getRoleDto;
+  // async findAllRoleWithPagination(getRoleDto: GetRoleDto) {
+  //   const { page, limit, search, filters, sort, projections, populate } = getRoleDto;
+  //
+  //   let query: any = {};
+  //   let options: any = {
+  //     skip: (page - 1) * limit,
+  //     limit: limit,
+  //   };
+  //
+  //   const aqp = (await import('api-query-params')).default;
+  //
+  //   if (filters) {
+  //     const parsedFilters = aqp(filters, {
+  //       skipKey: 'skip',
+  //       limitKey: 'limit',
+  //       projectionKey: 'projection',
+  //       sortKey: 'sort',
+  //     });
+  //     query = { ...query, ...parsedFilters.filter };
+  //     if (parsedFilters.sort) {
+  //       options.sort = parsedFilters.sort;
+  //     }
+  //
+  //     if (parsedFilters.projection) {
+  //       options.projection = parsedFilters.projection;
+  //     }
+  //   }
+  //
+  //   if (search) {
+  //     query.$or = [
+  //       { name: { $regex: search, $options: 'i' } },
+  //       { description: { $regex: search, $options: 'i' } },
+  //     ];
+  //   }
+  //
+  //   if (projections) {
+  //     const fields = projections.split(',').map((field) => field.trim());
+  //     options.projection = fields.reduce((acc, field) => {
+  //       acc[field] = 1;
+  //       return acc;
+  //     }, {});
+  //   }
+  //
+  //   if (!options.sort) {
+  //     options.sort = sort ? parseSort(sort) : { createdAt: -1 };
+  //   }
+  //
+  //   if (populate) {
+  //     // Tách chuỗi populate thành mảng, ví dụ: "permissions,user" -> ["permissions", "user"]
+  //     const fieldsToPopulate = populate.split(',').map((field) => field.trim());
+  //
+  //     const populateOptions: any[] = [];
+  //
+  //     fieldsToPopulate.forEach((field) => {
+  //       if (field === 'permissions') {
+  //         // Nếu là 'permissions', dùng rule select cụ thể
+  //         populateOptions.push({
+  //           path: 'permissions',
+  //           select: 'name method apiPath module description',
+  //         });
+  //       } else {
+  //         // Với các trường khác, populate bình thường
+  //         populateOptions.push({ path: field });
+  //         // Hoặc đơn giản là: populateOptions.push(field);
+  //       }
+  //     });
+  //
+  //     options.populate = populateOptions;
+  //   }
+  //
+  //   console.log('--- Final Role Mongoose Query ---');
+  //   console.log('Query:', JSON.stringify(query, null, 2));
+  //   console.log('Options:', JSON.stringify(options, null, 2));
+  //
+  //   try {
+  //     const total = await this.roleModel.countDocuments(query);
+  //     const data = await this.roleModel
+  //       .find(query, options.projection || {})
+  //       .sort(options.sort)
+  //       .skip(options.skip)
+  //       .limit(options.limit)
+  //       .populate(options.populate || [])
+  //       .lean();
+  //
+  //     return {
+  //       code: BusinessCode.ROLE_GET_SUCCESS,
+  //       message: ResponseMessage[BusinessCode.ROLE_GET_SUCCESS],
+  //       data,
+  //       meta: {
+  //         total,
+  //         page,
+  //         limit,
+  //         totalPages: Math.ceil(total / limit),
+  //       },
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
+  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+  //       },
+  //       HttpStatusCode.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 
-    let query: any = {};
-    let options: any = {
-      skip: (page - 1) * limit,
-      limit: limit,
-    };
-
-    const aqp = (await import('api-query-params')).default;
-
-    if (filters) {
-      const parsedFilters = aqp(filters, {
-        skipKey: 'skip',
-        limitKey: 'limit',
-        projectionKey: 'projection',
-        sortKey: 'sort',
-      });
-      query = { ...query, ...parsedFilters.filter };
-      if (parsedFilters.sort) {
-        options.sort = parsedFilters.sort;
-      }
-
-      if (parsedFilters.projection) {
-        options.projection = parsedFilters.projection;
-      }
-    }
-
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ];
-    }
-
-    if (projections) {
-      const fields = projections.split(',').map((field) => field.trim());
-      options.projection = fields.reduce((acc, field) => {
-        acc[field] = 1;
-        return acc;
-      }, {});
-    }
-
-    if (!options.sort) {
-      options.sort = sort ? parseSort(sort) : { createdAt: -1 };
-    }
-
+  async findAllRolesWithPagination(getRoleDto: GetRoleDto) {
+    const { populate } = getRoleDto;
+    //   1. Define a specific logic populate for role
+    let customPopulateOptions: any[] | undefined;
     if (populate) {
-      // Tách chuỗi populate thành mảng, ví dụ: "permissions,user" -> ["permissions", "user"]
       const fieldsToPopulate = populate.split(',').map((field) => field.trim());
 
-      const populateOptions: any[] = [];
-
-      fieldsToPopulate.forEach((field) => {
+      customPopulateOptions = fieldsToPopulate.map((field) => {
         if (field === 'permissions') {
-          // Nếu là 'permissions', dùng rule select cụ thể
-          populateOptions.push({
+          // Define special Rule for 'permissions'
+          return {
             path: 'permissions',
-            select: 'name method apiPath module description',
-          });
-        } else {
-          // Với các trường khác, populate bình thường
-          populateOptions.push({ path: field });
-          // Hoặc đơn giản là: populateOptions.push(field);
+            select: 'name method apiPath module',
+          };
         }
+        return { path: field }; // default rule
       });
-
-      options.populate = populateOptions;
     }
 
-    console.log('--- Final Role Mongoose Query ---');
-    console.log('Query:', JSON.stringify(query, null, 2));
-    console.log('Options:', JSON.stringify(options, null, 2));
+    //   2. Define specific fields for role
+    const searchFields = ['name', 'description'];
 
     try {
-      const total = await this.roleModel.countDocuments(query);
-      const data = await this.roleModel
-        .find(query, options.projection || {})
-        .sort(options.sort)
-        .skip(options.skip)
-        .limit(options.limit)
-        .populate(options.populate || [])
-        .lean();
+      //   3. Call common service
+      const { data, meta } = await this.paginationService.paginate(
+        this.roleModel,
+        getRoleDto,
+        searchFields,
+        customPopulateOptions,
+      );
 
+      //   4. Return response
       return {
         code: BusinessCode.ROLE_GET_SUCCESS,
         message: ResponseMessage[BusinessCode.ROLE_GET_SUCCESS],
         data,
-        meta: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
-        },
+        meta,
       };
     } catch (error) {
       throw new HttpException(
@@ -171,7 +223,7 @@ class RolesService {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -195,12 +247,139 @@ class RolesService {
     };
   }
 
-  updateRole(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async updateRoleById(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
+    // Check valid mongoId
+    validateMongoId(id);
+
+    // Ensure existed role
+    const role = await findModuleOrThrow(
+      this.roleModel,
+      '_id',
+      id,
+      BusinessCode.ROLE_NOT_FOUND,
+      ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+      HttpStatusCode.NOT_FOUND,
+    );
+
+    // Check has new values updated?
+    validateUpdateFields(updateRoleDto, role);
+
+    // Check is duplicated role's name
+    if (updateRoleDto.name) {
+      const duplicatedRole = await this.roleModel.findOne({
+        name: updateRoleDto.name || role.name,
+        _id: { $ne: id },
+      });
+      if (duplicatedRole) {
+        throw new HttpException(
+          {
+            code: BusinessCode.ROLE_ALREADY_EXISTS,
+            errors: ResponseMessage[BusinessCode.ROLE_ALREADY_EXISTS],
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+    }
+
+    try {
+      // Dùng $set để update có chủ đích hơn
+      const updatedRole = await this.roleModel.findByIdAndUpdate(
+        id, // findByIdAndUpdate chỉ cần id là đủ
+        {
+          $set: { // Dùng $set
+            ...updateRoleDto,
+            updatedBy: {
+              _id: user._id,
+              username: user?.username,
+              email: user?.email,
+            },
+          }
+        },
+        {
+          new: true,
+          runValidators: true,
+        },
+      ).lean(); // Thêm .lean() nếu bạn không cần Mongoose document
+
+      // Check after updating role
+      if (!updatedRole) {
+        throw new HttpException(
+          {
+            code: BusinessCode.ROLE_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return {
+        code: BusinessCode.ROLE_UPDATED_SUCCESS,
+        data: {
+          _id: updatedRole._id,
+          updatedAt: updatedRole.updatedAt,
+        },
+      };
+    } catch (error) {
+      // Re-throw business exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      // Catching errors from Mongoose Schema
+      if (error.name === 'ValidationError') {
+        throw new HttpException(
+          {
+            code: INVALID_INPUT, // Hoặc một mã lỗi validation chung
+            errors: error.message, // Lấy thông báo lỗi trực tiếp từ Mongoose
+          },
+          HttpStatus.BAD_REQUEST, // 400
+        );
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async removeRoleById(id: string, user: IUser ) {
+    // Soft delete
+    validateMongoId(id);
+    await isModuleExist(this.roleModel,'_id' ,id);
+
+    const result = await this.roleModel.softDelete({ _id: id });
+
+    if (!result || result.deleted !== 1) {
+      throw new HttpException(
+        {
+          code: BusinessCode.ROLE_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+        },
+        HttpStatusCode.NOT_FOUND,
+      );
+    }
+    await this.roleModel.findByIdAndUpdate(
+      id,
+      {
+        deletedBy: {
+          _id: user._id,
+          username: user?.username,
+          email: user?.email,
+        },
+      },
+      { new: true },
+    );
+
+    return {
+      code: BusinessCode.ROLE_DELETED_SUCCESS,
+      data: {
+        _id: id,
+      },
+    };
   }
 }
 
