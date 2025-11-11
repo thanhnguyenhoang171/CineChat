@@ -11,7 +11,7 @@ import { GetPermissionDto } from './dto/get-permission.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { validateMongoId } from '@common/utils/validate.util';
 import { ensurePermissionExists } from './utils/permission-validator';
-import { validateUpdateFields } from '@common/utils/update-field-validator';
+import { validateUpdateFields } from '@common/utils/update-field-validator.utils';
 import { PaginationService } from '@common/services/pagination.service';
 import mongoose from 'mongoose';
 
