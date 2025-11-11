@@ -17,7 +17,7 @@ import { HttpStatusCode } from '@common/constants/http-status-code';
 import { Permission, PermissionDocument } from '@modules/permissions/shemas/permission.schema';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
 import { PaginationService } from '@common/services/pagination.service';
-import { validateUpdateFields } from '@common/utils/update-field-validator';
+import { validateUpdateFields } from '@common/utils/update-field-validator.utils';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 
 @Injectable()
@@ -33,7 +33,7 @@ class RolesService {
   async createRole(createRoleDto: CreateRoleDto, user: IUser) {
     // Check existed role by name
     const isExistedRole = await isModuleExist(this.roleModel, 'name', createRoleDto.name);
-    if (isExistedRole === true) {
+    if (isExistedRole) {
       throw new HttpException(
         {
           code: BusinessCode.ROLE_ALREADY_EXISTS,
