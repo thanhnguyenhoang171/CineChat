@@ -8,7 +8,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
-import { JwtPublic } from '@common/decorators/jwt_public.decorator';
+import { JwtPublic } from '@common/decorators/auth.decorator';
 
 @Controller('roles')
 @ApiBearerAuth('jwt')

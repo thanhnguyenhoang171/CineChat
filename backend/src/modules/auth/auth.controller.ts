@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtPublic } from '@common/decorators/jwt_public.decorator';
+import { JwtPublic } from '@common/decorators/auth.decorator';
 import { LoginAccountDto, RegisterAccountDto } from '@modules/users/dto/create-user.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
