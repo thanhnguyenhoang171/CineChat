@@ -8,16 +8,21 @@ import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { HttpStatusCode } from '@common/constants/http-status-code';
-import {findModuleOrThrow ,validateMongoId } from '@common/utils/validate.util';
+import { findModuleOrThrow, isModuleExist, validateMongoId } from '@common/utils/validate.util';
 import { passwordHashing } from '@common/utils/password-bcrypt.util';
+import { CommonConstant } from '@common/constants/common-constant';
+import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
+import { INVALID_INPUT } from '@common/constants/Error-code-specific';
+import { Permission } from '@modules/permissions/schemas/permission.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
+    @InjectModel(Role.name)
+    private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
   ) {}
-
   async create(createUserDto: CreateUserDto) {
     const duplicatedUsername = await this.userModel.findOne({
       username: createUserDto.username,
@@ -61,10 +66,60 @@ export class UsersService {
   }
 
   async findUserByUsername(username: string) {
-    return {
-      code: BusinessCode.SUCCESS,
-      data: await this.userModel.findOne({ username }).lean(),
-    };
+    try {
+      const user = await this.userModel
+        .findOne({ username })
+        .populate({
+          path: 'role',
+          model: 'Role',
+          populate: {
+            path: 'permissions',
+            model: 'Permission',
+            select: '_id name method apiPath module',
+          },
+        })
+        .lean()
+        .exec();
+
+      if (!user) {
+        throw new HttpException(
+          {
+            code: BusinessCode.USER_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+          },
+          HttpStatusCode.NOT_FOUND,
+        );
+      }
+      const { password, role, ...userInfo } = user;
+
+      // Lấy permissions đã được populate trực tiếp từ đối tượng role
+      const permissions = (role as any)?.permissions ?? [];
+      const roleId = (role as any)?._id;
+      const roleName = (role as any)?.name;
+
+      return {
+        ...userInfo,
+        password: password, // <-- Giữ lại password HASHED để so sánh trong AuthService
+        role: {
+          _id: roleId,
+          name: roleName,
+        },
+        permissions: permissions,
+      };
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -146,35 +201,86 @@ export class UsersService {
   async registerAccount(registerAccountDto: RegisterAccountDto) {
     try {
       const { firstName, lastName, picture, username, password } = registerAccountDto;
-      // Kiểm tra tránh trùng username
-      const duplicatedUsername = await this.userModel.findOne({
-        username,
-      });
+      const duplicatedUsername = await isModuleExist(this.userModel, 'username', username);
+
       if (duplicatedUsername) {
-        throw new HttpException('Username này đã tồn tại', HttpStatus.CONFLICT);
+        throw new HttpException(
+          {
+            code: BusinessCode.DUPLICATE_USERNAME,
+            errors: ResponseMessage[BusinessCode.DUPLICATE_USERNAME],
+          },
+          HttpStatus.CONFLICT,
+        );
       }
+
+      // Get user's role
+      const userRole = await this.roleModel.findOne({ name: CommonConstant.roleLevel.USER });
+
+      if (!userRole) {
+        throw new HttpException(
+          {
+            code: BusinessCode.ROLE_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+          },
+          HttpStatusCode.NOT_FOUND,
+        );
+      }
+
       // Hash password
       const passwordHashed = await passwordHashing(password);
 
-      // Tạo mới acc
-      const result = await this.userModel.create({
+      // Tạo mới
+      return await this.userModel.create({
         firstName,
         lastName,
         picture,
         username,
         password: passwordHashed,
-        role: 'user', // hardcode role
+        role: userRole?._id,
       });
-
-      return result.id.toString();
     } catch (error) {
+      // Re-throw business exceptions
       if (error instanceof HttpException) {
         throw error;
       }
+
+      // Catching errors from Mongoose Schema
+      if (error.name === 'ValidationError') {
+        throw new HttpException(
+          {
+            code: INVALID_INPUT, // Hoặc một mã lỗi validation chung
+            errors: error.message, // Lấy thông báo lỗi trực tiếp từ Mongoose
+          },
+          HttpStatus.BAD_REQUEST, // 400
+        );
+      }
+
       throw new HttpException(
-        'Lỗi hệ thống, vui lòng thử lại sau',
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async updateUserRefreshTokenById(refreshToken: string, id: string) {
+    validateMongoId(id);
+
+    const result = await this.userModel.findOneAndUpdate(
+      { _id: id },
+      { refreshToken },
+      { new: true },
+    );
+    if (!result) {
+      throw new HttpException({
+        code: BusinessCode.USER_NOT_FOUND,
+        errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+      },
+        HttpStatusCode.NOT_FOUND,
+        )
+    }
+    return result;
   }
 }

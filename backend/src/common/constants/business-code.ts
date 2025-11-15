@@ -15,6 +15,8 @@ export enum BusinessCode {
   // --- 2xx: Authentication & Authorization Errors ---
   UNAUTHORIZED = 'SYS_200', // Chưa đăng nhập, thiếu token
   FORBIDDEN = 'SYS_201', // Đã đăng nhập nhưng không có quyền
+  REGISTERED = 'SYS_202', // Đăng ký thành công
+  LOGIN = 'SYS_203',
 
   // --- 5xx: Server Errors ---
   INTERNAL_SERVER_ERROR = 'SYS_500',

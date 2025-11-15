@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Permission, PermissionDocument } from './shemas/permission.schema';
+import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
 import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
 import type { IUser } from '@interfaces/user.interface';
 import { BusinessCode } from '@common/constants/business-code';
@@ -11,7 +11,7 @@ import { GetPermissionDto } from './dto/get-permission.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { validateMongoId } from '@common/utils/validate.util';
 import { ensurePermissionExists } from './utils/permission-validator';
-import { validateUpdateFields } from '@common/utils/update-field-validator.utils';
+import { validateUpdateFields } from '@common/utils/update-field-validator.util';
 import { PaginationService } from '@common/services/pagination.service';
 import mongoose from 'mongoose';
 

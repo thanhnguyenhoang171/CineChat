@@ -1,11 +1,13 @@
 import { IS_PUBLIC_KEY } from '@common/decorators/jwt_public.decorator';
-import { ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ExecutionContext, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-
+import { BusinessCode } from '@common/constants/business-code';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+  private readonly logger =  new Logger(JwtAuthGuard.name);
+
   constructor(private reflector: Reflector) {
     super();
   }
@@ -22,16 +24,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user, info, context: ExecutionContext) {
     // You can throw an exception based on either "info" or "err" arguments
+    this.logger.log(">>> JWT AUTH GUARD INFO = " + info.toString());
+    this.logger.error(">>> JWT AUTH GUARD ERRORS = " + err.toString());
     if (err || !user) {
       throw (
         err ||
         new HttpException(
-          'Token không hợp lệ hoặc không có Token ở Bearer Token ở Header request!',
+          {
+            code: BusinessCode.UNAUTHORIZED,
+            errors: 'Token không hợp lệ hoặc không có Token ở Bearer Token ở Header request!',
+          },
           HttpStatus.UNAUTHORIZED,
         )
       );
     }
-
     return user;
   }
 }

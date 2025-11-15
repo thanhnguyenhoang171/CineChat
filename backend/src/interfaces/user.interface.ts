@@ -6,6 +6,14 @@ export interface IUser {
   username?: string;
   password: string;
   email?: string;
-  role?: string;
-  // Permission
+  role: {
+    _id: string;
+    name: string;
+  }
+  permissions?: {
+    _id: string;
+    name: string;
+    apiPath: string;
+    module: string;
+  }[]
 }

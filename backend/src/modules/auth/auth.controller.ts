@@ -7,13 +7,17 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request,
+  Req, // Đã import Req
+  Res
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from '../../common/guards/local-auth-guard';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtPublic } from '@common/decorators/jwt_public.decorator';
 import { LoginAccountDto, RegisterAccountDto } from '@modules/users/dto/create-user.dto';
+import { HttpStatusCode } from '@common/constants/http-status-code';
+import { ResponseStatus } from '@common/decorators/response_message.decorator';
+import { LocalAuthGuard } from '@common/guards/local-auth-guard';
+import type { Request, Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -22,6 +26,8 @@ export class AuthController {
 
   @JwtPublic()
   @Post('/register')
+  @ApiOperation({ summary: 'Register a new account' })
+  @ResponseStatus(HttpStatusCode.CREATED)
   async registerAccount(@Body() registerAccountDto: RegisterAccountDto) {
     return this.authService.register(registerAccountDto);
   }
@@ -30,12 +36,19 @@ export class AuthController {
   @Post('/login')
   @ApiBody({ type: LoginAccountDto })
   @UseGuards(LocalAuthGuard)
-  async lginAccount(@Request() req): Promise<any> {
-    return this.authService.login(req.user);
+  @ResponseStatus(HttpStatusCode.OK)
+  @ApiOperation({ summary: 'Login to system' })
+  async loginAccount(
+    @Req() req: any,
+    @Res({ passthrough: true }) response: Response
+  ): Promise<any> {
+    return this.authService.login(req.user, response);
   }
 
   @Post('/logout')
-  async logout(@Request() req) {
+  @ApiOperation({ summary: 'Logout from system' })
+  @ResponseStatus(HttpStatusCode.OK)
+  async logout(@Req() req: any) {
     return req.logout();
   }
 }

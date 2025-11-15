@@ -1,14 +1,39 @@
 import * as Joi from 'joi';
 
-export default () => ({
+// export default () => ({
+//   host: process.env.HOST || '0.0.0.0',
+//   port: parseInt(process.env.PORT || '3000', 10),
+//
+//   mongodbUri: process.env.MONGODB_URI,
+//
+//   jwt: {
+//     publicKey: process.env.JWT_PUBLIC_KEY,
+//     privateKey: process.env.JWT_PRIVATE_KEY,
+//     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+//     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+//   },
+// });
+export interface JwtConfig {
+  publicKey: string;
+  privateKey: string;
+  expiresIn: string;
+  refreshExpiresIn: string;
+}
+
+export interface ConfigEnv {
+  host: string;
+  port: number;
+  mongodbUri: string;
+  jwt: JwtConfig;
+}
+
+export default (): ConfigEnv => ({
   host: process.env.HOST || '0.0.0.0',
   port: parseInt(process.env.PORT || '3000', 10),
-
-  mongodbUri: process.env.MONGODB_URI,
-
+  mongodbUri: process.env.MONGODB_URI as string,
   jwt: {
-    publicKey: process.env.JWT_PUBLIC_KEY,
-    privateKey: process.env.JWT_PRIVATE_KEY,
+    publicKey: process.env.JWT_PUBLIC_KEY as string,
+    privateKey: process.env.JWT_PRIVATE_KEY as string,
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
