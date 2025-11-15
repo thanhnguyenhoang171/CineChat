@@ -1,5 +1,7 @@
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Permission } from '@modules/permissions/schemas/permission.schema';
+import { Role } from '@modules/roles/schemas/role.schema';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
@@ -16,8 +18,9 @@ export class User {
   password: string;
   @Prop()
   email: string;
-  @Prop()
-  role: string; // hardcode tạm thời làm authorization sau
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: Role.name })
+  role: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   refreshToken: string;

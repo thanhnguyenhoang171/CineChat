@@ -58,12 +58,12 @@ export class RegisterAccountDto {
 }
 
 export class LoginAccountDto {
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên đăng nhập' })
+  @ApiProperty({ example: 'thanh171', description: 'Tên đăng nhập' })
   @IsString({ message: 'Tên đăng nhập phải là một chuỗi' })
   @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
   username: string;
 
-  @ApiProperty({ example: '123456', description: 'Mật khẩu' })
+  @ApiProperty({ example: 'ABC123', description: 'Mật khẩu' })
   @IsString({ message: 'Mật khẩu phải là một chuỗi' })
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;

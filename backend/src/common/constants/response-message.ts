@@ -9,6 +9,8 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.INVALID_MONGODB_ID]: 'ID không đúng định dạng MongoDB.',
   [BusinessCode.NO_FIELD_UPDATED]: 'Không có trường nào được cập nhật.',
   [BusinessCode.UNAUTHORIZED]: 'Xác thực không thành công. Vui lòng đăng nhập lại.',
+  [BusinessCode.REGISTERED]: 'Đăng ký tài khoản mới thành công!',
+  [BusinessCode.LOGIN]: 'Đăng nhập thành công!',
   [BusinessCode.FORBIDDEN]: 'Bạn không có quyền thực hiện hành động này.',
   [BusinessCode.INTERNAL_SERVER_ERROR]: 'Lỗi hệ thống, vui lòng thử lại sau.',
   [BusinessCode.EMPTY_UPDATE_DTO]: 'Không có dữ liệu nào để cập nhật.',
