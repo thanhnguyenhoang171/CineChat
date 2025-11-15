@@ -8,7 +8,7 @@ import { HttpStatusCode } from '@common/constants/http-status-code';
 import { User } from '@common/decorators/user.decorator';
 import type { IUser } from '@interfaces/user.interface';
 import { GetPermissionDto } from './dto/get-permission.dto';
-import { JwtPublic } from '@common/decorators/jwt_public.decorator';
+import { JwtPublic } from '@common/decorators/auth.decorator';
 
 @Controller('permissions')
 @ApiBearerAuth('jwt')
