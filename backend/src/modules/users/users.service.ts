@@ -265,7 +265,7 @@ export class UsersService {
     }
   }
 
-  async updateUserRefreshTokenById(refreshToken: string, id: string) {
+  async updateUserRefreshTokenById(refreshToken: string | null, id: string) {
     validateMongoId(id);
 
     const result = await this.userModel.findOneAndUpdate(
@@ -274,13 +274,55 @@ export class UsersService {
       { new: true },
     );
     if (!result) {
-      throw new HttpException({
-        code: BusinessCode.USER_NOT_FOUND,
-        errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
-      },
+      throw new HttpException(
+        {
+          code: BusinessCode.USER_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+        },
         HttpStatusCode.NOT_FOUND,
-        )
+      );
     }
     return result;
+  }
+
+  async findUserByRefreshToken(refreshToken: string | null) {
+    const user = await this.userModel
+      .findOne({ refreshToken }, { password: 0 })
+      .populate({
+        path: 'role',
+        model: 'Role',
+        populate: {
+          path: 'permissions',
+          model: 'Permission',
+          select: '_id name method apiPath module',
+        },
+      })
+      .lean()
+      .exec();
+
+    if (!user) {
+      throw new HttpException(
+        {
+          code: BusinessCode.USER_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+        },
+        HttpStatusCode.NOT_FOUND,
+      );
+    }
+
+    // Take permissions form role
+    const { role, ...userInfo } = user;
+    const permissions = (role as any)?.permissions || [];
+    const roleId = (role as any)?.id;
+    const roleName = (role as any)?.name;
+
+    return {
+      ...user,
+      role: {
+        _id: roleId,
+        name: roleName,
+      },
+      permissions: permissions,
+    }
   }
 }

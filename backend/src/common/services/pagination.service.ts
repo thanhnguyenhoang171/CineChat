@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
-import { PaginatedMeta, PaginatedResponse } from '@interfaces/pagination.interface';
-import aqp from 'api-query-params';
+import { PaginatedResponse } from '@interfaces/pagination.interface';
+
 import {
   buildBaseOptions,
   executeQuery,

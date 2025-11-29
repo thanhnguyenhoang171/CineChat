@@ -1,6 +1,5 @@
 import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Permission } from '@modules/permissions/schemas/permission.schema';
 import { Role } from '@modules/roles/schemas/role.schema';
 export type UserDocument = HydratedDocument<User>;
 
@@ -22,8 +21,8 @@ export class User {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Role.name })
   role: mongoose.Schema.Types.ObjectId;
 
-  @Prop()
-  refreshToken: string;
+  @Prop({type: String, default: null})
+  refreshToken: string | null;
 
   @Prop({ type: Object })
   createdBy: {

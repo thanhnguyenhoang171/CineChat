@@ -8,20 +8,29 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersModule } from '@modules/users/users.module';
 import { ConfigEnv } from '@config/env.config';
+import { JwtModuleOptions } from '@nestjs/jwt';
+import { CommonModule } from '@common/common.module';
+
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService<ConfigEnv, true>) => ({
-        privateKey: configService.get<string>('jwt.privateKey', {infer: true})?.replace(/\\n/g, '\n'),
-        publicKey: configService.get<string>('jwt.publicKey', {infer: true})?.replace(/\\n/g, '\n'),
-        signOptions: {
-          algorithm: 'RS256',
-          expiresIn: configService.get<string>('jwt.expiresIn', {infer:true}),
-        },
-      }),
+      useFactory: async (configService: ConfigService<ConfigEnv, true>): Promise<JwtModuleOptions> => {
+        const privateKey = configService.get<string>('jwt.privateKey', { infer: true })?.replace(/\\n/g, '\n');
+        const publicKey = configService.get<string>('jwt.publicKey', { infer: true })?.replace(/\\n/g, '\n');
+        const expiresIn = configService.get<string>('jwt.expiresIn', { infer: true });
+
+        return {
+          privateKey,
+          publicKey,
+          signOptions: {
+            algorithm: 'RS256',
+            expiresIn: expiresIn as any, // Use type assertion
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
