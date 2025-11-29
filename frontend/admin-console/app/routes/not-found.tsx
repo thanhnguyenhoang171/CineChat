@@ -38,7 +38,7 @@ export default function NotFoundPage() {
           </Button>
 
           <Button asChild className='gap-2'>
-            <Link to='/admin/dashboard'>
+            <Link to='/dashboard'>
               <Home size={16} />
               Về Dashboard
             </Link>

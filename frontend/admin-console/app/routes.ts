@@ -6,40 +6,35 @@ import {
 } from '@react-router/dev/routes';
 
 export default [
-  // Public routes
-  index('routes/home.tsx'),
-  route('login', 'routes/login.tsx'),
-  //   route('register', 'routes/register.tsx'),
+  // 1. Root Route ("/")
+  // Thường dùng để check login: chưa login -> đẩy sang /login, rồi -> đẩy sang /dashboard
+  index('routes/_index.tsx'),
 
-  //   // Auth layout - requires authentication
-  //   layout('routes/auth-layout.tsx', [
-  //     route('dashboard', 'routes/dashboard.tsx', [
-  //       index('routes/dashboard/overview.tsx'),
-  //       route('analytics', 'routes/dashboard/analytics.tsx'),
-  //       route('reports', 'routes/dashboard/reports.tsx'),
-  //     ]),
+  // 2. Auth Routes (Bọc bởi AuthLayout)
+  layout('layouts/auth-layout.tsx', [
+    route('login', 'routes/auth/login.tsx'),
+    route('register', 'routes/auth/register.tsx'),
+  ]),
 
-  //     route('users', 'routes/users.tsx', [
-  //       index('routes/users/list.tsx'),
-  //       route(':id', 'routes/users/detail.tsx'),
-  //       route('create', 'routes/users/create.tsx'),
-  //     ]),
+  // 3. Admin Routes (Bọc bởi AdminLayout - Có Sidebar)
+  layout('layouts/admin-layout.tsx', [
+    // URL: /dashboard
+    route('dashboard', 'routes/dashboard/overview.tsx'),
 
-  //     route('products', 'routes/products.tsx', [
-  //       index('routes/products/list.tsx'),
-  //       route(':id', 'routes/products/detail.tsx'),
-  //       route('create', 'routes/products/create.tsx'),
-  //       route(':id/edit', 'routes/products/edit.tsx'),
-  //     ]),
-  //   ]),
+    // Module Users
+    // URL: /users (List), /users/create, /users/:id
+    route('dashboard/users', 'routes/dashboard/users/user-list.tsx'),
+    // route('users/create', 'routes/dashboard/users/create.tsx'),
+    // route('users/:id', 'routes/dashboard/users/detail.tsx'),
 
-  //   // Admin routes
-  //   layout('routes/admin-layout.tsx', [
-  //     route('admin', 'routes/admin/dashboard.tsx'),
-  //     route('admin/users', 'routes/admin/users.tsx'),
-  //     route('admin/settings', 'routes/admin/settings.tsx'),
-  //   ]),
+    // Module Movies
+    route('dashboard/movies', 'routes/dashboard/movies/movie-list.tsx'),
+    // ... thêm các route con của product tại đây
 
-  // Error route
+    // // Module Settings
+    // route('settings', 'routes/dashboard/settings/profile.tsx'),
+  ]),
+
+  // 4. Error Route (Splats)
   route('*', 'routes/not-found.tsx'),
 ] satisfies RouteConfig;

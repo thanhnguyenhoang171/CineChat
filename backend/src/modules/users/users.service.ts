@@ -13,7 +13,6 @@ import { passwordHashing } from '@common/utils/password-bcrypt.util';
 import { CommonConstant } from '@common/constants/common-constant';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
-import { Permission } from '@modules/permissions/schemas/permission.schema';
 
 @Injectable()
 export class UsersService {
