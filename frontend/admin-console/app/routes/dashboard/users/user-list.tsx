@@ -7,6 +7,10 @@ import { userQueries } from '~/queries/user.queries';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
+// 👇 THÊM 2 DÒNG NÀY
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
+
 // 1. LOADER: Prefetch data (Chạy song song khi load trang)
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   // Đảm bảo data được load vào cache trước khi render component
@@ -84,8 +88,6 @@ export default function UsersListPage() {
             <thead className='bg-gray-50 text-gray-700 border-b'>
               <tr>
                 <th className='px-6 py-4 font-medium'>Người dùng</th>
-                <th className='px-6 py-4 font-medium'>Role</th>
-                <th className='px-6 py-4 font-medium'>Trạng thái</th>
                 <th className='px-6 py-4 font-medium'>Ngày tạo</th>
                 <th className='px-6 py-4 font-medium text-right'>Hành động</th>
               </tr>
@@ -131,7 +133,14 @@ export default function UsersListPage() {
 
                     {/* Cột 4: Ngày tạo */}
                     <td className='px-6 py-4 text-gray-500'>
-                      {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                      {/* Cũ: new Date(user.createdAt).toLocaleDateString('vi-VN') */}
+
+                      {/* Mới: Dùng date-fns */}
+                      {user.createdAt
+                        ? format(new Date(user.createdAt), 'dd/MM/yyyy', {
+                            locale: vi,
+                          })
+                        : 'N/A'}
                     </td>
 
                     {/* Cột 5: Actions */}

@@ -1,11 +1,8 @@
-'use client'; // ← THÊM DÒNG NÀY ĐỂ FIX SSR ISSUE
+'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router'; // Chỉ import useNavigate từ RR7
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
 
 import { loginSchema, type LoginFormValues } from '../schemas';
 import {
@@ -25,36 +22,25 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
+import { useLogin } from '~/hooks/useLogin';
 
 export function LoginForm() {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  // 1. Gọi Hook: Lấy hàm login và trạng thái loading từ TanStack Query
+  const { mutate: login, isPending } = useLogin();
 
-  // 1. Setup Form với Zod
+  // 2. Setup Form
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      username: '', // Lưu ý: Backend thường dùng 'email' hoặc 'username', hãy check lại service
       password: '',
     },
   });
 
-  // 2. Xử lý Submit
-  async function onSubmit(data: LoginFormValues) {
-    setIsLoading(true);
-    try {
-      console.log('Login Data:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Giả lập login thành công
-      localStorage.setItem('accessToken', 'fake-token-123');
-      toast.success('Đăng nhập thành công!');
-      navigate('/admin/dashboard');
-    } catch (error) {
-      toast.error('Đăng nhập thất bại. Vui lòng thử lại.');
-    } finally {
-      setIsLoading(false);
-    }
+  // 3. Xử lý Submit (Cực gọn)
+  function onSubmit(data: LoginFormValues) {
+    // Gọi mutation. Hook sẽ lo việc: Gọi API -> Lưu Token -> Toast -> Redirect
+    login(data);
   }
 
   return (
@@ -64,25 +50,24 @@ export function LoginForm() {
           CineChat Admin
         </CardTitle>
         <CardDescription className='text-center'>
-          Nhập email và mật khẩu để truy cập
+          Nhập thông tin để truy cập hệ thống
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* SỬA: Form từ shadcn/ui, không phải từ react-router */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            {/* Email Field */}
+            {/* Input Email/Username */}
             <FormField
               control={form.control}
-              name='email'
+              name='username' // Đảm bảo name khớp với schema và API
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email / Username</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='admin@cinechat.com'
                       {...field}
-                      disabled={isLoading}
+                      disabled={isPending} // Disable khi đang call API
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,7 +75,7 @@ export function LoginForm() {
               )}
             />
 
-            {/* Password Field */}
+            {/* Input Password */}
             <FormField
               control={form.control}
               name='password'
@@ -102,7 +87,7 @@ export function LoginForm() {
                       type='password'
                       placeholder='••••••'
                       {...field}
-                      disabled={isLoading}
+                      disabled={isPending} // Disable khi đang call API
                     />
                   </FormControl>
                   <FormMessage />
@@ -110,9 +95,10 @@ export function LoginForm() {
               )}
             />
 
-            <Button type='submit' className='w-full' disabled={isLoading}>
-              {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
+            {/* Submit Button */}
+            <Button type='submit' className='w-full' disabled={isPending}>
+              {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              {isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
             </Button>
           </form>
         </Form>

@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate, Link } from 'react-router';
+import { Outlet, NavLink, useNavigate, Link, redirect } from 'react-router';
 import {
   LayoutDashboard,
   Users,
@@ -7,9 +7,36 @@ import {
   Film,
   Menu,
   ShoppingBag,
+  Loader2,
 } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
+import { useLogout } from '~/hooks/useLogout';
+import type { Route } from './+types/admin-layout'; // Auto-generated type
+
+// 👇 THÊM HÀM NÀY VÀO ĐẦU FILE
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  // 1. Kiểm tra token trong localStorage
+  const token = localStorage.getItem('accessToken');
+
+  // 2. Nếu không có token -> Chặn lại và đá về trang login
+  if (!token) {
+    // throw redirect giúp chuyển hướng ngay lập tức
+    throw redirect('/login');
+  }
+
+  // 3. Nếu có token -> Cho phép đi tiếp
+  return null;
+}
+
+// 👇 Thêm hydrateFallback (Optional): Hiển thị khi đang check token (thường rất nhanh)
+export function hydrateFallback() {
+  return (
+    <div className='flex h-screen w-full items-center justify-center'>
+      Loading...
+    </div>
+  );
+}
 
 // 1. Định nghĩa danh sách Menu
 const navItems = [
@@ -40,15 +67,11 @@ const navItems = [
 ];
 
 export default function AdminLayout() {
-  const navigate = useNavigate();
+  const { mutate: logout, isPending } = useLogout();
 
   const handleLogout = () => {
-    // 1. Xóa token
-    localStorage.removeItem('accessToken');
-    // 2. Chuyển về login
-    navigate('/login');
+    logout(); // ✅ Gọi mutate
   };
-
   return (
     <div className='flex h-screen w-full bg-slate-50 overflow-hidden'>
       {/* --- SIDEBAR (Desktop) --- */}
@@ -102,9 +125,14 @@ export default function AdminLayout() {
           <Button
             variant='outline'
             className='w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200'
-            onClick={handleLogout}>
-            <LogOut size={16} />
-            Đăng xuất
+            onClick={handleLogout}
+            disabled={isPending}>
+            {isPending ? (
+              <Loader2 size={16} className='animate-spin' />
+            ) : (
+              <LogOut size={16} />
+            )}
+            {isPending ? 'Đang đăng xuất...' : 'Đăng xuất'}
           </Button>
         </div>
       </aside>
