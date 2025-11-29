@@ -16,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
+import { JwtPublic } from '@common/decorators/auth.decorator';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -30,6 +31,7 @@ export class UsersController {
   }
 
   @Get()
+  @JwtPublic()
   @ResponseStatus(HttpStatusCode.OK)
   findAll() {
     return this.usersService.findAll();
