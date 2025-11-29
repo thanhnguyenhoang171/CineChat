@@ -11,9 +11,14 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.UNAUTHORIZED]: 'Xác thực không thành công. Vui lòng đăng nhập lại.',
   [BusinessCode.REGISTERED]: 'Đăng ký tài khoản mới thành công!',
   [BusinessCode.LOGIN]: 'Đăng nhập thành công!',
+  [BusinessCode.TOKEN_EXPIRED]: 'Token đã hết hạn!',
+  [BusinessCode.INVALID_TOKEN]: 'Token không hợp lệ!',
+  [BusinessCode.LOGOUT_SUCCESS]: 'Đăng xuất thành công!',
   [BusinessCode.FORBIDDEN]: 'Bạn không có quyền thực hiện hành động này.',
   [BusinessCode.INTERNAL_SERVER_ERROR]: 'Lỗi hệ thống, vui lòng thử lại sau.',
   [BusinessCode.EMPTY_UPDATE_DTO]: 'Không có dữ liệu nào để cập nhật.',
+  [BusinessCode.ACCOUNT_INFO]: 'Lấy thông tin tài khoản thành công.',
+  [BusinessCode.REFRESH_TOKEN_SUCCESS]: 'Refresh tài khoản thành công.',
   // =========================================================
   // === USR: USER MODULE MESSAGES ===========================
   // =========================================================

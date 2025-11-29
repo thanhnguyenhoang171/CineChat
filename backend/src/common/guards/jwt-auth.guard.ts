@@ -5,6 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { BusinessCode } from '@common/constants/business-code';
 import { Request, Response } from 'express';
 import { ResponseMessage } from '@common/constants/response-message';
+import { extractTokenFromHeader, matchPermission } from '@common/helpers/auth.helper';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -13,7 +14,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
-  canActivate(context: ExecutionContext) {
+   canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -24,52 +25,80 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user, info, context: ExecutionContext) {
-    // You can throw an exception based on either "info" or "err" arguments
-    this.logger.log('>>> JWT AUTH GUARD INFO = ' + info);
-    this.logger.error('>>> JWT AUTH GUARD ERRORS = ' + err);
-    this.logger.error('>>> JWT AUTH USER INFO = ' + user);
+  handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+    this.logger.log('>>> JWT AUTH GUARD INFO = ' + info?.message);
+    this.logger.log('>>> JWT AUTH USER INFO = ' +  user?._id);
+
     if (err || !user) {
-      throw (
-        err ||
-        new HttpException(
+      this.logger.error('>>> JWT AUTH GUARD ERRORS = ' + err?.message);
+
+      //  Xử lý các loại lỗi JWT cụ thể
+      if (info?.name === 'TokenExpiredError') {
+        throw new HttpException(
           {
-            code: BusinessCode.UNAUTHORIZED,
-            errors: ResponseMessage[BusinessCode.UNAUTHORIZED],
+            code: BusinessCode.TOKEN_EXPIRED,
+            errors: ResponseMessage[BusinessCode.TOKEN_EXPIRED],
           },
           HttpStatus.UNAUTHORIZED,
-        )
+        );
+      }
+
+      if (info?.name === 'JsonWebTokenError') {
+        throw new HttpException(
+          {
+            code: BusinessCode.INVALID_TOKEN,
+            errors: ResponseMessage[BusinessCode.INVALID_TOKEN],
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.UNAUTHORIZED,
+          errors: ResponseMessage[BusinessCode.UNAUTHORIZED],
+        },
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
-    // authorization guard
+    //  Authorization guard - Check permissions
     const request: Request = context.switchToHttp().getRequest();
-    this.logger.log('>>> CHECKING REQUEST = ', request);
+    const targetMethod = request.method;
+    const targetEndpoint = request.route?.path || request.path;
 
-    // get route and method to check permissions to access this api
+    this.logger.log(
+      `>>> CHECKING PERMISSIONS FOR: [${targetMethod}] ${targetEndpoint} - User: ${user.username}`,
+    );
+
     const publicPermission = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_PERMISSION, [
       context.getHandler(),
       context.getClass(),
     ]);
-    const targetMethod = request?.method;
-    const targetEndpoint = request?.route?.path;
 
-    this.logger.log(
-      '>>> CHECKING TARGET METHOD AND ENDPOINT = ' + '[' + targetMethod + '] - ' + targetEndpoint,
-    );
-
-    const permissionList = user?.permissions ?? [];
-
-    let isAllowAccess: boolean = permissionList.find(
-      (permission: any) =>
-        targetMethod === permission.method && targetEndpoint === permission.apiPath,
-    );
-
-    if (targetEndpoint.endsWith('/api/auth')) {
-      isAllowAccess = true;
+    // Cho phép truy cập các endpoint auth mà không cần check permission
+    if (targetEndpoint.startsWith('/api/auth')) {
+      this.logger.log('>>> AUTH ENDPOINT - SKIPPING PERMISSION CHECK');
+      return user;
     }
 
-    if (!isAllowAccess && !publicPermission) {
+    //  Cho phép truy cập nếu là public permission
+    if (publicPermission) {
+      this.logger.log('>>> PUBLIC PERMISSION - ALLOWING ACCESS');
+      return user;
+    }
+
+    //  Check permissions từ user
+    const permissionList = user?.permissions ?? [];
+    const isAllowAccess = permissionList.some(
+      (permission: any) =>
+        matchPermission(permission, targetMethod, targetEndpoint),
+    );
+
+    if (!isAllowAccess) {
+      this.logger.warn(
+        `>>> ACCESS DENIED - User ${user.username} lacks permission for [${targetMethod}] ${targetEndpoint}`,
+      );
       throw new HttpException(
         {
           code: BusinessCode.FORBIDDEN,
@@ -78,6 +107,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         HttpStatus.FORBIDDEN,
       );
     }
+
+    this.logger.log('>>> ACCESS GRANTED');
     return user;
   }
 }

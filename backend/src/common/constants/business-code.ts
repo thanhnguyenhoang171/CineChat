@@ -17,6 +17,13 @@ export enum BusinessCode {
   FORBIDDEN = 'SYS_201', // Đã đăng nhập nhưng không có quyền
   REGISTERED = 'SYS_202', // Đăng ký thành công
   LOGIN = 'SYS_203',
+  LOGOUT_SUCCESS = 'SYS_204',
+
+  TOKEN_EXPIRED = 'SYS_301',
+  INVALID_TOKEN = 'SYS_302',
+
+  ACCOUNT_INFO = 'SYS_205',
+  REFRESH_TOKEN_SUCCESS = 'SYS_206',
 
   // --- 5xx: Server Errors ---
   INTERNAL_SERVER_ERROR = 'SYS_500',

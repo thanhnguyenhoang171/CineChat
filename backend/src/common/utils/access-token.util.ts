@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from '@config/env.config';
 
 export const createRefreshToken = (
-  payload: any, // Sử dụng interface thay vì any
+  payload: any,
   jwtService: JwtService,
   configService: ConfigService<ConfigEnv, true>,
 ): string => {
@@ -11,8 +11,8 @@ export const createRefreshToken = (
   const expiresIn = configService.get<string>('jwt.refreshExpiresIn', { infer: true });
 
   return jwtService.sign(payload, {
-    secret: privateKey.replace(/\\n/g, '\n'),
+    privateKey: privateKey?.replace(/\\n/g, '\n'),
     algorithm: 'RS256',
     expiresIn: expiresIn,
-  });
+  } as any); // Use type assertion if needed
 };

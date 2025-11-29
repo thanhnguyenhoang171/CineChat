@@ -12,7 +12,7 @@ import { JwtPublic } from '@common/decorators/auth.decorator';
 
 @Controller('permissions')
 @ApiBearerAuth('jwt')
-@ApiTags('Permssions')
+@ApiTags('Permissions')
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
@@ -27,7 +27,6 @@ export class PermissionsController {
   }
 
   @Get()
-  @JwtPublic()
   @ApiOperation({ summary: 'Get permissions with pagination' })
   @ResponseStatus(HttpStatusCode.OK)
   getAllPermissionWithPaginationController(@Query() getPermissionDto: GetPermissionDto) {
