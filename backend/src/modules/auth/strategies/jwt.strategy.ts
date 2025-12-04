@@ -4,11 +4,15 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IUser } from '@interfaces/user.interface';
 import { ConfigEnv } from '@config/env.config';
+import RolesService from '@modules/roles/roles.service';
 
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService<ConfigEnv, true>) {
+  constructor(
+    private configService: ConfigService<ConfigEnv, true>,
+    private rolesService: RolesService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Lấy chuỗi token thô
       ignoreExpiration: false,
@@ -18,7 +22,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+// payload lúc này chỉ có: { sub, _id, role }
   async validate(payload: IUser) {
+    const roleId = payload?.role?._id;
+    const RoleWithPermissions = await this.rolesService.findRoleWithPermissionsById(roleId);
     return {
       _id: payload._id,
       firstName: payload.firstName,
@@ -26,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       username: payload?.username,
       email: payload?.email,
       role: payload.role,
-      permissions: payload?.permissions,
+      permissions: RoleWithPermissions?.permissions ?? [],
     };
   }
 }

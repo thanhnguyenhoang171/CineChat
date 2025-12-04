@@ -13,6 +13,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/query-client';
 import NotFoundPage from './routes/not-found';
 import { GeneralError } from './components/shared/general-error';
+import { SonnerToasterComponent } from './components/ui/sonner-toaster';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -39,6 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
+          <SonnerToasterComponent />
           <ScrollRestoration />
           <Scripts />
         </QueryClientProvider>

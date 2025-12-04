@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate, Link, redirect } from 'react-router';
+import { Outlet, NavLink, Link, redirect, useLocation } from 'react-router';
 import {
   LayoutDashboard,
   Users,
@@ -6,162 +6,146 @@ import {
   LogOut,
   Film,
   Menu,
-  ShoppingBag,
   Loader2,
 } from 'lucide-react';
-import { cn } from '~/lib/utils';
-import { Button } from '~/components/ui/button';
+import { useState } from 'react';
+import type { Route } from './+types/admin-layout';
+import { useBoundStore } from '~/store';
 import { useLogout } from '~/hooks/useLogout';
-import type { Route } from './+types/admin-layout'; // Auto-generated type
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '~/components/ui/sheet';
+import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
-// 👇 THÊM HÀM NÀY VÀO ĐẦU FILE
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  // 1. Kiểm tra token trong localStorage
-  const token = localStorage.getItem('accessToken');
-
-  // 2. Nếu không có token -> Chặn lại và đá về trang login
-  if (!token) {
-    // throw redirect giúp chuyển hướng ngay lập tức
-    throw redirect('/login');
-  }
-
-  // 3. Nếu có token -> Cho phép đi tiếp
-  return null;
-}
-
-// 👇 Thêm hydrateFallback (Optional): Hiển thị khi đang check token (thường rất nhanh)
-export function hydrateFallback() {
-  return (
-    <div className='flex h-screen w-full items-center justify-center'>
-      Loading...
-    </div>
-  );
-}
-
-// 1. Định nghĩa danh sách Menu
 const navItems = [
-  {
-    title: 'Overview',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    end: true, // end=true để chỉ active khi đúng chính xác đường dẫn /dashboard
-  },
-  {
-    title: 'Quản lý Users',
-    href: '/dashboard/users',
-    icon: Users,
-    end: false,
-  },
-  {
-    title: 'Quản lý Phim',
-    href: '/dashboard/movies', // Giả sử bạn sẽ làm route này
-    icon: Film,
-    end: false,
-  },
-  {
-    title: 'Cài đặt',
-    href: '/dashboard/settings',
-    icon: Settings,
-    end: false,
-  },
+  // 👇 Sửa href cho ngắn gọn, khớp với route config bên dưới
+  { title: 'Overview', href: '/dashboard', icon: LayoutDashboard, end: true },
+  { title: 'Quản lý Users', href: '/dashboard/users', icon: Users, end: false },
+  { title: 'Quản lý Phim', href: '/dashboard/movies', icon: Film, end: false },
 ];
 
 export default function AdminLayout() {
-  const { mutate: logout, isPending } = useLogout();
+  // 👇 4. Lấy User từ Store để UI tự động cập nhật (Reactive)
+  const user = useBoundStore((state) => state.user);
 
-  const handleLogout = () => {
-    logout(); // ✅ Gọi mutate
-  };
+  const { mutate: logout, isPending } = useLogout(); // Giả sử dùng React Query
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Component con render Link (Tái sử dụng)
+  const renderNavLinks = () => (
+    <nav className='grid gap-1 px-2'>
+      {navItems.map((item, index) => (
+        <NavLink
+          key={index}
+          to={item.href}
+          end={item.end}
+          onClick={() => setIsMobileMenuOpen(false)}
+          className={({ isActive }) =>
+            cn(
+              'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+              isActive
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900',
+            )
+          }>
+          <item.icon size={18} />
+          {item.title}
+        </NavLink>
+      ))}
+    </nav>
+  );
+
   return (
     <div className='flex h-screen w-full bg-slate-50 overflow-hidden'>
       {/* --- SIDEBAR (Desktop) --- */}
-      <aside className='hidden w-64 flex-col border-r bg-white md:flex'>
-        {/* Logo Area */}
+      <aside className='hidden w-64 flex-col border-r bg-white md:flex shadow-sm z-10'>
         <div className='flex h-16 items-center border-b px-6'>
           <Link
-            to='/dashboard'
-            className='flex items-center gap-2 font-bold text-xl text-primary'>
-            <div className='flex h-8 w-8 items-center justify-center rounded-md bg-slate-900 text-white'>
+            to='/admin/dashboard'
+            className='flex items-center gap-2 font-bold text-xl text-slate-900'>
+            <div className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white'>
               <Film size={18} />
             </div>
             <span>CineChat</span>
           </Link>
         </div>
 
-        {/* Navigation Links */}
-        <div className='flex-1 overflow-y-auto py-4'>
-          <nav className='grid gap-1 px-2'>
-            {navItems.map((item, index) => (
-              <NavLink
-                key={index}
-                to={item.href}
-                end={item.end} // Quan trọng để highlight đúng menu
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900',
-                    isActive
-                      ? 'bg-slate-900 text-white hover:bg-slate-900 hover:text-white'
-                      : 'text-slate-500',
-                  )
-                }>
-                <item.icon size={18} />
-                {item.title}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
+        <div className='flex-1 overflow-y-auto py-4'>{renderNavLinks()}</div>
 
-        {/* Sidebar Footer (User Info) */}
-        <div className='border-t p-4'>
+        {/* User Info Footer */}
+        <div className='border-t p-4 bg-slate-50/50'>
           <div className='flex items-center gap-3 mb-4'>
-            <div className='h-9 w-9 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold'>
-              AD
+            {/* Avatar chữ cái đầu */}
+            <div className='h-9 w-9 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold uppercase shadow-sm'>
+              {user?.firstName?.[0] || 'A'}
             </div>
-            <div className='flex flex-col'>
-              <span className='text-sm font-medium'>Admin User</span>
-              <span className='text-xs text-slate-500'>admin@cinechat.com</span>
+            <div className='flex flex-col overflow-hidden'>
+              <span className='text-sm font-semibold text-slate-700 truncate'>
+                {user?.firstName || 'Admin User'}
+              </span>
+              <span
+                className='text-xs text-slate-500 truncate'
+                title={user?.email}>
+                {user?.email || 'admin@cinechat.com'}
+              </span>
             </div>
           </div>
+
           <Button
             variant='outline'
             className='w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200'
-            onClick={handleLogout}
+            onClick={() => logout()}
             disabled={isPending}>
             {isPending ? (
               <Loader2 size={16} className='animate-spin' />
             ) : (
               <LogOut size={16} />
             )}
-            {isPending ? 'Đang đăng xuất...' : 'Đăng xuất'}
+            {isPending ? 'Đang thoát...' : 'Đăng xuất'}
           </Button>
         </div>
       </aside>
 
-      {/* --- MAIN CONTENT AREA --- */}
+      {/* --- MAIN CONTENT --- */}
       <div className='flex flex-1 flex-col overflow-hidden'>
-        {/* Header (Mobile Toggle + Breadcrumbs/Actions) */}
-        <header className='flex h-16 items-center justify-between border-b bg-white px-6'>
+        <header className='flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm'>
           <div className='flex items-center gap-4'>
-            {/* Nút Menu cho Mobile (Hiện tại chưa xử lý logic mở drawer, chỉ để icon) */}
-            <Button variant='ghost' size='icon' className='md:hidden'>
-              <Menu size={20} />
-            </Button>
-            <h1 className='text-lg font-semibold text-slate-800'>
-              Admin Console
-            </h1>
-          </div>
+            {/* --- MOBILE MENU --- */}
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant='ghost' size='icon' className='md:hidden -ml-2'>
+                  <Menu size={20} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side='left' className='w-64 p-0'>
+                <SheetHeader className='border-b h-16 flex items-center justify-center px-6'>
+                  <SheetTitle className='flex items-center gap-2 font-bold text-xl'>
+                    <div className='flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white'>
+                      <Film size={18} />
+                    </div>
+                    CineChat
+                  </SheetTitle>
+                </SheetHeader>
+                <div className='py-4'>{renderNavLinks()}</div>
+              </SheetContent>
+            </Sheet>
 
-          {/* Header Actions (Right side) */}
-          <div className='flex items-center gap-2'>
-            {/* Ví dụ nút thông báo hoặc dark mode có thể đặt ở đây */}
+            {/* Breadcrumb Title */}
+            <h1 className='text-lg font-semibold text-slate-800 capitalize'>
+              {location.pathname.split('/').pop()?.replace(/-/g, ' ') ||
+                'Overview'}
+            </h1>
           </div>
         </header>
 
-        {/* Content Scrollable Area */}
         <main className='flex-1 overflow-y-auto bg-slate-50 p-6'>
-          {/* Container giới hạn độ rộng nội dung cho dễ nhìn */}
-          <div className='mx-auto max-w-6xl'>
-            {/* 👇 Đây là nơi nội dung các trang con (Dashboard, Users...) hiển thị */}
+          <div className='mx-auto max-w-6xl animate-in fade-in duration-500'>
             <Outlet />
           </div>
         </main>

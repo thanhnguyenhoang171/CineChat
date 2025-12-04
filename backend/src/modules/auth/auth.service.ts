@@ -2,7 +2,13 @@ import { passwordCompare } from '@common/utils/password-bcrypt.util';
 import { IUser } from '@interfaces/user.interface';
 import { RegisterAccountDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
-import { BadRequestException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { response, Response } from 'express';
 import { BusinessCode } from '@common/constants/business-code';
@@ -39,27 +45,25 @@ export class AuthService {
     // get user info by username:
     const userData = await this.userService.findUserByUsername(username);
     // decode password and compare
-    if (userData && (await passwordCompare(pass, userData.password))) {
-      // remove password before return
-      const { password, __v, refreshToken, ...result } = userData;
-      return result;
+    if (userData) {
+      const isMatch = await passwordCompare(pass, userData.password);
+      if (isMatch) {
+        // remove password before return
+        const { password, __v, refreshToken, ...result } = userData;
+        return result;
+      }
     }
     return null;
   }
 
   // handle login account
   async login(userRequest: IUser, response: Response) {
-    const { _id, firstName, lastName, role } = userRequest;
+    const { _id, firstName, lastName, role, permissions, email, username, picture } = userRequest;
     const payload = {
-      sub: 'Token of ' + userRequest.firstName + ' ' + userRequest.lastName + ' for access api',
+      sub: 'Token-' + _id,
       iss: 'from server',
       _id,
-      firstName,
-      lastName,
-      username: userRequest?.username,
-      email: userRequest?.email,
       role,
-      permissions: userRequest?.permissions,
     };
     this.logger.log('payload sign:', payload);
 
@@ -82,10 +86,11 @@ export class AuthService {
           _id,
           firstName,
           lastName,
-          email: userRequest?.email,
-          username: userRequest?.username,
           role,
-          permissions: userRequest?.permissions,
+          permissions,
+          email,
+          username,
+          picture,
         },
       },
     };

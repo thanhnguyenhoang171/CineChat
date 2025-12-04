@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useBoundStore } from '~/store';
 
 export const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -12,8 +12,9 @@ export const axiosClient = axios.create({
 // This approach enables clean retry logic when handling authentication errors:
 // Request interceptor - lấy accessToken từ memory/localStorage
 axiosClient.interceptors.request.use((config) => {
-  // Lấy accessToken từ localStorage/memory thay vì cookie
-  const token = localStorage.getItem('accessToken');
+  // Lấy token từ Bound Store (Auth Slice)
+  const token = useBoundStore.getState().accessToken;
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -39,8 +40,8 @@ axiosClient.interceptors.response.use(
 
         const newAccessToken = response.data.data.access_token;
 
-        // ✅ Lưu access token mới vào localStorage/memory
-        localStorage.setItem('accessToken', newAccessToken);
+        // Cập nhật token mới vào Bound Store
+        useBoundStore.getState().setAccessToken(newAccessToken);
 
         // ✅ Retry request với token mới
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

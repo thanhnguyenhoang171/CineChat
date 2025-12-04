@@ -32,8 +32,8 @@ export interface User {
 
   isDeleted?: boolean;
 
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Interface cho việc tạo mới (DTO) - Chuẩn bị sẵn cho tương lai

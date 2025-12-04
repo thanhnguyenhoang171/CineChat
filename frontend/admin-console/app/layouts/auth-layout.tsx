@@ -1,15 +1,4 @@
-import { Outlet, redirect } from 'react-router';
-import type { Route } from './+types/auth-layout'; // Auto-generated type
-
-// 👇 LOGIC: Kiểm tra nếu đã đăng nhập thì không cho vào trang Auth nữa
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    // Nếu có token, đá sang dashboard ngay
-    return redirect('/dashboard');
-  }
-  return null;
-}
+import { Outlet } from 'react-router';
 
 export default function AuthLayout() {
   return (

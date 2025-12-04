@@ -6,35 +6,43 @@ import {
 } from '@react-router/dev/routes';
 
 export default [
-  // 1. Root Route ("/")
-  // Thường dùng để check login: chưa login -> đẩy sang /login, rồi -> đẩy sang /dashboard
+  // 1. Root Route ("/") -> Landing page hoặc redirect
+  // Nếu bạn muốn vào "/" tự động nhảy vào dashboard nếu login rồi:
   index('routes/_index.tsx'),
 
-  // 2. Auth Routes (Bọc bởi AuthLayout)
-  layout('layouts/auth-layout.tsx', [
-    route('login', 'routes/auth/login.tsx'),
-    route('register', 'routes/auth/register.tsx'),
+  // ==========================================
+  // 1. PUBLIC ROUTES (Login, Register...)
+  // ==========================================
+  layout('routes/guards/guest-guard.tsx', [
+    // 🛡️ Layer 1: Check Guest (đã login chưa)
+    layout('layouts/auth-layout.tsx', [
+      // 🎨 Layer 2: UI Layout
+      route('login', 'routes/auth/login.tsx'),
+      route('register', 'routes/auth/register.tsx'),
+    ]),
   ]),
 
-  // 3. Admin Routes (Bọc bởi AdminLayout - Có Sidebar)
-  layout('layouts/admin-layout.tsx', [
-    // URL: /dashboard
-    route('dashboard', 'routes/dashboard/overview.tsx'),
+  // ==========================================
+  // 2. PROTECTED ROUTES (Admin)
+  // ==========================================
+  layout('routes/guards/auth-guard.tsx', [
+    // 🛡️ Layer 1: Check Token
 
-    // Module Users
-    // URL: /users (List), /users/create, /users/:id
-    route('dashboard/users', 'routes/dashboard/users/user-list.tsx'),
-    // route('users/create', 'routes/dashboard/users/create.tsx'),
-    // route('users/:id', 'routes/dashboard/users/detail.tsx'),
+    // ✅ URL Prefix "dashboard" nằm ở đây -> Con bên trong không cần gõ lại
+    route('dashboard', 'layouts/admin-layout.tsx', [
+      // 🎨 Layer 2: UI Layout + Base Path
 
-    // Module Movies
-    route('dashboard/movies', 'routes/dashboard/movies/movie-list.tsx'),
-    // ... thêm các route con của product tại đây
+      // URL: /dashboard
+      index('routes/dashboard/overview.tsx'),
 
-    // // Module Settings
-    // route('settings', 'routes/dashboard/settings/profile.tsx'),
+      // URL: /dashboard/users
+      route('users', 'routes/dashboard/users/user-list.tsx'),
+
+      // URL: /dashboard/movies
+      route('movies', 'routes/dashboard/movies/movie-list.tsx'),
+    ]),
   ]),
 
-  // 4. Error Route (Splats)
+  // 4. Fallback 404
   route('*', 'routes/not-found.tsx'),
 ] satisfies RouteConfig;
