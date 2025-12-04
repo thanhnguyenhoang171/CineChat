@@ -10,10 +10,13 @@ import { UsersModule } from '@modules/users/users.module';
 import { ConfigEnv } from '@config/env.config';
 import { JwtModuleOptions } from '@nestjs/jwt';
 import { CommonModule } from '@common/common.module';
+import RolesService from '@modules/roles/roles.service';
+import { RolesModule } from '@modules/roles/roles.module';
 
 @Module({
   imports: [
     UsersModule,
+    RolesModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

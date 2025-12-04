@@ -65,6 +65,8 @@ export class AuthService {
       _id,
       role,
     };
+
+    this.logger.log(" Checking role info = ", role);
     this.logger.log('payload sign:', payload);
 
     const refreshToken = createRefreshToken(payload, this.jwtService, this.configService);
