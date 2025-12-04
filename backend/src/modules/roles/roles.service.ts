@@ -19,6 +19,7 @@ import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
 import { PaginationService } from '@common/services/pagination.service';
 import { validateUpdateFields } from '@common/utils/update-field-validator.util';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
+import { async } from 'rxjs';
 
 @Injectable()
 class RolesService {
@@ -283,23 +284,26 @@ class RolesService {
 
     try {
       // Dùng $set để update có chủ đích hơn
-      const updatedRole = await this.roleModel.findByIdAndUpdate(
-        id, // findByIdAndUpdate chỉ cần id là đủ
-        {
-          $set: { // Dùng $set
-            ...updateRoleDto,
-            updatedBy: {
-              _id: user._id,
-              username: user?.username,
-              email: user?.email,
+      const updatedRole = await this.roleModel
+        .findByIdAndUpdate(
+          id, // findByIdAndUpdate chỉ cần id là đủ
+          {
+            $set: {
+              // Dùng $set
+              ...updateRoleDto,
+              updatedBy: {
+                _id: user._id,
+                username: user?.username,
+                email: user?.email,
+              },
             },
-          }
-        },
-        {
-          new: true,
-          runValidators: true,
-        },
-      ).lean(); // Thêm .lean() nếu bạn không cần Mongoose document
+          },
+          {
+            new: true,
+            runValidators: true,
+          },
+        )
+        .lean(); // Thêm .lean() nếu bạn không cần Mongoose document
 
       // Check after updating role
       if (!updatedRole) {
@@ -346,10 +350,10 @@ class RolesService {
     }
   }
 
-  async removeRoleById(id: string, user: IUser ) {
+  async removeRoleById(id: string, user: IUser) {
     // Soft delete
     validateMongoId(id);
-    await isModuleExist(this.roleModel,'_id' ,id);
+    await isModuleExist(this.roleModel, '_id', id);
 
     const result = await this.roleModel.softDelete({ _id: id });
 
@@ -380,6 +384,23 @@ class RolesService {
         _id: id,
       },
     };
+  }
+
+  async findRoleWithPermissionsById(roleId: string) {
+    validateMongoId(roleId);
+
+    return await this.roleModel
+      .findOne({
+        _id: roleId,
+        isDeleted: false,
+      })
+      .populate({
+        path: 'permissions',
+        model: 'Permission',
+        select: '_id name method apiPath module',
+      })
+      .lean()
+      .exec();
   }
 }
 

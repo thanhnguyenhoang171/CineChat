@@ -70,7 +70,7 @@ export class UsersService {
         .findOne({ username })
         .populate({
           path: 'role',
-          model: 'Role',
+          model: 'Role', // Đảm bảo model name đúng trong schema
           populate: {
             path: 'permissions',
             model: 'Permission',
@@ -80,37 +80,29 @@ export class UsersService {
         .lean()
         .exec();
 
+      // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
       if (!user) {
-        throw new HttpException(
-          {
-            code: BusinessCode.USER_NOT_FOUND,
-            errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
-          },
-          HttpStatusCode.NOT_FOUND,
-        );
+        return null;
       }
+
       const { password, role, ...userInfo } = user;
 
-      // Lấy permissions đã được populate trực tiếp từ đối tượng role
-      const permissions = (role as any)?.permissions ?? [];
-      const roleId = (role as any)?._id;
-      const roleName = (role as any)?.name;
+      // Handle safe casting
+      const roleObj = role as any;
+      const permissions = roleObj?.permissions ?? [];
 
       return {
         ...userInfo,
-        password: password, // <-- Giữ lại password HASHED để so sánh trong AuthService
+        password: password, // Cần password hash để so sánh
         role: {
-          _id: roleId,
-          name: roleName,
+          _id: roleObj?._id,
+          name: roleObj?.name,
         },
         permissions: permissions,
       };
     } catch (error) {
-      console.log(error);
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
+      // Log error system
+      console.error('Error in findUserByUsername:', error);
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,

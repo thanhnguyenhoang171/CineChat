@@ -1,46 +1,38 @@
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
+import { useBoundStore } from '~/store';
 import { authService } from '~/services/auth.service';
 import type { ApiError } from '~/types/api-error';
-import type { ApiResponse } from '~/types/api-response';
-import type { LoginRequest, LoginResponse } from '~/types/auth';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router';
 
 export function useLogin() {
   const navigate = useNavigate();
-  return useMutation<
-    ApiResponse<LoginResponse>,
-    AxiosError<ApiError>,
-    LoginRequest
-  >({
-    // 1. Function to call API
-    mutationFn: async (data: LoginRequest) => {
-      return authService.login(data);
-    },
+  // Lấy action từ Slice
+  const loginSuccess = useBoundStore((state) => state.loginSuccess);
 
-    // 2. When success
-    onSuccess: (data: ApiResponse<LoginResponse>) => {
-      if (data.data) {
-        // ✅ Lưu accessToken vào localStorage/memory (KHÔNG phải cookie)
-        localStorage.setItem('accessToken', data.data.access_token);
+  return useMutation({
+    mutationFn: authService.login, // Gọi service
 
-        // ✅ Có thể lưu user info nếu cần
-        localStorage.setItem('user', JSON.stringify(data.data.user));
+    onSuccess: (response) => {
+      // API trả về: { data: { user, access_token }, message: "..." }
+      if (response.data) {
+        const { user, access_token } = response.data;
 
-        toast.success('Đăng nhập thành công!');
-        navigate('/dashboard');
+        // 1. Lưu vào Store (và LocalStorage)
+        loginSuccess(user, access_token);
+
+        // 2. Thông báo & Chuyển hướng
+        toast.success('Đăng nhập thành công!', {
+          description: `Chào mừng ${user.firstName} ${user.lastName} trở lại Admin Console!`,
+        });
+        navigate('/dashboard', { replace: true });
       }
     },
-    // 3. Khi thất bại
-    onError: (error: AxiosError<ApiError>) => {
-      // Lấy message từ response của NestJS
-      const message =
-        error.response?.data?.errors || 'Đăng nhập thất bại. Vui lòng thử lại.';
 
-      toast.error('Lỗi đăng nhập', {
-        description: message,
-      });
+    onError: (error: AxiosError<ApiError>) => {
+      const msg = error.response?.data?.errors || 'Đăng nhập thất bại';
+      toast.error(msg);
     },
   });
 }
