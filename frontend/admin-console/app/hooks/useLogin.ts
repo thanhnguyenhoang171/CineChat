@@ -8,30 +8,24 @@ import type { ApiError } from '~/types/api-error';
 
 export function useLogin() {
   const navigate = useNavigate();
-  // Lấy action từ Slice
   const loginSuccess = useBoundStore((state) => state.loginSuccess);
 
   return useMutation({
-    mutationFn: authService.login, // Gọi service
+    mutationFn: authService.login,
 
-    onSuccess: (response) => {
-      // API trả về: { data: { user, access_token }, message: "..." }
+    onSuccess: async (response) => {
       if (response.data) {
-        const { user, access_token } = response.data;
+        const { access_token } = response.data;
 
-        // 1. Lưu vào Store (và LocalStorage)
-        loginSuccess(user, access_token);
+        await loginSuccess(access_token); // call action loginSuccess and it will fetch user info
 
-        // 2. Thông báo & Chuyển hướng
-        toast.success('Đăng nhập thành công!', {
-          description: `Chào mừng ${user.firstName} ${user.lastName} trở lại Admin Console!`,
-        });
+        toast.success(`${response.message}`);
         navigate('/dashboard', { replace: true });
       }
     },
 
     onError: (error: AxiosError<ApiError>) => {
-      const msg = error.response?.data?.errors || 'Đăng nhập thất bại';
+      const msg = error.response?.data?.errors;
       toast.error(msg);
     },
   });

@@ -1,10 +1,10 @@
 export interface IUser {
   _id: string;
-  firstName: string;
-  lastName: string;
-  picture: string;
+  firstName?: string;
+  lastName?: string;
+  picture?: string;
   username?: string;
-  password: string;
+  password?: string;
   email?: string;
   role: {
     _id: string;

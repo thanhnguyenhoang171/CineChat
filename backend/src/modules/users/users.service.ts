@@ -277,6 +277,7 @@ export class UsersService {
   }
 
   async findUserByRefreshToken(refreshToken: string | null) {
+    try {
     const user = await this.userModel
       .findOne({ refreshToken }, { password: 0 })
       .populate({
@@ -291,29 +292,93 @@ export class UsersService {
       .lean()
       .exec();
 
+    // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
     if (!user) {
-      throw new HttpException(
-        {
-          code: BusinessCode.USER_NOT_FOUND,
-          errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
-        },
-        HttpStatusCode.NOT_FOUND,
-      );
+      return null;
     }
 
-    // Take permissions form role
-    const { role, ...userInfo } = user;
-    const permissions = (role as any)?.permissions || [];
-    const roleId = (role as any)?.id;
-    const roleName = (role as any)?.name;
+    const {role, ...userInfo } = user;
+
+    // Handle safe casting
+    const roleObj = role as any;
+    const permissions = roleObj?.permissions ?? [];
 
     return {
-      ...user,
+      ...userInfo,
+
       role: {
-        _id: roleId,
-        name: roleName,
+        _id: roleObj?._id,
+        name: roleObj?.name,
       },
       permissions: permissions,
+    };
+  } catch (error) {
+      // Log error system
+      console.error('Error in findUserByRefreshToken:', error);
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findUserById(id: string) {
+    try {
+      const user = await this.userModel
+        .findOne({ _id: id })
+        .populate({
+          path: 'role',
+          model: 'Role', // Đảm bảo model name đúng trong schema
+          populate: {
+            path: 'permissions',
+            model: 'Permission',
+            select: '_id name method apiPath module',
+          },
+        })
+        .select('-password -refreshToken -__v -deletedAt -isDeleted')
+        .lean()
+        .exec();
+
+      if (!user) {
+        throw new HttpException(
+          {
+            code: BusinessCode.USER_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+          },
+          HttpStatusCode.UNAUTHORIZED, // Nên trả về 401 để FE tự logout
+        );
+      }
+
+      const { role, ...userInfo } = user;
+
+      // Handle safe casting
+      const roleObj = role as any;
+      const permissions = roleObj?.permissions ?? [];
+
+      return {
+        ...userInfo,
+        role: {
+          _id: roleObj?._id,
+          name: roleObj?.name,
+        },
+        permissions: permissions,
+      };
+    } catch (error) {
+      // Re-throw business exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -9,7 +9,8 @@ import { User } from '@modules/users/schemas/user.schema';
 import { Role } from '@modules/roles/schemas/role.schema';
 
 import { PERMISSIONS_DATA, ROLES_DATA, USERS_DATA } from '@database/mock-data';
-import { Permission } from '@modules/permissions/schemas/permission.schema'; // Cần cài: npm i bcrypt @types/bcrypt
+import { Permission } from '@modules/permissions/schemas/permission.schema';
+import { passwordHashing } from '@common/utils/password-bcrypt.util'; // Cần cài: npm i bcrypt @types/bcrypt
 
 
 async function bootstrap() {
@@ -51,17 +52,29 @@ async function bootstrap() {
 
     // Tạo Role USER (Chỉ lấy quyền Login và Get Users ví dụ)
     // Lọc ra permission id tương ứng
-    const userPermissions = createdPermissions
-      .filter(p => ['Login', 'Get All Users'].includes(p.name))
-      .map(p => p._id);
+    // const userPermissions = createdPermissions
+    //   .filter(p => ['Login', 'Get All Users'].includes(p.name))
+    //   .map(p => p._id);
 
     const userRoleData = ROLES_DATA.find(r => r.name === 'USER');
     const userRole = await roleModel.create({
       ...userRoleData,
-      permissions: userPermissions
+      // permissions: userPermissions
     });
 
-    console.log(`   - Created Roles: ADMIN (${adminRole._id}), USER (${userRole._id})`);
+    // Tạo Role MANAGER
+    // Lọc ra permission id tương ứng
+    const managerPermissions = createdPermissions
+      .filter(p => ['Tạo mới một người dùng', 'Lấy tất cả người dùng có phân trang', 'Cập nhật một người dùng bằng id', 'Xóa một người dùng bằng id'].includes(p.name))
+      .map(p => p._id);
+
+    const managerRoleData = ROLES_DATA.find(r => r.name === 'MANAGER');
+    const managerRole = await roleModel.create({
+      ...managerRoleData,
+      permissions: managerPermissions
+    });
+
+    console.log(`   - Created Roles: ADMIN (${adminRole._id}), MANAGER (${managerRole._id}), USER (${userRole._id})`);
 
     // ---------------------------------------------------------
     // 4. SEED USERS (Gán Role vào User & Hash Password)
@@ -69,12 +82,16 @@ async function bootstrap() {
     console.log('🌱 Seeding Users...');
 
     // Hash password chung cho nhanh (hoặc hash từng user nếu pass khác nhau)
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('123', salt);
+    const hashedPassword = await passwordHashing('@Thanh171');
 
     const usersToInsert = USERS_DATA.map(user => {
       // Logic gán Role: Nếu username là admin thì gán role Admin, còn lại User
-      const assignedRole = user.username === 'admin' ? adminRole._id : userRole._id;
+      const assignedRole =
+        user.username === 'admincinechat'
+          ? adminRole._id
+          : user.username === 'managercinechat'
+            ? managerRole._id
+            : userRole._id;
 
       return {
         ...user,

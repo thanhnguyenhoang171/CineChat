@@ -3,9 +3,9 @@ import { ExecutionContext, HttpException, HttpStatus, Injectable, Logger } from 
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { BusinessCode } from '@common/constants/business-code';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { ResponseMessage } from '@common/constants/response-message';
-import { extractTokenFromHeader, matchPermission } from '@common/helpers/auth.helper';
+import {  matchPermission } from '@common/helpers/auth.helper';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -25,7 +25,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+  handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
     this.logger.log('>>> JWT AUTH GUARD INFO = ' + info?.message);
     this.logger.log('>>> JWT AUTH USER INFO = ' +  user?._id);
 
@@ -68,7 +68,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const targetEndpoint = request.route?.path || request.path;
 
     this.logger.log(
-      `>>> CHECKING PERMISSIONS FOR: [${targetMethod}] ${targetEndpoint} - User: ${user.username}`,
+      `>>> CHECKING PERMISSIONS FOR: [${targetMethod}] ${targetEndpoint} - User: ${user._id}`,
     );
 
     const publicPermission = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_PERMISSION, [
@@ -97,7 +97,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (!isAllowAccess) {
       this.logger.warn(
-        `>>> ACCESS DENIED - User ${user.username} lacks permission for [${targetMethod}] ${targetEndpoint}`,
+        `>>> ACCESS DENIED - User ${user._id} lacks permission for [${targetMethod}] ${targetEndpoint}`,
       );
       throw new HttpException(
         {

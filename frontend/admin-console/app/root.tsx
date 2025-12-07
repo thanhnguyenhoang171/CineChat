@@ -28,6 +28,15 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// Disable indexing by search engines (SEO)
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: 'CineChat Admin' },
+    // Block search engines Google, Bing, ...
+    { name: 'robots', content: 'noindex, nofollow, noarchive' },
+  ];
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en'>

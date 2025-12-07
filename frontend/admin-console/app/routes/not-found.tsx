@@ -13,7 +13,6 @@ export default function NotFoundPage() {
 
   return (
     <div className='h-screen w-full flex flex-col items-center justify-center bg-slate-50 text-center p-4'>
-      {/* Số 404 lớn làm điểm nhấn */}
       <h1 className='text-9xl font-extrabold text-slate-200 select-none'>
         404
       </h1>

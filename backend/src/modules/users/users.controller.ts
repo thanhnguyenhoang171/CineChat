@@ -30,8 +30,8 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  // TODO: Handle get all users with pagination
   @Get()
-  @JwtPublic()
   @ResponseStatus(HttpStatusCode.OK)
   findAll() {
     return this.usersService.findAll();

@@ -25,7 +25,6 @@ export class RolesController {
   }
 
   @Get()
-  @JwtPublic()
   @ApiOperation({ summary: 'Get all roles with pagination' })
   @ResponseStatus(HttpStatusCode.OK)
   findAllRolesWithPaginationController(@Query() getRoleDto: GetRoleDto) {

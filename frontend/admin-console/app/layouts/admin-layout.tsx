@@ -82,9 +82,11 @@ export default function AdminLayout() {
         <div className='border-t p-4 bg-slate-50/50'>
           <div className='flex items-center gap-3 mb-4'>
             {/* Avatar chữ cái đầu */}
-            <div className='h-9 w-9 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold uppercase shadow-sm'>
-              {user?.firstName?.[0] || 'A'}
-            </div>
+            <img
+              src={user?.picture}
+              alt={`${user?.firstName || 'User'} avatar`}
+              className='h-9 w-9 rounded-full border border-blue-200 shadow-sm object-cover'
+            />
             <div className='flex flex-col overflow-hidden'>
               <span className='text-sm font-semibold text-slate-700 truncate'>
                 {user?.firstName || 'Admin User'}
