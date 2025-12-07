@@ -22,17 +22,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-// payload lúc này chỉ có: { sub, _id, role }
-  async validate(payload: IUser) {
-    const roleId = payload?.role?._id;
-    const RoleWithPermissions = await this.rolesService.findRoleWithPermissionsById(roleId);
+  //     const payload = {
+  //       sub: _id,
+  //       r: role._id,
+  //     };
+
+  async validate(payload: any) {
+    const RoleWithPermissions = await this.rolesService.findRoleWithPermissionsById(payload.r.toString());
     return {
-      _id: payload._id,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      username: payload?.username,
-      email: payload?.email,
-      role: payload.role,
+      _id: payload.sub,
+      role: payload.r,
       permissions: RoleWithPermissions?.permissions ?? [],
     };
   }

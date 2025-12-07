@@ -16,8 +16,6 @@ import { createRefreshToken } from '@common/utils/access-token.util';
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from '@config/env.config';
 import ms from 'ms';
-import { ResponseMessage } from '@common/constants/response-message';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 
 @Injectable()
 export class AuthService {
@@ -58,12 +56,10 @@ export class AuthService {
 
   // handle login account
   async login(userRequest: IUser, response: Response) {
-    const { _id, firstName, lastName, role, permissions, email, username, picture } = userRequest;
+    const { _id, role } = userRequest;
     const payload = {
-      sub: 'Token-' + _id,
-      iss: 'from server',
-      _id,
-      role,
+      sub: _id,
+      r: role._id,
     };
 
     this.logger.log(" Checking role info = ", role);
@@ -84,34 +80,19 @@ export class AuthService {
       code: BusinessCode.LOGIN,
       data: {
         access_token: this.jwtService.sign(payload),
-        user: {
-          _id,
-          firstName,
-          lastName,
-          role,
-          permissions,
-          email,
-          username,
-          picture,
-        },
       },
     };
   }
 
   async getAccount(user: IUser): Promise<any> {
-    if (!user) {
-      throw new HttpException(
-        {
-          code: BusinessCode.USER_NOT_FOUND,
-          errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
-        },
-        HttpStatusCode.NOT_FOUND,
-      );
-    }
+    const result = await this.userService.findUserById(user._id);
+
+    // 2. Trả về đúng format response chuẩn của hệ thống
     return {
-      code: BusinessCode.ACCOUNT_INFO,
-      data: user,
+      code: BusinessCode.ACCOUNT_INFO, // Ví dụ: 'SYS_004'
+      data: result,
     };
+
   }
 
   async logout(response: Response, user: IUser) {
@@ -136,38 +117,31 @@ export class AuthService {
         infer: true,
       });
       const accessExpiresIn =
-        this.configService.get<string>('jwt.accessExpiresIn', { infer: true }) || '15m'; // Default 15m
+        this.configService.get<string>('jwt.expiresIn', { infer: true });
 
       // 2. Verify sign of refresh token first
-      // Nếu token hết hạn hoặc sai chữ ký, dòng này sẽ throw error nhảy xuống catch
       await this.jwtService.verifyAsync(refreshToken, {
         publicKey: publicKey,
         algorithms: ['RS256'],
+        // ignoreIssuer: true, // Bật lên nếu token cũ trong DB đang bị lệch issuer
       });
 
-      // 3. Check this token is valid with user in DB
-      // (Quan trọng: Chống việc dùng token cũ đã bị logout hoặc bị replace)
+      // 3. Check DB
       const user = await this.userService.findUserByRefreshToken(refreshToken);
-
+      // console.log("Checking refresh token", user);
       if (!user) {
         throw new UnauthorizedException('Refresh token is not valid or has been revoked');
       }
 
-      // 4. Prepare Payload
+      // 4. Prepare Payload (FIX QUAN TRỌNG: Phải khớp với hàm login)
       const { _id, firstName, lastName, username, email, role, permissions } = user;
+
       const payload = {
-        sub: 'token refresh', // Hoặc dùng nội dung chuẩn hơn như 'Authentication'
-        iss: 'from server',
-        _id,
-        firstName,
-        lastName,
-        username,
-        email,
-        role,
-        permissions,
+        sub: _id, // <--- SỬA: Phải giống format lúc Login
+        r: role._id,
       };
 
-      // 5. Sign new refresh token (Token Rotation)
+      // 5. Sign new refresh token
       const newRefreshToken = this.jwtService.sign(payload, {
         privateKey: privateKey,
         algorithm: 'RS256',
@@ -181,14 +155,14 @@ export class AuthService {
         expiresIn: accessExpiresIn as any,
       });
 
-      // 7. Update DB with new Refresh Token
+      // 7. Update DB
       await this.userService.updateUserRefreshTokenById(newRefreshToken, _id.toString());
 
       // 8. Set Cookie again
       response.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
-        // secure: true, // Bật lên nếu chạy HTTPS (Production)
-        // sameSite: 'none', // Bật lên nếu Frontend và Backend khác domain
+        // secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
+        // sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
         maxAge: +ms(refreshExpiresIn as any),
       });
 
@@ -197,26 +171,20 @@ export class AuthService {
         code: BusinessCode.REFRESH_TOKEN_SUCCESS,
         data: {
           access_token: newAccessToken,
-          user: {
-            _id,
-            firstName,
-            lastName,
-            email,
-            username,
-            role,
-            permissions,
-          },
         },
       };
     } catch (error) {
       this.logger.error(`Refresh token failed: ${error.message}`);
 
-      // Quan trọng: Nếu lỗi (token hết hạn/sai), phải xóa cookie để Client biết đường Logout
-      response.clearCookie('refresh_token');
+      // Quan trọng: Phải clear cookie với options giống hệt lúc set
+      response.clearCookie('refresh_token', {
+        httpOnly: true,
+        // secure: true,
+        // sameSite: 'none'
+      });
 
-      // Ném lỗi 401 để Frontend interceptor bắt được và chuyển hướng về Login
       throw new UnauthorizedException({
-        code: BusinessCode.UNAUTHORIZED || 401,
+        code: BusinessCode.UNAUTHORIZED, // Sửa lại mã lỗi cho đúng chuẩn
         message: 'Invalid or expired refresh token',
       });
     }

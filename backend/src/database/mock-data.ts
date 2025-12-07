@@ -1,23 +1,36 @@
 
 export const PERMISSIONS_DATA = [
   // --- User Module ---
-  { name: 'Create User', apiPath: '/api/users', method: 'POST', module: 'User Management' },
-  { name: 'Get All Users', apiPath: '/api/users', method: 'GET', module: 'User Management' },
-  { name: 'Update User', apiPath: '/api/users/:id', method: 'PATCH', module: 'User Management' },
-  { name: 'Delete User', apiPath: '/api/users/:id', method: 'DELETE', module: 'User Management' },
+  { name: 'Tạo mới một người dùng', apiPath: '/api/users', method: 'POST', module: 'User Management' },
+  { name: 'Lấy tất cả người dùng có phân trang', apiPath: '/api/users', method: 'GET', module: 'User Management' },
+  { name: 'Cập nhật một người dùng bằng id', apiPath: '/api/users/:id', method: 'PATCH', module: 'User Management' },
+  { name: 'Xóa một người dùng bằng id', apiPath: '/api/users/:id', method: 'DELETE', module: 'User Management' },
 
   // --- Role Module ---
-  { name: 'Create Role', apiPath: '/api/roles', method: 'POST', module: 'Role Management' },
-  { name: 'Get Roles', apiPath: '/api/roles', method: 'GET', module: 'Role Management' },
+  { name: 'Tạo mới một vai trò', apiPath: '/api/roles', method: 'POST', module: 'Role Management' },
+  { name: 'Lấy tất cả vai trò có phân trang', apiPath: '/api/roles', method: 'GET', module: 'Role Management' },
+  { name: 'Lấy một vai trò bằng id', apiPath: '/api/roles/:id', method: 'GET', module: 'Role Management' },
+  { name: 'Cập nhật một vai trò bằng id', apiPath: '/api/roles', method: 'PATCH', module: 'Role Management' },
+  { name: 'Xóa một vai trò bằng id', apiPath: '/api/roles/:id', method: 'DELETE', module: 'Role Management' },
 
-  // --- Auth Module ---
-  { name: 'Login', apiPath: '/api/auth/login', method: 'POST', module: 'Auth' },
+  // --- Permission Module ---
+  { name: 'Tạo mới một quyền hạn', apiPath: '/api/permissions', method: 'POST', module: 'Permission Management' },
+  { name: 'Lấy tất cả quyền hạn có phân trang', apiPath: '/api/permissions', method: 'GET', module: 'Permission Management' },
+  { name: 'Lấy một quyền hạn bằng id', apiPath: '/api/permissions/:id', method: 'GET', module: 'Permission Management' },
+  { name: 'Cập nhật một quyền hạn bằng id', apiPath: '/api/permissions', method: 'PATCH', module: 'Permission Management' },
+  { name: 'Xóa một quyền hạn bằng id', apiPath: '/api/permissions/:id', method: 'DELETE', module: 'Permission Management' },
+
 ];
 
 export const ROLES_DATA = [
   {
     name: 'ADMIN',
     description: 'Quản trị viên hệ thống, full quyền',
+    isActive: true,
+  },
+  {
+    name: 'MANAGER',
+    description: 'Quản lý hệ thống',
     isActive: true,
   },
   {
@@ -31,8 +44,8 @@ export const USERS_DATA = [
   {
     firstName: 'Admin',
     lastName: 'System',
-    username: 'admin',
-    password: '123', // Sẽ được hash trong script
+    username: 'admincinechat',
+    password: '@Thanh171', // Sẽ được hash trong script
     email: 'admin@cinechat.com',
     picture: '',
     // role sẽ được gán động trong script
@@ -41,7 +54,7 @@ export const USERS_DATA = [
     firstName: 'Thanh',
     lastName: 'Nguyen',
     username: 'thanh171',
-    password: '123',
+    password: '@Thanh171',
     email: 'thanh171@gmail.com',
     picture: 'https://i.pravatar.cc/300',
   },
@@ -49,8 +62,15 @@ export const USERS_DATA = [
     firstName: 'John',
     lastName: 'Doe',
     username: 'johndoe',
-    password: '123',
+    password: '@Thanh171',
     email: 'john@example.com',
-    picture: '',
+    picture: 'https://i.pravatar.cc/300',
+  },
+  {
+    firstName: 'Manager',
+    lastName: 'System',
+    username: 'managercinechat',
+    password: '@Thanh171',
+    picture: 'https://i.pravatar.cc/300',
   }
 ];

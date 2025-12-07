@@ -1,7 +1,10 @@
 import { Controller, Post, Body, UseGuards, Req, Res, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtPublic } from '@common/decorators/auth.decorator';
+import {
+  JwtPublic,
+  PublicPermission,
+} from '@common/decorators/auth.decorator';
 import { LoginAccountDto, RegisterAccountDto } from '@modules/users/dto/create-user.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
@@ -38,6 +41,7 @@ export class AuthController {
   }
 
   @Post('/logout')
+  @PublicPermission()
   @ApiOperation({ summary: 'Logout from system' })
   @ResponseStatus(HttpStatusCode.OK)
   async logoutController(
@@ -48,6 +52,7 @@ export class AuthController {
   }
 
   @Get('/account')
+  @PublicPermission()
   @ApiOperation({ summary: 'Get account information' })
   @ResponseStatus(HttpStatusCode.OK)
   async getAccountController(@User() user: IUser): Promise<any> {
@@ -55,14 +60,14 @@ export class AuthController {
   }
 
   @JwtPublic()
-  @Get('/refresh')
+  @Post('/refresh')
   @ApiOperation({ summary: 'Get refresh information' })
   @ResponseStatus(HttpStatusCode.OK)
   async getRefreshController(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<any> {
-    const refreshToken = request.cookies["refresh_token"];
+    const refreshToken = request.cookies?.['refresh_token'];
     return this.authService.refresh(refreshToken, response);
   }
 }

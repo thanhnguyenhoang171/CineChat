@@ -7,6 +7,7 @@ import { setupCors } from '@config/cors.config';
 import { setupVersioning } from '@config/versioning.config';
 import { setupSwagger } from '@config/swagger.config';
 import { globalValidationPipe } from '@common/pipes/validation.pipe';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -23,6 +24,8 @@ async function bootstrap() {
 
   // Trust proxy (for IP & load balancer support)
   app.getHttpAdapter().getInstance().set('trust proxy', true);
+
+  app.use(cookieParser());
 
   // get port from .env
   const configService = app.get(ConfigService);
