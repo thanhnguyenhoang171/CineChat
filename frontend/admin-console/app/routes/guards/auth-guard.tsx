@@ -2,34 +2,37 @@ import { Outlet, redirect } from 'react-router';
 import type { Route } from './+types/auth-guard';
 import { useBoundStore } from '~/store';
 import { Spinner } from '~/components/ui/spinner';
+import { silentRefreshToken } from '~/helpers/silent-refresh-token';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const store = useBoundStore.getState();
-  const token = store.accessToken;
-  const user = store.user;
+  let token = useBoundStore.getState().accessToken;
 
-  // Check token
+  // case 1: lose token in RAM but have cookie (httpOnly refresh token)
   if (!token) {
-    return redirect('/login');
-  }
-
-  // logic F5: Has Token but no User -> Re-fetch immediately
-  if (!user) {
-    try {
-      await store.fetchAccount();
-
-      // After fetching, if still no user -> throw error to logout
-      if (!useBoundStore.getState().user) {
-        throw new Error('User not found');
-      }
-    } catch (error) {
-      // Token expired or User is invalid -> Logout & Redirect to Login
-      store.logout();
+    const success = await silentRefreshToken();
+    if (success) {
+      token = useBoundStore.getState().accessToken;
+    } else {
       return redirect('/login');
     }
   }
 
-  return null;
+  //case 2: have token in RAM but haven't user info yet -> fetch user info
+  if (token && !useBoundStore.getState().user) {
+    try {
+      await useBoundStore.getState().fetchAccount();
+
+      // After fetching user info, double check if user is valid
+      if (!useBoundStore.getState().user) {
+        throw new Error('No user info after fetching account');
+      }
+    } catch (error) {
+      // Token invalid or user is blocked/deleted
+      useBoundStore.getState().logout();
+      return redirect('/login');
+    }
+    return null; //case 3: have token and have user info --> allow access
+  }
 }
 
 export function HydrateFallback() {
@@ -47,12 +50,24 @@ export function HydrateFallback() {
 
 // Loading when Refresh Token)
 export default function AuthGuard() {
+  const user = useBoundStore((state) => state.user);
   const isRefreshing = useBoundStore((state) => state.isRefreshToken);
   const isLoadingUser = useBoundStore((state) => state.isLoadingUser);
 
   // Logic: Chỉ hiện Overlay nếu đang Refresh Token MÀ KHÔNG PHẢI đang tải user lần đầu (F5)
   // Vì nếu đang tải user lần đầu thì HydrateFallback đã hiện rồi.
   const showOverlay = isRefreshing && !isLoadingUser;
+
+  // 👇 THÊM LOGIC MỚI: CHẶN CỬA
+  // Nếu chưa có User (do đang F5 load lại) -> Hiện Spinner xoay xoay
+  // KHÔNG render <Outlet /> để tránh các component con chạy useQuery lung tung
+  if (!user) {
+    return (
+      <div className='flex h-screen w-full items-center justify-center bg-slate-50'>
+        <Spinner className='size-10 text-primary' />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -67,6 +82,7 @@ export default function AuthGuard() {
         </div>
       )}
 
+      {/* Chỉ khi có User mới render cái này 👇 */}
       <Outlet />
     </>
   );
