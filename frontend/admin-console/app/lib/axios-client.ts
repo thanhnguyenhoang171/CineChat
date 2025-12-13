@@ -2,8 +2,10 @@ import axios from 'axios';
 import { useBoundStore } from '~/store'; // Đảm bảo import đúng store tổng
 import { Mutex } from 'async-mutex';
 import { BusinessCode } from '~/types/bussiness-code';
+import { authService } from '~/services/auth.service';
 
 const mutex = new Mutex();
+const MAX_RETRY = 3;
 
 export const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -11,16 +13,22 @@ export const axiosClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-axiosClient.interceptors.request.use((config) => {
-  // Take token từ Zustand Store
-  const token = useBoundStore.getState().accessToken;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+axiosClient.interceptors.request.use(
+  (config) => {
+    // Take token từ Zustand Store (RAM)
+    const token = useBoundStore.getState().accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 axiosClient.interceptors.response.use(
   (response) => response,
@@ -34,15 +42,16 @@ axiosClient.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       error.response?.data?.code === BusinessCode.TOKEN_EXPIRED &&
-      !originalRequest._retry
+      !originalRequest._retry // to avoid infinite loop
     ) {
-      originalRequest._retry = true;
+      originalRequest._retry = true; // mark as retried
 
       try {
         await mutex.runExclusive(async () => {
-          const currentToken = store.accessToken;
+          const currentToken = store.accessToken; // newst token in store
+
           const failedToken =
-            originalRequest.headers.Authorization?.split(' ')[1];
+            originalRequest.headers.Authorization?.split(' ')[1]; // token used in failed request
 
           // If token has been refreshed by another request, use the new token --> skip refresh
           if (currentToken && currentToken !== failedToken) {
@@ -53,27 +62,14 @@ axiosClient.interceptors.response.use(
           // Refresh token logic
           store.setRefreshTokenStatus(true, null);
           try {
-            const response = await axios.post(
-              `${import.meta.env.VITE_API_URL}/auth/refresh`,
-              {},
-              { withCredentials: true },
-            );
+            const response = await authService.refreshToken();
 
-            const newAccessToken = response.data.data.access_token;
+            const newAccessToken = response?.data?.access_token;
 
-            // Update new token in zustand store (only token, not user info --> using setAccessToken)
+            // Update new token in zustand store
             store.setAccessToken(newAccessToken);
 
             store.setRefreshTokenStatus(false, null);
-
-            // Get user info only when the original request is not for account info
-            if (
-              !originalRequest.url?.includes('/auth/account') &&
-              !originalRequest.url?.includes('/auth/login') &&
-              !originalRequest.url?.includes('/auth/logout')
-            ) {
-              store.fetchAccount(); // don't await --> avoid slowing down the retry
-            }
 
             // Update Authorization header
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -81,7 +77,6 @@ axiosClient.interceptors.response.use(
             throw apiError;
           }
         });
-
         // Retry request
         return axiosClient(originalRequest);
       } catch (refreshError: any) {

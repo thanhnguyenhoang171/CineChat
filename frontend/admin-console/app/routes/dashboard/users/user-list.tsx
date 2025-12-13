@@ -1,4 +1,3 @@
-// 📂 File: app/routes/dashboard/users/user-list.tsx
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Trash2, Edit } from 'lucide-react';
@@ -11,18 +10,16 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
+import { protectedLoader } from '~/utils/loader-utils';
 
-// 1. LOADER: Prefetch data
+// 1. LOADER: Prefetch data --> Chỉ Prefetch khi ĐÃ CÓ TOKEN
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  // Prefetch giúp UX mượt hơn, vào trang là có data ngay (nếu mạng nhanh)
-  await queryClient.prefetchQuery(userQueries.list());
-  return null;
+  return protectedLoader(async () => {
+    await queryClient.prefetchQuery(userQueries.list());
+  });
 }
 
 export default function UsersListPage() {
-  // 👇 2. Lấy trạng thái đăng nhập từ Store
-  const isAuthenticated = useBoundStore((state) => state.isAuthenticated);
-
   const {
     data: response,
     isLoading,
@@ -30,13 +27,11 @@ export default function UsersListPage() {
     error,
   } = useQuery({
     ...userQueries.list(), // Spread option từ file queries
-    // 👇 3. QUAN TRỌNG: Chỉ fetch khi đã đăng nhập (Fix lỗi 401 khi logout)
-    enabled: isAuthenticated,
   });
 
   const users = response?.data || [];
 
-  // 👇 4. EFFECT: Hiện Toast khi lỗi (như bạn yêu cầu)
+  // 4. EFFECT: Hiện Toast khi lỗi (như bạn yêu cầu)
   useEffect(() => {
     if (isError) {
       const err = error as AxiosError<any>;

@@ -18,9 +18,8 @@ export function useLogout() {
       logoutFromStore();
 
       queryClient.clear(); // remove all queries from cache
-
       navigate('/login', { replace: true });
-      toast.info(`${response?.data?.message}`);
+      toast.info(`${response?.message}`);
     },
 
     onError: (error) => {

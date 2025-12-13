@@ -17,7 +17,7 @@ type AuthActions = {
   setRefreshTokenStatus: (isRefreshing: boolean, error: string | null) => void;
   logout: () => void;
   fetchAccount: () => Promise<void>;
-  loginSuccess: (token: string) => Promise<void>; 
+  loginSuccess: (token: string) => Promise<void>;
 };
 
 export type AuthSlice = AuthState & AuthActions;
@@ -28,7 +28,6 @@ export const createAuthSlice: StateCreator<
   [],
   AuthSlice
 > = (set, get) => ({
-
   // --- Initial State ---
   user: null,
   accessToken: null,
@@ -59,7 +58,7 @@ export const createAuthSlice: StateCreator<
       state.accessToken = token;
       state.isAuthenticated = true;
     });
-    await get().fetchAccount();  // auto call api to get user info immediately
+    await get().fetchAccount(); // auto call api to get user info immediately
   },
 
   logout: () => {
@@ -73,12 +72,15 @@ export const createAuthSlice: StateCreator<
   },
 
   fetchAccount: async () => {
+    // Avoid multiple simultaneous fetches if already loading
+    if (get().isLoadingUser) return;
+
     set((state) => {
       state.isLoadingUser = true;
     });
+
     try {
       const response = await authService.getAccount();
-  
       set((state) => {
         state.user = response.data;
         state.isAuthenticated = true;
@@ -87,10 +89,8 @@ export const createAuthSlice: StateCreator<
     } catch (error) {
       set((state) => {
         state.isLoadingUser = false;
-        state.user = null;
-        state.accessToken = null;
-        state.isAuthenticated = false;
       });
+      throw error;
     }
   },
 });

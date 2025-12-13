@@ -26,7 +26,7 @@ export const useBoundStore = create<BoundStore>()(
 
         // Difinition specific state to persist
         partialize: (state) => ({
-          accessToken: state.accessToken,
+          // accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
         }),
       },
