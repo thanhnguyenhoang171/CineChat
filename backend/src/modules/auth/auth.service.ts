@@ -161,8 +161,8 @@ export class AuthService {
       // 8. Set Cookie again
       response.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
-        // secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
-        // sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
+        secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
+        sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
         maxAge: +ms(refreshExpiresIn as any),
       });
 
