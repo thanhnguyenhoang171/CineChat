@@ -74,6 +74,8 @@ export class AuthService {
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
+      secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
+      sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
     });
 
     return {
