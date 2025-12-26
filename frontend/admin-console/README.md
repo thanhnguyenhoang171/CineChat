@@ -1,24 +1,55 @@
-# Welcome to React Router!
+# CineChat Admin Console
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A modern administration dashboard for the CineChat platform, built with React Router 7, TypeScript, and Tailwind CSS.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Overview
 
-## Features
+The CineChat Admin Console provides a robust interface for managing users, movies, and platform analytics. It features a secure authentication system, data visualization, and a responsive UI designed for administrative efficiency.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Tech Stack
+
+- **Framework:** React Router 7
+- **Styling:** Tailwind CSS v4, Shadcn UI, Framer Motion
+- **State Management:** Zustand & TanStack Query v5
+- **Forms & Validation:** React Hook Form & Zod
+- **Networking:** Axios with interceptors for token management
+- **Data Display:** TanStack Table v8 & Recharts
+- **Icons:** Lucide React
+
+## Key Features
+
+- **Authentication:** JWT-based login and registration with automated silent token refresh.
+- **Route Protection:** Built-in AuthGuard and GuestGuard for access control.
+- **Dashboard Overview:** Platform statistics visualized through interactive charts.
+- **User Management:** Comprehensive management of user accounts and roles.
+- **Movie Management:** Interface for cataloging and updating movie content.
+- **Responsive Design:** Optimized layouts for various screen sizes.
+- **Transitions:** Smooth UI interactions powered by Framer Motion.
+
+## Project Structure
+
+```text
+app/
+├── components/       # Reusable UI components (Shadcn UI, Animations)
+├── features/         # Domain-driven feature modules (Auth, User)
+├── hooks/            # Custom React hooks (useLogin, useLogout)
+├── layouts/          # Layout wrappers (AdminLayout, AuthLayout)
+├── lib/              # Shared utilities and API clients
+├── queries/          # TanStack Query definitions
+├── routes/           # Page components and route guards
+├── services/         # API service layers
+├── store/            # Global state (Zustand)
+└── types/            # TypeScript interfaces and schemas
+```
 
 ## Getting Started
 
-### Installation
+### Prerequisites
 
-Install the dependencies:
+- Node.js (Latest LTS recommended)
+- npm
+
+### Installation
 
 ```bash
 npm install
@@ -26,75 +57,27 @@ npm install
 
 ### Development
 
-Start the development server with HMR:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
+### Building for Production
 
 ```bash
+# Type-check and build the application
 npm run build
+
+# Start the production server
+npm start
 ```
 
-## Deployment
+## Docker Support
 
-### Docker Deployment
-
-To build and run using Docker:
+Build and run the admin console using Docker:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+docker build -t cinechat-admin .
+docker run -p 3000:3000 cinechat-admin
 ```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
-
-
-# 1. UI & Styles
-npm install tailwindcss postcss autoprefixer clsx tailwind-merge lucide-react
-
-# 2. Logic & Data
-npm install @tanstack/react-query axios zustand
-
-# 3. Form & Validation
-npm install react-hook-form @hookform/resolvers zod
-
-# 4. Admin Tools (Table, Chart, Date, Toast)
-npm install @tanstack/react-table recharts sonner date-fns
