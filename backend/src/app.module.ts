@@ -12,6 +12,8 @@ import envConfig, { envValidationSchema } from '@config/env.config';
 import { DatabaseModule } from '@database/mongoose.module';
 import { PaginationService } from '@common/services/pagination.service';
 import { CommonModule } from '@common/common.module';
+import { RedisModule } from './redis/redis.module';
+import { HealthModule } from '@modules/health/health.module';
 
 @Module({
   imports: [
@@ -22,11 +24,13 @@ import { CommonModule } from '@common/common.module';
       validationSchema: envValidationSchema, // validate biến môi trường
     }),
     DatabaseModule,
+    RedisModule,
     UsersModule,
     AuthModule,
     RolesModule,
     PermissionsModule,
-    CommonModule
+    CommonModule,
+    HealthModule,
   ],
   providers: [
     {

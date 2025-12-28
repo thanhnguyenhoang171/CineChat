@@ -1,6 +1,4 @@
-import { LoginForm } from '~/features/auth/components/login-form';
 import type { Route } from './+types/register';
-
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,7 +7,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className='min-h-screen flex items-center justify-center bg-slate-100 p-4'>
       Trang đăng ký

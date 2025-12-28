@@ -11,9 +11,9 @@ import type { Route } from './+types/root';
 import './styles/app-style.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/query-client';
-import NotFoundPage from './routes/not-found';
-import { GeneralError } from './components/shared/general-error';
-import { SonnerToasterComponent } from './components/ui/sonner-toaster';
+import NotFoundPage from './routes/notFound';
+import { GeneralError } from './components/shared/generalError';
+import { SonnerToasterComponent } from './components/ui/sonnerToaster';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
