@@ -8,21 +8,21 @@ import {
 export default [
   index('routes/_index.tsx'),
 
-  layout('routes/guards/guest-guard.tsx', [
-    layout('layouts/auth-layout.tsx', [
+  layout('routes/guards/guestGuard.tsx', [
+    layout('layouts/authLayout.tsx', [
       route('login', 'routes/auth/login.tsx'),
       route('register', 'routes/auth/register.tsx'),
     ]),
   ]),
 
-  layout('routes/guards/auth-guard.tsx', [
-    route('dashboard', 'layouts/admin-layout.tsx', [
+  layout('routes/guards/authGuard.tsx', [
+    route('dashboard', 'layouts/adminLayout.tsx', [
       index('routes/dashboard/overview.tsx'),
-      route('users', 'routes/dashboard/users/user-list.tsx'),
-      route('movies', 'routes/dashboard/movies/movie-list.tsx'),
+      route('users', 'routes/dashboard/users/userList.tsx'),
+      route('movies', 'routes/dashboard/movies/movieList.tsx'),
     ]),
   ]),
 
   // Fallback 404
-  route('*', 'routes/not-found.tsx'),
+  route('*', 'routes/notFound.tsx'),
 ] satisfies RouteConfig;

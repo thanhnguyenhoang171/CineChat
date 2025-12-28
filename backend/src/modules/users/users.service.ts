@@ -323,7 +323,7 @@ export class UsersService {
         HttpStatusCode.INTERNAL_SERVER_ERROR,
       );
     }
-  }
+  } 
 
   async findUserById(id: string) {
     try {
