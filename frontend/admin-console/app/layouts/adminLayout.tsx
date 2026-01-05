@@ -2,7 +2,6 @@ import { Outlet, NavLink, Link, redirect, useLocation } from 'react-router';
 import {
   LayoutDashboard,
   Users,
-  Settings,
   LogOut,
   Film,
   Menu,

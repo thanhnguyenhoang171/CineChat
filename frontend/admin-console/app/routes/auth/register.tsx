@@ -4,10 +4,7 @@ import { RegisterForm } from '~/features/auth/components/register/registerForm';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: 'Đăng ký | CineChat Admin' },
-    { name: 'description', content: 'Trang đăng ký hệ thống quản trị' },
-  ];
+  return [{ title: 'Đăng ký | CineChat Admin' }];
 }
 
 export default function RegisterPage() {

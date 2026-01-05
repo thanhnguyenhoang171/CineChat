@@ -1,7 +1,5 @@
 import { Outlet } from 'react-router';
 import type { Route } from './+types/authLayout';
-import { LoginCarousel } from '~/features/auth/components/login/loginCarousel';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
 
 export function meta({}: Route.MetaArgs) {
   return [

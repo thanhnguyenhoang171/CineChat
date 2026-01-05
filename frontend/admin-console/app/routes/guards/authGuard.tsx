@@ -1,8 +1,9 @@
 import { Outlet, redirect } from 'react-router';
-import type { Route } from './+types/auth-guard';
+
 import { useBoundStore } from '~/store';
 import { Spinner } from '~/components/ui/spinner';
 import { silentRefreshToken } from '~/helpers/silent-refresh-token';
+import type { Route } from './+types/authGuard';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   let token = useBoundStore.getState().accessToken;
