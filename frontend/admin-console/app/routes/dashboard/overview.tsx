@@ -1,11 +1,7 @@
-import { LoginCarousel } from '~/features/auth/components/login/loginCarousel';
 import type { Route } from './+types/overview';
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: 'Dashboard quản trị viên' },
-    { name: 'description', content: 'Welcome to Admin Dashboard!' },
-  ];
+  return [{ title: 'Dashboard quản trị viên' }];
 }
 
 export default function Overview() {

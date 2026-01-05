@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router';
 import { MoveLeft, Home } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import type { Route } from './+types/not-found';
+import type { Route } from './+types/notFound';
 
 // Meta SEO cho trang lỗi
 export function meta({}: Route.MetaArgs) {

@@ -1,6 +1,12 @@
+
+import { useBreakpoint } from '~/hooks/useBreakpoint';
+import type { Route } from './+types/login';
 import { LoginCarousel } from '~/features/auth/components/login/loginCarousel';
 import { LoginForm } from '~/features/auth/components/login/loginForm';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+
+export function meta({}: Route.MetaArgs) {
+  return [{ title: 'Đăng ký | CineChat Admin' }];
+}
 
 export default function LoginPage() {
   const { isMobile } = useBreakpoint();
