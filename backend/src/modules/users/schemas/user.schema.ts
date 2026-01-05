@@ -21,7 +21,16 @@ export class User {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Role.name })
   role: mongoose.Schema.Types.ObjectId;
 
-  @Prop({type: String, default: null})
+  @Prop()
+  provider?: string;
+
+  @Prop()
+  googleId?: string;
+
+  @Prop()
+  emailVerified?: boolean;
+
+  @Prop({ type: String, default: null })
   refreshToken: string | null;
 
   @Prop({ type: Object })

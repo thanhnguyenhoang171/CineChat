@@ -1,5 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto, RegisterAccountDto } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  LoginAccountDto,
+  RegisterAccountDto,
+  RegisterGGAccountDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -13,6 +18,7 @@ import { passwordHashing } from '@common/utils/password-bcrypt.util';
 import { CommonConstant } from '@common/constants/common-constant';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
+import { async } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -112,7 +118,56 @@ export class UsersService {
       );
     }
   }
+  async findUserByEmailAndGoogleId(email: string, googleId: string) {
+    try {
+      const user = await this.userModel
+        .findOne({
+          email: email,
+          googleId: googleId,
+        })
+        .populate({
+          path: 'role',
+          model: 'Role', // Đảm bảo model name đúng trong schema
+          populate: {
+            path: 'permissions',
+            model: 'Permission',
+            select: '_id name method apiPath module',
+          },
+        })
+        .lean()
+        .exec();
 
+      if (!user) {
+        return null;
+      }
+
+      const { password, role, ...userInfo } = user;
+
+      // Handle safe casting
+      const roleObj = role as any;
+      const permissions = roleObj?.permissions ?? [];
+
+      return {
+        ...userInfo,
+        password: password, // Cần password hash để so sánh
+        role: {
+          _id: roleObj?._id,
+          name: roleObj?.name,
+        },
+        permissions: permissions,
+      };
+    } catch (error) {
+      // Log error system
+      console.error('Error in findUserByUsername:', error);
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   async update(id: string, updateUserDto: UpdateUserDto) {
     validateMongoId(id);
     const user = await findModuleOrThrow(
@@ -191,7 +246,7 @@ export class UsersService {
 
   async registerAccount(registerAccountDto: RegisterAccountDto) {
     try {
-      const { firstName, lastName, picture, username, password } = registerAccountDto;
+      const { firstName, lastName, picture, username, password, provider } = registerAccountDto;
       const duplicatedUsername = await isModuleExist(this.userModel, 'username', username);
 
       if (duplicatedUsername) {
@@ -226,6 +281,7 @@ export class UsersService {
         lastName,
         picture,
         username,
+        provider,
         password: passwordHashed,
         role: userRole?._id,
       });
@@ -246,6 +302,34 @@ export class UsersService {
         );
       }
 
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async registerGoogleAccount(registerGGAccountDto: RegisterGGAccountDto) {
+    try {
+      const { firstName, lastName, picture, googleId, emailVerified, email, provider } =
+        registerGGAccountDto;
+      // Get user's role
+      const userRole = await this.roleModel.findOne({ name: CommonConstant.roleLevel.USER });
+
+      return await this.userModel.create({
+        firstName,
+        lastName,
+        picture,
+        provider,
+        emailVerified,
+        email,
+        googleId,
+        role: userRole?._id,
+      });
+    } catch (error) {
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
@@ -278,41 +362,41 @@ export class UsersService {
 
   async findUserByRefreshToken(refreshToken: string | null) {
     try {
-    const user = await this.userModel
-      .findOne({ refreshToken }, { password: 0 })
-      .populate({
-        path: 'role',
-        model: 'Role',
-        populate: {
-          path: 'permissions',
-          model: 'Permission',
-          select: '_id name method apiPath module',
+      const user = await this.userModel
+        .findOne({ refreshToken }, { password: 0 })
+        .populate({
+          path: 'role',
+          model: 'Role',
+          populate: {
+            path: 'permissions',
+            model: 'Permission',
+            select: '_id name method apiPath module',
+          },
+        })
+        .lean()
+        .exec();
+
+      // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
+      if (!user) {
+        return null;
+      }
+
+      const { role, ...userInfo } = user;
+
+      // Handle safe casting
+      const roleObj = role as any;
+      const permissions = roleObj?.permissions ?? [];
+
+      return {
+        ...userInfo,
+
+        role: {
+          _id: roleObj?._id,
+          name: roleObj?.name,
         },
-      })
-      .lean()
-      .exec();
-
-    // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
-    if (!user) {
-      return null;
-    }
-
-    const {role, ...userInfo } = user;
-
-    // Handle safe casting
-    const roleObj = role as any;
-    const permissions = roleObj?.permissions ?? [];
-
-    return {
-      ...userInfo,
-
-      role: {
-        _id: roleObj?._id,
-        name: roleObj?.name,
-      },
-      permissions: permissions,
-    };
-  } catch (error) {
+        permissions: permissions,
+      };
+    } catch (error) {
       // Log error system
       console.error('Error in findUserByRefreshToken:', error);
       throw new HttpException(
@@ -323,7 +407,7 @@ export class UsersService {
         HttpStatusCode.INTERNAL_SERVER_ERROR,
       );
     }
-  } 
+  }
 
   async findUserById(id: string) {
     try {
@@ -376,6 +460,34 @@ export class UsersService {
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findUserRoleId(roleName: string) {
+    try {
+      const userRole = await this.roleModel.findOne({ name: roleName });
+
+      if (!userRole) {
+        throw new HttpException(
+          {
+            code: BusinessCode.ROLE_NOT_FOUND,
+            message: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+          },
+          HttpStatusCode.NOT_FOUND,
+        );
+      }
+      return userRole._id;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          message: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

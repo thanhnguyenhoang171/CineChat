@@ -20,11 +20,18 @@ export interface JwtConfig {
   refreshExpiresIn: string;
 }
 
+export interface AuthGGConfig {
+  googleClientId: string;
+  googleSecret: string;
+  googleCallbackUrl: string;
+}
+
 export interface ConfigEnv {
   host: string;
   port: number;
   mongodbUri: string;
   jwt: JwtConfig;
+  ggAuth: AuthGGConfig;
 }
 
 export default (): ConfigEnv => ({
@@ -36,6 +43,11 @@ export default (): ConfigEnv => ({
     privateKey: process.env.JWT_PRIVATE_KEY as string,
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+  },
+  ggAuth: {
+    googleClientId: process.env.GOOGLE_CLIENT_ID as string,
+    googleSecret: process.env.GOOGLE_SECRET as string,
+    googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL as string,
   },
 });
 
@@ -54,4 +66,13 @@ export const envValidationSchema = Joi.object({
   }),
   JWT_EXPIRES_IN: Joi.string().default('1h'),
   JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
+  GOOGLE_CLIENT_ID: Joi.string().required().messages({
+    'any.required': 'GOOGLE_CLIENT_ID is required',
+  }),
+  GOOGLE_SECRET: Joi.string().required().messages({
+    'any.required': 'GOOGLE_SECRET is required',
+  }),
+  GOOGLE_CALLBACK_URL: Joi.string().required().messages({
+    'any.required': 'GOOGLE_CALLBACK_URL is required',
+  }),
 });

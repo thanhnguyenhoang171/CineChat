@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { CommonConstant } from '@common/constants/common-constant';
 export class CreateUserDto {
+  @ApiProperty({ example: 'USERNAME/GOOGLE', description: 'Provider', default: 'USERNAME' })
+  @IsBoolean({ message: 'Provider phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Provider không được để trống' })
+  @IsOptional()
+  provider: string = CommonConstant.loginProvider.USERNAME;
+
   @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
   @IsString({ message: 'Tên phải là một chuỗi' })
   @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -32,6 +39,12 @@ export class CreateUserDto {
 }
 
 export class RegisterAccountDto {
+  @ApiProperty({ example: 'USERNAME/GOOGLE', description: 'Provider', default: 'USERNAME' })
+  @IsBoolean({ message: 'Provider phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Provider không được để trống' })
+  @IsOptional()
+  provider: string = CommonConstant.loginProvider.USERNAME;
+
   @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
   @IsString({ message: 'Tên phải là một chuỗi' })
   @IsNotEmpty({ message: 'Tên không được để trống' })
@@ -56,6 +69,41 @@ export class RegisterAccountDto {
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;
 }
+
+export class RegisterGGAccountDto {
+  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @IsString({ message: 'Tên phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Tên không được để trống' })
+  firstName: string;
+
+  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @IsString({ message: 'Họ phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Họ không được để trống' })
+  lastName: string;
+
+  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @IsOptional()
+  picture: string;
+
+  @ApiProperty({ example: 'thanhnguyen@gmail.com', description: 'Email' })
+  @IsOptional()
+  email: string;
+
+  @ApiProperty({ example: 'USERNAME/GOOGLE', description: 'Provider', default: 'USERNAME' })
+  @IsBoolean({ message: 'Provider phải là một chuỗi' })
+  @IsNotEmpty({ message: 'Provider không được để trống' })
+  @IsOptional()
+  provider: string = CommonConstant.loginProvider.GOOGLE;
+
+  @ApiProperty({ example: 'am2n34nsfjdkdm', description: 'Google Id khi đăng ký thành công' })
+  @IsOptional()
+  googleId: string;
+
+  @ApiProperty({ example: 'true/false', description: 'Email đã xác thực hay chưa' })
+  @IsOptional()
+  emailVerified: boolean;
+}
+
 
 export class LoginAccountDto {
   @ApiProperty({ example: 'thanh171', description: 'Tên đăng nhập' })

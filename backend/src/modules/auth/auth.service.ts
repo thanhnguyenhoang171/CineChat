@@ -1,10 +1,11 @@
 import { passwordCompare } from '@common/utils/password-bcrypt.util';
-import { IUser } from '@interfaces/user.interface';
-import { RegisterAccountDto } from '@modules/users/dto/create-user.dto';
+import { IGGUser, IUser } from '@interfaces/user.interface';
+import { RegisterAccountDto, RegisterGGAccountDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
 import {
   BadRequestException,
   HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -16,6 +17,9 @@ import { createRefreshToken } from '@common/utils/access-token.util';
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from '@config/env.config';
 import ms from 'ms';
+import { ResponseMessage } from '@common/constants/response-message';
+import { HttpStatusCode } from '@common/constants/http-status-code';
+import { CommonConstant } from '@common/constants/common-constant';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +31,12 @@ export class AuthService {
   private readonly logger = new Logger('AuthService');
 
   async register(registerAccountDto: RegisterAccountDto) {
+    const userData = {
+      ...registerAccountDto,
+      provider: CommonConstant.loginProvider.USERNAME,
+    };
     // return this.userService.registerAccount(registerAccountDto);
-    const registeredUser = await this.userService.registerAccount(registerAccountDto);
+    const registeredUser = await this.userService.registerAccount(userData);
     return {
       code: BusinessCode.REGISTERED,
       data: {
@@ -62,7 +70,7 @@ export class AuthService {
       r: role._id,
     };
 
-    this.logger.log(" Checking role info = ", role);
+    this.logger.log(' Checking role info = ', role);
     this.logger.log('payload sign:', payload);
 
     const refreshToken = createRefreshToken(payload, this.jwtService, this.configService);
@@ -94,7 +102,6 @@ export class AuthService {
       code: BusinessCode.ACCOUNT_INFO, // Ví dụ: 'SYS_004'
       data: result,
     };
-
   }
 
   async logout(response: Response, user: IUser) {
@@ -109,7 +116,6 @@ export class AuthService {
     };
   }
 
-  // TODO: Handle get user info by refresh token
   async refresh(refreshToken: string, response: Response) {
     try {
       // 1. Get configs
@@ -118,8 +124,7 @@ export class AuthService {
       const refreshExpiresIn = this.configService.get<string>('jwt.refreshExpiresIn', {
         infer: true,
       });
-      const accessExpiresIn =
-        this.configService.get<string>('jwt.expiresIn', { infer: true });
+      const accessExpiresIn = this.configService.get<string>('jwt.expiresIn', { infer: true });
 
       // 2. Verify sign of refresh token first
       await this.jwtService.verifyAsync(refreshToken, {
@@ -139,7 +144,7 @@ export class AuthService {
       const { _id, firstName, lastName, username, email, role, permissions } = user;
 
       const payload = {
-        sub: _id, // <--- SỬA: Phải giống format lúc Login
+        sub: _id,
         r: role._id,
       };
 
@@ -189,6 +194,87 @@ export class AuthService {
         code: BusinessCode.UNAUTHORIZED, // Sửa lại mã lỗi cho đúng chuẩn
         message: 'Invalid or expired refresh token',
       });
+    }
+  }
+
+  async googleLogin(user: IGGUser, response: Response) {
+    const refreshExpiresIn = this.configService.get<string>('jwt.refreshExpiresIn', {
+      infer: true,
+    });
+
+    try {
+      if (!user.emailVerified) {
+        throw new HttpException(
+          {
+            code: BusinessCode.EMAIL_NOT_VERIFIED,
+            errors: ResponseMessage[BusinessCode.EMAIL_NOT_VERIFIED],
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const registerData = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        picture: user.picture,
+        provider: CommonConstant.loginProvider.GOOGLE,
+        googleId: user.googleId,
+        emailVerified: user.emailVerified,
+      } as RegisterGGAccountDto;
+
+      console.log('Checking register data = ', registerData);
+
+      const existEmailAccount = await this.userService.findUserByEmailAndGoogleId(
+        user.email,
+        user.googleId,
+      );
+
+      let currentUser;
+
+      if (existEmailAccount) {
+        currentUser = existEmailAccount;
+      } else {
+        currentUser = await this.userService.registerGoogleAccount(registerData);
+      }
+
+      // sign jwt token
+      const payload = {
+        sub: currentUser._id,
+        r: currentUser.role._id,
+      };
+
+      this.logger.log('payload sign:', payload);
+
+      const refreshToken = createRefreshToken(payload, this.jwtService, this.configService);
+
+      // update refresh token to database
+      await this.userService.updateUserRefreshTokenById(refreshToken, currentUser._id);
+      // token in cookie
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: +ms(refreshExpiresIn as any),
+      });
+
+      return {
+        code: BusinessCode.LOGIN,
+        data: {
+          access_token: this.jwtService.sign(payload),
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

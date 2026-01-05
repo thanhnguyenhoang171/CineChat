@@ -3,7 +3,8 @@ import axios from 'axios';
 import type {
   LoginRequest,
   LoginResponse,
-  RefreshTokenResponse,
+  RegisterAccountResponse,
+  RegisterRequest,
 } from '~/types/auth';
 import type { ApiResponse, User } from '~/types/user';
 
@@ -44,14 +45,13 @@ export const authService = {
     return response.data;
   },
 
-  // refreshToken: async (): Promise<ApiResponse<RefreshTokenResponse>> => {
-  //   const response = axios.post<ApiResponse<LoginResponse>>(
-  //     `${BASE_URL}/auth/refresh`,
-  //     {},
-  //     {
-  //       withCredentials: true,
-  //     },
-  //   );
-  //   return response.data;
-  // },
+  registerAccount: async (
+    data: RegisterRequest,
+  ): Promise<ApiResponse<RegisterAccountResponse>> => {
+    const response = await axios.post<ApiResponse<RegisterAccountResponse>>(
+      `${BASE_URL}/auth/register`,
+      data,
+    );
+    return response.data;
+  },
 };

@@ -1,17 +1,35 @@
-import { Controller, Post, Body, UseGuards, Req, Res, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Res,
+  Get,
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   JwtPublic,
   PublicPermission,
 } from '@common/decorators/auth.decorator';
-import { LoginAccountDto, RegisterAccountDto } from '@modules/users/dto/create-user.dto';
+import {
+  LoginAccountDto,
+  RegisterAccountDto,
+  RegisterGGAccountDto,
+} from '@modules/users/dto/create-user.dto';
 import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { LocalAuthGuard } from '@common/guards/local-auth-guard';
 import type { Request, Response } from 'express';
 import { User } from '@common/decorators/user.decorator';
-import type { IUser } from '@interfaces/user.interface';
+import type { IGGUser, IUser } from '@interfaces/user.interface';
+import { AuthGuard } from '@nestjs/passport';
+import { BusinessCode } from '@common/constants/business-code';
+import { ResponseMessage } from '@common/constants/response-message';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -69,5 +87,27 @@ export class AuthController {
   ): Promise<any> {
     const refreshToken = request.cookies?.['refresh_token'];
     return this.authService.refresh(refreshToken, response);
+  }
+  @JwtPublic()
+  @Get('google')
+  @ResponseStatus(HttpStatusCode.OK)
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @JwtPublic()
+  @Get('google/callback')
+  @ResponseStatus(HttpStatusCode.OK)
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+    if (!req.user) {
+      throw new HttpException(
+        {
+          code: BusinessCode.GOOGLE_AUTH_FAILED,
+          errors: ResponseMessage[BusinessCode.GOOGLE_AUTH_FAILED],
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return this.authService.googleLogin(req.user as IGGUser, response);
   }
 }

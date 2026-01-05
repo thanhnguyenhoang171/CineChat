@@ -19,6 +19,10 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.EMPTY_UPDATE_DTO]: 'Không có dữ liệu nào để cập nhật.',
   [BusinessCode.ACCOUNT_INFO]: 'Lấy thông tin tài khoản thành công.',
   [BusinessCode.REFRESH_TOKEN_SUCCESS]: 'Refresh tài khoản thành công.',
+  [BusinessCode.GOOGLE_AUTH_FAILED]:
+    'Xác thực Google thất bại. Thông tin người dùng bị thiếu hoặc không hợp lệ.',
+  [BusinessCode.EMAIL_NOT_VERIFIED]:
+    'Vui lòng xác nhận địa chỉ email Google của bạn trước khi đăng nhập.',
   // =========================================================
   // === USR: USER MODULE MESSAGES ===========================
   // =========================================================
