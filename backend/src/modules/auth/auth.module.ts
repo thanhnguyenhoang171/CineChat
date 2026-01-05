@@ -12,6 +12,7 @@ import { JwtModuleOptions } from '@nestjs/jwt';
 import { CommonModule } from '@common/common.module';
 import RolesService from '@modules/roles/roles.service';
 import { RolesModule } from '@modules/roles/roles.module';
+import { GoogleStrategy } from '@modules/auth/strategies/google.strategy';
 
 @Module({
   imports: [
@@ -20,9 +21,15 @@ import { RolesModule } from '@modules/roles/roles.module';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService<ConfigEnv, true>): Promise<JwtModuleOptions> => {
-        const privateKey = configService.get<string>('jwt.privateKey', { infer: true })?.replace(/\\n/g, '\n');
-        const publicKey = configService.get<string>('jwt.publicKey', { infer: true })?.replace(/\\n/g, '\n');
+      useFactory: async (
+        configService: ConfigService<ConfigEnv, true>,
+      ): Promise<JwtModuleOptions> => {
+        const privateKey = configService
+          .get<string>('jwt.privateKey', { infer: true })
+          ?.replace(/\\n/g, '\n');
+        const publicKey = configService
+          .get<string>('jwt.publicKey', { infer: true })
+          ?.replace(/\\n/g, '\n');
         const expiresIn = configService.get<string>('jwt.expiresIn', { infer: true });
 
         return {
@@ -38,6 +45,6 @@ import { RolesModule } from '@modules/roles/roles.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}

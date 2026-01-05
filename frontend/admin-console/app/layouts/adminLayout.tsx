@@ -9,7 +9,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { Route } from './+types/admin-layout';
 import { useBoundStore } from '~/store';
 import { useLogout } from '~/hooks/useLogout';
 import {

@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { useBoundStore } from '~/store'; // Đảm bảo import đúng store tổng
 import { Mutex } from 'async-mutex';
-import { BusinessCode } from '~/types/bussiness-code';
+
 import { authService } from '~/services/auth.service';
+import { BusinessCode } from '~/types/bussiness-code';
 
 const mutex = new Mutex();
-const MAX_RETRY = 3;
 
 export const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

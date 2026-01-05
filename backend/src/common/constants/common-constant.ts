@@ -1,12 +1,16 @@
-export const  CommonConstant = {
+export const CommonConstant = {
   roleLevel: {
-    ADMIN: 'admin',
-    MANAGER: 'manager',
-    USER: 'user',
+    ADMIN: 'ADMIN',
+    MANAGER: 'MANAGER',
+    USER: 'USER',
   },
   // activeStatus: {
   //   ACTIVE: 'active',
   //   DEACTIVE: 'deactivate',
   // }
-} as const;
 
+  loginProvider : {
+    GOOGLE: 'GOOGLE',
+    USERNAME: 'USERNAME',
+  },
+} as const;

@@ -1,4 +1,4 @@
-import { LoginCarousel } from '~/features/auth/components/loginCarousel';
+import { LoginCarousel } from '~/features/auth/components/login/loginCarousel';
 import type { Route } from './+types/overview';
 
 export function meta({}: Route.MetaArgs) {
