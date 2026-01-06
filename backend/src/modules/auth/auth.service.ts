@@ -18,8 +18,7 @@ import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from '@config/env.config';
 import ms from 'ms';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpStatusCode } from '@common/constants/http-status-code';
-import { CommonConstant } from '@common/constants/common-constant';
+import { LoginProvider } from '@common/constants/common-constant';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +32,7 @@ export class AuthService {
   async register(registerAccountDto: RegisterAccountDto) {
     const userData = {
       ...registerAccountDto,
-      provider: CommonConstant.loginProvider.USERNAME,
+      provider: LoginProvider.USERNAME,
     };
     // return this.userService.registerAccount(registerAccountDto);
     const registeredUser = await this.userService.registerAccount(userData);
@@ -186,8 +185,8 @@ export class AuthService {
       // Quan trọng: Phải clear cookie với options giống hệt lúc set
       response.clearCookie('refresh_token', {
         httpOnly: true,
-        // secure: true,
-        // sameSite: 'none'
+        secure: true,
+        sameSite: 'none'
       });
 
       throw new UnauthorizedException({
@@ -218,7 +217,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         picture: user.picture,
-        provider: CommonConstant.loginProvider.GOOGLE,
+        provider: LoginProvider.GOOGLE,
         googleId: user.googleId,
         emailVerified: user.emailVerified,
       } as RegisterGGAccountDto;
@@ -258,12 +257,11 @@ export class AuthService {
         maxAge: +ms(refreshExpiresIn as any),
       });
 
-      return {
-        code: BusinessCode.LOGIN,
-        data: {
-          access_token: this.jwtService.sign(payload),
-        },
-      };
+      const feUri = this.configService.get<string>('clientUri', {
+        infer: true,
+      });
+      const accessToken = this.jwtService.sign(payload);
+      response.redirect(`${feUri}/auth/google-success?act=${accessToken}`);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -273,7 +271,7 @@ export class AuthService {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

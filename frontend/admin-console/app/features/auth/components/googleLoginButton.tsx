@@ -6,15 +6,18 @@ interface GoogleLoginButtonProps {
   isPending: boolean;
 }
 
-// TODO: Handle Google Login Feature
 const GoogleLoginButton = ({ isPending }: GoogleLoginButtonProps) => {
+  const handleGGLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
   return (
     <div className='flex justify-center'>
       <Button
         type='button'
         variant='secondary'
         className='w-[80%] rounded-[5px] flex items-center justify-center gap-2'
-        disabled={isPending}>
+        disabled={isPending}
+        onClick={handleGGLogin}>
         {isPending ? (
           <>
             <Loader2 className='h-4 w-4 animate-spin' />

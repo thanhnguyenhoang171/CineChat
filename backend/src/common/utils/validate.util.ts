@@ -1,7 +1,6 @@
 import { BusinessCode } from '@common/constants/business-code';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import mongoose from 'mongoose';
 
 export const validateMongoId = (
@@ -22,7 +21,7 @@ export const validateMongoId = (
           code: BusinessCode.INVALID_MONGODB_ID,
           errors: ResponseMessage[BusinessCode.INVALID_MONGODB_ID],
         },
-        HttpStatusCode.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }

@@ -3,7 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from '@config/env.config';
 import { Strategy, Profile } from 'passport-google-oauth20';
-import { CommonConstant } from '@common/constants/common-constant';
+import { RoleLevel } from '@common/constants/common-constant';
+
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -21,7 +22,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       firstName: profile._json.given_name,
       lastName: profile._json.family_name,
       picture: profile._json.picture,
-      role: CommonConstant.roleLevel.USER,
+      role: RoleLevel.USER,
       emailVerified: profile._json.email_verified,
       googleId: profile.id,
     };

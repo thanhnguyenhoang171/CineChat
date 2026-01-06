@@ -11,6 +11,7 @@ export default [
   layout('routes/guards/guestGuard.tsx', [
     layout('layouts/authLayout.tsx', [
       route('login', 'routes/auth/login.tsx'),
+      route('auth/google-success', 'routes/auth/googleCallback.tsx'),
       route('register', 'routes/auth/register.tsx'),
     ]),
   ]),

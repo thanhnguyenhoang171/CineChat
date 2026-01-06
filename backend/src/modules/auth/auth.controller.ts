@@ -21,7 +21,6 @@ import {
   RegisterAccountDto,
   RegisterGGAccountDto,
 } from '@modules/users/dto/create-user.dto';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { LocalAuthGuard } from '@common/guards/local-auth-guard';
 import type { Request, Response } from 'express';
@@ -40,8 +39,9 @@ export class AuthController {
   @JwtPublic()
   @Post('/register')
   @ApiOperation({ summary: 'Register a new account' })
-  @ResponseStatus(HttpStatusCode.CREATED)
+  @ResponseStatus(HttpStatus.CREATED)
   async registerController(@Body() registerAccountDto: RegisterAccountDto) {
+    console.log("Checking register account dto = ", registerAccountDto);
     return this.authService.register(registerAccountDto);
   }
 
@@ -49,7 +49,7 @@ export class AuthController {
   @Post('/login')
   @ApiBody({ type: LoginAccountDto })
   @UseGuards(LocalAuthGuard)
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   @ApiOperation({ summary: 'Login to system' })
   async loginController(
     @Req() req: any,
@@ -61,7 +61,7 @@ export class AuthController {
   @Post('/logout')
   @PublicPermission()
   @ApiOperation({ summary: 'Logout from system' })
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   async logoutController(
     @Res({ passthrough: true }) response: Response,
     @User() user: IUser,
@@ -72,7 +72,7 @@ export class AuthController {
   @Get('/account')
   @PublicPermission()
   @ApiOperation({ summary: 'Get account information' })
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   async getAccountController(@User() user: IUser): Promise<any> {
     return this.authService.getAccount(user);
   }
@@ -80,7 +80,7 @@ export class AuthController {
   @JwtPublic()
   @Post('/refresh')
   @ApiOperation({ summary: 'Get refresh information' })
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   async getRefreshController(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
@@ -90,13 +90,13 @@ export class AuthController {
   }
   @JwtPublic()
   @Get('google')
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
   @JwtPublic()
   @Get('google/callback')
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     if (!req.user) {

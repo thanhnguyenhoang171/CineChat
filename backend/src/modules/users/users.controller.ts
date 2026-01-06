@@ -14,7 +14,6 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { JwtPublic } from '@common/decorators/auth.decorator';
 
@@ -25,33 +24,34 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @ResponseStatus(HttpStatusCode.CREATED)
+  @ResponseStatus(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    return this.usersService.createNewUser(createUserDto);
   }
 
   // TODO: Handle get all users with pagination
   @Get()
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   findAll() {
-    return this.usersService.findAll();
+    return this.usersService.findAllUsersWithPagination();
   }
 
   @Get(':username')
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   getUserByUsername(@Param('username') username: string) {
     return this.usersService.findUserByUsername(username);
   }
 
   @Patch(':id')
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.updateUserById(id, updateUserDto);
   }
 
+  // TODO: Handle remove an user
   @Delete(':id')
-  @ResponseStatus(HttpStatusCode.OK)
+  @ResponseStatus(HttpStatus.OK)
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.removeUserById(+id);
   }
 }

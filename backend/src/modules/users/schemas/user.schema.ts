@@ -1,16 +1,19 @@
 import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Role } from '@modules/roles/schemas/role.schema';
+import { ActiveStatus, LoginProvider } from '@common/constants/common-constant';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
   @Prop()
-  firstName: string;
+  firstName?: string;
   @Prop()
-  lastName: string;
+  lastName?: string;
+
   @Prop()
-  picture: string; // upload user avatar into cloudinary
+  picture: string; // TODO: Handle Update picture to Cloundinary
+
   @Prop()
   username: string;
   @Prop()
@@ -21,14 +24,24 @@ export class User {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Role.name })
   role: mongoose.Schema.Types.ObjectId;
 
-  @Prop()
-  provider?: string;
+  @Prop({
+    type: Number,
+    enum: LoginProvider,
+  })
+  provider: string;
 
   @Prop()
   googleId?: string;
 
   @Prop()
   emailVerified?: boolean;
+
+  @Prop({
+    type: Number,
+    enum: ActiveStatus,
+    default: ActiveStatus.ACTIVE,
+  })
+  isActive: ActiveStatus;
 
   @Prop({ type: String, default: null })
   refreshToken: string | null;
