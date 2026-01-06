@@ -1,14 +1,5 @@
 import { Request } from 'express';
 
-//  Helper method để extract token từ header
-export const  extractTokenFromHeader = (request: Request): string | undefined => {
-  const authHeader = request.headers.authorization;
-  if (!authHeader) return undefined;
-
-  const [type, token] = request.headers.authorization?.split(' ') ?? [];
-  return type === 'Bearer' ? token : undefined; // Chỉ trả về phần token
-}
-
 
 // Helper method để match permission với endpoint
 export const matchPermission = (permission: any, method: string, endpoint: string): boolean => {

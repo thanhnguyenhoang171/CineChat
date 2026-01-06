@@ -6,7 +6,6 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Cinema with AI')
     .setDescription('Cinema combined with AI project API documentation')
     .setVersion('1.0')
-    // 1. Config cho Access Token (Bearer)
     .addBearerAuth(
       {
         type: 'http',
@@ -14,10 +13,8 @@ export function setupSwagger(app: INestApplication): void {
         bearerFormat: 'JWT',
         in: 'header',
       },
-      'jwt', // Tên này dùng để gán vào @ApiBearerAuth('jwt') trong Controller
+      'jwt',
     )
-    // 2. (Tùy chọn) Thêm hiển thị Cookie Auth để document rõ ràng hơn
-    // Lưu ý: httpOnly cookie không nhập tay được, cái này chỉ để hiện icon ổ khóa cho đẹp
     .addCookieAuth('refresh_token')
     .build();
 
@@ -26,7 +23,7 @@ export function setupSwagger(app: INestApplication): void {
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // Giữ token khi F5
-      withCredentials: true,      // <--- QUAN TRỌNG NHẤT: Bắt Swagger gửi Cookie đi
+      withCredentials: true,      // Bắt Swagger gửi Cookie đi
     },
   });
 }

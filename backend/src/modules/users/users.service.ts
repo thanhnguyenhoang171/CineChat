@@ -1,10 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {
-  CreateUserDto,
-  LoginAccountDto,
-  RegisterAccountDto,
-  RegisterGGAccountDto,
-} from './dto/create-user.dto';
+import { CreateUserDto, RegisterAccountDto, RegisterGGAccountDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
@@ -12,13 +7,11 @@ import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
 import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { findModuleOrThrow, isModuleExist, validateMongoId } from '@common/utils/validate.util';
 import { passwordHashing } from '@common/utils/password-bcrypt.util';
-import { CommonConstant } from '@common/constants/common-constant';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
-import { async } from 'rxjs';
+import { RoleLevel } from '@common/constants/common-constant';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +21,8 @@ export class UsersService {
     @InjectModel(Role.name)
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
   ) {}
-  async create(createUserDto: CreateUserDto) {
+
+  async createNewUser(createUserDto: CreateUserDto) {
     const duplicatedUsername = await this.userModel.findOne({
       username: createUserDto.username,
     });
@@ -38,7 +32,7 @@ export class UsersService {
           code: BusinessCode.DUPLICATE_USERNAME,
           errors: ResponseMessage[BusinessCode.DUPLICATE_USERNAME],
         },
-        HttpStatusCode.CONFLICT,
+        HttpStatus.CONFLICT,
       );
     }
 
@@ -51,7 +45,7 @@ export class UsersService {
           code: BusinessCode.DUPLICATE_EMAIL,
           errors: ResponseMessage[BusinessCode.DUPLICATE_EMAIL],
         },
-        HttpStatusCode.CONFLICT,
+        HttpStatus.CONFLICT,
       );
     }
 
@@ -63,7 +57,7 @@ export class UsersService {
     };
   }
 
-  async findAll() {
+  async findAllUsersWithPagination() {
     return {
       code: BusinessCode.USER_GET_SUCCESS,
       data: await this.userModel.find(),
@@ -76,7 +70,7 @@ export class UsersService {
         .findOne({ username })
         .populate({
           path: 'role',
-          model: 'Role', // Đảm bảo model name đúng trong schema
+          model: 'Role',
           populate: {
             path: 'permissions',
             model: 'Permission',
@@ -86,7 +80,7 @@ export class UsersService {
         .lean()
         .exec();
 
-      // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
+
       if (!user) {
         return null;
       }
@@ -99,7 +93,7 @@ export class UsersService {
 
       return {
         ...userInfo,
-        password: password, // Cần password hash để so sánh
+        password: password, // Need return password to compare
         role: {
           _id: roleObj?._id,
           name: roleObj?.name,
@@ -107,14 +101,13 @@ export class UsersService {
         permissions: permissions,
       };
     } catch (error) {
-      // Log error system
       console.error('Error in findUserByUsername:', error);
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -127,7 +120,7 @@ export class UsersService {
         })
         .populate({
           path: 'role',
-          model: 'Role', // Đảm bảo model name đúng trong schema
+          model: 'Role',
           populate: {
             path: 'permissions',
             model: 'Permission',
@@ -141,7 +134,7 @@ export class UsersService {
         return null;
       }
 
-      const { password, role, ...userInfo } = user;
+      const { role, ...userInfo } = user; // reject googleId
 
       // Handle safe casting
       const roleObj = role as any;
@@ -149,7 +142,6 @@ export class UsersService {
 
       return {
         ...userInfo,
-        password: password, // Cần password hash để so sánh
         role: {
           _id: roleObj?._id,
           name: roleObj?.name,
@@ -157,18 +149,16 @@ export class UsersService {
         permissions: permissions,
       };
     } catch (error) {
-      // Log error system
-      console.error('Error in findUserByUsername:', error);
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async updateUserById(id: string, updateUserDto: UpdateUserDto) {
     validateMongoId(id);
     const user = await findModuleOrThrow(
       this.userModel,
@@ -176,10 +166,9 @@ export class UsersService {
       id,
       BusinessCode.USER_NOT_FOUND,
       ResponseMessage[BusinessCode.USER_NOT_FOUND],
-      HttpStatusCode.NOT_FOUND,
+      HttpStatus.NOT_FOUND,
     );
     try {
-      // So sánh giá trị mới với cũ
       const isDifferent = Object.keys(updateUserDto).some(
         (key) => user[key] !== updateUserDto[key],
       );
@@ -190,7 +179,7 @@ export class UsersService {
             code: BusinessCode.NO_FIELD_UPDATED,
             errors: ResponseMessage[BusinessCode.NO_FIELD_UPDATED],
           },
-          HttpStatusCode.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -205,7 +194,6 @@ export class UsersService {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        //  Ném lại lỗi nghiệp vụ
         throw error;
       }
       if (error instanceof mongoose.Error.StrictModeError) {
@@ -214,33 +202,31 @@ export class UsersService {
             code: BusinessCode.VALIDATION_FAILED,
             errors: ResponseMessage[BusinessCode.VALIDATION_FAILED],
           },
-          HttpStatusCode.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
-      //  Nếu là lỗi validation khác
       if (error instanceof mongoose.Error.ValidationError) {
         throw new HttpException(
           {
             code: BusinessCode.VALIDATION_FAILED,
             errors: error.message,
           },
-          HttpStatusCode.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
-      // Các lỗi khác → 500
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  remove(id: number) {
+  removeUserById(id: number) {
     return `This action removes a #${id} user`;
   }
 
@@ -260,7 +246,7 @@ export class UsersService {
       }
 
       // Get user's role
-      const userRole = await this.roleModel.findOne({ name: CommonConstant.roleLevel.USER });
+      const userRole = await this.roleModel.findOne({ level: RoleLevel.USER });
 
       if (!userRole) {
         throw new HttpException(
@@ -268,14 +254,13 @@ export class UsersService {
             code: BusinessCode.ROLE_NOT_FOUND,
             errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
           },
-          HttpStatusCode.NOT_FOUND,
+          HttpStatus.NOT_FOUND,
         );
       }
 
       // Hash password
       const passwordHashed = await passwordHashing(password);
 
-      // Tạo mới
       return await this.userModel.create({
         firstName,
         lastName,
@@ -295,10 +280,10 @@ export class UsersService {
       if (error.name === 'ValidationError') {
         throw new HttpException(
           {
-            code: INVALID_INPUT, // Hoặc một mã lỗi validation chung
-            errors: error.message, // Lấy thông báo lỗi trực tiếp từ Mongoose
+            code: INVALID_INPUT,
+            errors: error.message,
           },
-          HttpStatus.BAD_REQUEST, // 400
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -317,7 +302,7 @@ export class UsersService {
       const { firstName, lastName, picture, googleId, emailVerified, email, provider } =
         registerGGAccountDto;
       // Get user's role
-      const userRole = await this.roleModel.findOne({ name: CommonConstant.roleLevel.USER });
+      const userRole = await this.roleModel.findOne({ level: RoleLevel.USER });
 
       return await this.userModel.create({
         firstName,
@@ -354,7 +339,7 @@ export class UsersService {
           code: BusinessCode.USER_NOT_FOUND,
           errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
         },
-        HttpStatusCode.NOT_FOUND,
+        HttpStatus.NOT_FOUND,
       );
     }
     return result;
@@ -376,7 +361,6 @@ export class UsersService {
         .lean()
         .exec();
 
-      // FIX: Không throw Error ở đây. Trả về null để lớp gọi tự xử lý.
       if (!user) {
         return null;
       }
@@ -397,14 +381,12 @@ export class UsersService {
         permissions: permissions,
       };
     } catch (error) {
-      // Log error system
-      console.error('Error in findUserByRefreshToken:', error);
       throw new HttpException(
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -415,7 +397,7 @@ export class UsersService {
         .findOne({ _id: id })
         .populate({
           path: 'role',
-          model: 'Role', // Đảm bảo model name đúng trong schema
+          model: 'Role',
           populate: {
             path: 'permissions',
             model: 'Permission',
@@ -432,7 +414,7 @@ export class UsersService {
             code: BusinessCode.USER_NOT_FOUND,
             errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
           },
-          HttpStatusCode.UNAUTHORIZED, // Nên trả về 401 để FE tự logout
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -460,34 +442,6 @@ export class UsersService {
         {
           code: BusinessCode.INTERNAL_SERVER_ERROR,
           errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async findUserRoleId(roleName: string) {
-    try {
-      const userRole = await this.roleModel.findOne({ name: roleName });
-
-      if (!userRole) {
-        throw new HttpException(
-          {
-            code: BusinessCode.ROLE_NOT_FOUND,
-            message: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
-          },
-          HttpStatusCode.NOT_FOUND,
-        );
-      }
-      return userRole._id;
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        {
-          code: BusinessCode.INTERNAL_SERVER_ERROR,
-          message: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

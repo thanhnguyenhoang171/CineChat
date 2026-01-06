@@ -103,7 +103,7 @@ export const handleProjections = (
     }
   }
 
-  // ✅ Luôn exclude mặc định các trường nhạy cảm
+  // Luôn exclude mặc định các trường nhạy cảm
   for (const excludeField of defaultExcludes) {
     projection[excludeField] = 0;
   }

@@ -1,18 +1,5 @@
 import * as Joi from 'joi';
 
-// export default () => ({
-//   host: process.env.HOST || '0.0.0.0',
-//   port: parseInt(process.env.PORT || '3000', 10),
-//
-//   mongodbUri: process.env.MONGODB_URI,
-//
-//   jwt: {
-//     publicKey: process.env.JWT_PUBLIC_KEY,
-//     privateKey: process.env.JWT_PRIVATE_KEY,
-//     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-//     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-//   },
-// });
 export interface JwtConfig {
   publicKey: string;
   privateKey: string;
@@ -32,6 +19,7 @@ export interface ConfigEnv {
   mongodbUri: string;
   jwt: JwtConfig;
   ggAuth: AuthGGConfig;
+  clientUri: string;
 }
 
 export default (): ConfigEnv => ({
@@ -49,6 +37,7 @@ export default (): ConfigEnv => ({
     googleSecret: process.env.GOOGLE_SECRET as string,
     googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL as string,
   },
+  clientUri: process.env.FRONTEND_URL as string,
 });
 
 // Schema validation để kiểm tra biến môi trường khi khởi động
@@ -73,6 +62,9 @@ export const envValidationSchema = Joi.object({
     'any.required': 'GOOGLE_SECRET is required',
   }),
   GOOGLE_CALLBACK_URL: Joi.string().required().messages({
+    'any.required': 'GOOGLE_CALLBACK_URL is required',
+  }),
+  FRONTEND_URL: Joi.string().required().messages({
     'any.required': 'GOOGLE_CALLBACK_URL is required',
   }),
 });

@@ -1,7 +1,6 @@
 import { BusinessCode } from '@common/constants/business-code';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export function validateUpdateFields(dto: any, schema: any) {
   //Check empty DTO
@@ -11,7 +10,7 @@ export function validateUpdateFields(dto: any, schema: any) {
         code: BusinessCode.EMPTY_UPDATE_DTO,
         errors: ResponseMessage[BusinessCode.EMPTY_UPDATE_DTO],
       },
-      HttpStatusCode.BAD_REQUEST,
+      HttpStatus.BAD_REQUEST,
     );
   }
 

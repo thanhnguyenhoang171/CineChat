@@ -1,5 +1,6 @@
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ActiveStatus } from '@common/constants/common-constant';
 
 @Schema({ timestamps: true })
 export class Permission {
@@ -14,6 +15,13 @@ export class Permission {
 
   @Prop()
   module: string;
+
+  @Prop({
+    type: Number,
+    enum: ActiveStatus,
+    default: ActiveStatus.ACTIVE,
+  })
+  isActive: ActiveStatus;
 
   @Prop({ type: Object })
   createdBy: {

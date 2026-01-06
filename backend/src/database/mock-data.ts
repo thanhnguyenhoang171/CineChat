@@ -1,3 +1,4 @@
+import { ActiveStatus, LoginProvider, RoleLevel } from '@common/constants/common-constant';
 
 export const PERMISSIONS_DATA = [
   // --- User Module ---
@@ -24,20 +25,17 @@ export const PERMISSIONS_DATA = [
 
 export const ROLES_DATA = [
   {
-    name: 'ADMIN',
+    level: RoleLevel.ADMIN,
     description: 'Quản trị viên hệ thống, full quyền',
-    isActive: true,
   },
   {
-    name: 'MANAGER',
+    level: RoleLevel.MANAGER,
     description: 'Quản lý hệ thống',
-    isActive: true,
   },
   {
-    name: 'USER',
+    level: RoleLevel.USER,
     description: 'Người dùng cơ bản',
-    isActive: true,
-  }
+  },
 ];
 
 export const USERS_DATA = [
@@ -48,6 +46,7 @@ export const USERS_DATA = [
     password: '@Thanh171', // Sẽ được hash trong script
     email: 'admin@cinechat.com',
     picture: '',
+    provider: LoginProvider.USERNAME,
     // role sẽ được gán động trong script
   },
   {
@@ -57,6 +56,7 @@ export const USERS_DATA = [
     password: '@Thanh171',
     email: 'thanh171@gmail.com',
     picture: 'https://i.pravatar.cc/300',
+    provider: LoginProvider.USERNAME,
   },
   {
     firstName: 'John',
@@ -65,6 +65,7 @@ export const USERS_DATA = [
     password: '@Thanh171',
     email: 'john@example.com',
     picture: 'https://i.pravatar.cc/300',
+    provider: LoginProvider.USERNAME,
   },
   {
     firstName: 'Manager',
@@ -72,5 +73,6 @@ export const USERS_DATA = [
     username: 'managercinechat',
     password: '@Thanh171',
     picture: 'https://i.pravatar.cc/300',
-  }
+    provider: LoginProvider.USERNAME,
+  },
 ];

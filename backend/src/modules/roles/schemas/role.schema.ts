@@ -1,18 +1,23 @@
 import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Permission } from '@modules/permissions/schemas/permission.schema';
+import { ActiveStatus } from '@common/constants/common-constant';
 export type RoleDocument = HydratedDocument<Role>;
 
 @Schema({ timestamps: true })
 export class Role {
   @Prop()
-  name: string;
+  level: number;
 
   @Prop()
   description: string;
 
-  @Prop({ default: true })
-  isActive: boolean;
+  @Prop({
+    type: Number,
+    enum: ActiveStatus,
+    default: ActiveStatus.ACTIVE,
+  })
+  isActive: ActiveStatus;
 
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: Permission.name })
   permissions: Permission[];

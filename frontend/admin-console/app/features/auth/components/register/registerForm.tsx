@@ -101,7 +101,7 @@ export function RegisterForm() {
                     <FormLabel>Tên đăng nhập</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='newmember@cinechat.com'
+                        placeholder='newmemberusername'
                         {...field}
                         disabled={isPending} // Disable when calling API
                       />
@@ -170,7 +170,7 @@ export function RegisterForm() {
                 <a
                   href='/login'
                   className='text-primary font-medium hover:underline hover:text-muted-foreground transition-colors'>
-                  Đăng ký
+                  Đăng nhập
                 </a>
               </div>
             </form>

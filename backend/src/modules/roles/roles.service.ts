@@ -13,13 +13,11 @@ import {
 } from '@common/utils/validate.util';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
 import { PaginationService } from '@common/services/pagination.service';
 import { validateUpdateFields } from '@common/utils/update-field-validator.util';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
-import { async } from 'rxjs';
 
 @Injectable()
 class RolesService {
@@ -33,7 +31,7 @@ class RolesService {
 
   async createRole(createRoleDto: CreateRoleDto, user: IUser) {
     // Check existed role by name
-    const isExistedRole = await isModuleExist(this.roleModel, 'name', createRoleDto.name);
+    const isExistedRole = await this.roleModel.findOne({level: createRoleDto.level});
     if (isExistedRole) {
       throw new HttpException(
         {
@@ -53,7 +51,7 @@ class RolesService {
       this.permissionModel,
       createRoleDto.permissions,
       BusinessCode.PERMISSION_NOT_FOUND,
-      HttpStatusCode.NOT_FOUND,
+      HttpStatus.NOT_FOUND,
     );
 
     const createdRole = await this.roleModel.create({
@@ -74,111 +72,6 @@ class RolesService {
     };
   }
 
-  // async findAllRoleWithPagination(getRoleDto: GetRoleDto) {
-  //   const { page, limit, search, filters, sort, projections, populate } = getRoleDto;
-  //
-  //   let query: any = {};
-  //   let options: any = {
-  //     skip: (page - 1) * limit,
-  //     limit: limit,
-  //   };
-  //
-  //   const aqp = (await import('api-query-params')).default;
-  //
-  //   if (filters) {
-  //     const parsedFilters = aqp(filters, {
-  //       skipKey: 'skip',
-  //       limitKey: 'limit',
-  //       projectionKey: 'projection',
-  //       sortKey: 'sort',
-  //     });
-  //     query = { ...query, ...parsedFilters.filter };
-  //     if (parsedFilters.sort) {
-  //       options.sort = parsedFilters.sort;
-  //     }
-  //
-  //     if (parsedFilters.projection) {
-  //       options.projection = parsedFilters.projection;
-  //     }
-  //   }
-  //
-  //   if (search) {
-  //     query.$or = [
-  //       { name: { $regex: search, $options: 'i' } },
-  //       { description: { $regex: search, $options: 'i' } },
-  //     ];
-  //   }
-  //
-  //   if (projections) {
-  //     const fields = projections.split(',').map((field) => field.trim());
-  //     options.projection = fields.reduce((acc, field) => {
-  //       acc[field] = 1;
-  //       return acc;
-  //     }, {});
-  //   }
-  //
-  //   if (!options.sort) {
-  //     options.sort = sort ? parseSort(sort) : { createdAt: -1 };
-  //   }
-  //
-  //   if (populate) {
-  //     // Tách chuỗi populate thành mảng, ví dụ: "permissions,user" -> ["permissions", "user"]
-  //     const fieldsToPopulate = populate.split(',').map((field) => field.trim());
-  //
-  //     const populateOptions: any[] = [];
-  //
-  //     fieldsToPopulate.forEach((field) => {
-  //       if (field === 'permissions') {
-  //         // Nếu là 'permissions', dùng rule select cụ thể
-  //         populateOptions.push({
-  //           path: 'permissions',
-  //           select: 'name method apiPath module description',
-  //         });
-  //       } else {
-  //         // Với các trường khác, populate bình thường
-  //         populateOptions.push({ path: field });
-  //         // Hoặc đơn giản là: populateOptions.push(field);
-  //       }
-  //     });
-  //
-  //     options.populate = populateOptions;
-  //   }
-  //
-  //   console.log('--- Final Role Mongoose Query ---');
-  //   console.log('Query:', JSON.stringify(query, null, 2));
-  //   console.log('Options:', JSON.stringify(options, null, 2));
-  //
-  //   try {
-  //     const total = await this.roleModel.countDocuments(query);
-  //     const data = await this.roleModel
-  //       .find(query, options.projection || {})
-  //       .sort(options.sort)
-  //       .skip(options.skip)
-  //       .limit(options.limit)
-  //       .populate(options.populate || [])
-  //       .lean();
-  //
-  //     return {
-  //       code: BusinessCode.ROLE_GET_SUCCESS,
-  //       message: ResponseMessage[BusinessCode.ROLE_GET_SUCCESS],
-  //       data,
-  //       meta: {
-  //         total,
-  //         page,
-  //         limit,
-  //         totalPages: Math.ceil(total / limit),
-  //       },
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
-  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
-  //       },
-  //       HttpStatusCode.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
 
   async findAllRolesWithPagination(getRoleDto: GetRoleDto) {
     const { populate } = getRoleDto;
@@ -238,10 +131,9 @@ class RolesService {
           code: BusinessCode.ROLE_NOT_FOUND,
           errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
         },
-        HttpStatusCode.NOT_FOUND,
+        HttpStatus.NOT_FOUND,
       );
     }
-    console.log('Check role: ', role);
     return {
       code: BusinessCode.ROLE_ALREADY_EXISTS,
       data: role,
@@ -259,16 +151,16 @@ class RolesService {
       id,
       BusinessCode.ROLE_NOT_FOUND,
       ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
-      HttpStatusCode.NOT_FOUND,
+      HttpStatus.NOT_FOUND,
     );
 
     // Check has new values updated?
     validateUpdateFields(updateRoleDto, role);
 
-    // Check is duplicated role's name
-    if (updateRoleDto.name) {
+    // Check is duplicated role's level
+    if (updateRoleDto.level) {
       const duplicatedRole = await this.roleModel.findOne({
-        name: updateRoleDto.name || role.name,
+        level: updateRoleDto.level || role?.level,
         _id: { $ne: id },
       });
       if (duplicatedRole) {
@@ -283,13 +175,11 @@ class RolesService {
     }
 
     try {
-      // Dùng $set để update có chủ đích hơn
       const updatedRole = await this.roleModel
         .findByIdAndUpdate(
-          id, // findByIdAndUpdate chỉ cần id là đủ
+          id,
           {
             $set: {
-              // Dùng $set
               ...updateRoleDto,
               updatedBy: {
                 _id: user._id,
@@ -303,7 +193,7 @@ class RolesService {
             runValidators: true,
           },
         )
-        .lean(); // Thêm .lean() nếu bạn không cần Mongoose document
+        .lean();
 
       // Check after updating role
       if (!updatedRole) {
@@ -333,10 +223,10 @@ class RolesService {
       if (error.name === 'ValidationError') {
         throw new HttpException(
           {
-            code: INVALID_INPUT, // Hoặc một mã lỗi validation chung
-            errors: error.message, // Lấy thông báo lỗi trực tiếp từ Mongoose
+            code: INVALID_INPUT,
+            errors: error.message,
           },
-          HttpStatus.BAD_REQUEST, // 400
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -363,7 +253,7 @@ class RolesService {
           code: BusinessCode.ROLE_NOT_FOUND,
           errors: ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
         },
-        HttpStatusCode.NOT_FOUND,
+        HttpStatus.NOT_FOUND,
       );
     }
     await this.roleModel.findByIdAndUpdate(

@@ -1,5 +1,4 @@
 import { BusinessCode } from '@common/constants/business-code';
-import { HttpStatusCode } from '@common/constants/http-status-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { RESPONSE_STATUS } from '@common/decorators/response_message.decorator';
 import {
@@ -7,11 +6,11 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Logger,
+  Logger, HttpStatus,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export interface ApiResponse<T> {
   status: number;
@@ -29,8 +28,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const httpCode =
-      this.reflector.get<HttpStatusCode>(RESPONSE_STATUS, context.getHandler()) ||
-      HttpStatusCode.OK;
+      this.reflector.get<HttpStatus>(RESPONSE_STATUS, context.getHandler()) || HttpStatus.OK;
 
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();

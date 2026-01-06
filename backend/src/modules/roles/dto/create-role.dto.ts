@@ -3,9 +3,9 @@ import { IsArray, IsBoolean, IsNotEmpty } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateRoleDto {
-  @ApiProperty({ description: 'Tên vai trò', default: 'user' })
-  @IsNotEmpty({ message: 'Tên vai trò không được để trống' })
-  name: string;
+  @ApiProperty({ description: 'Cấp vai trò', default: 3 })
+  @IsNotEmpty({ message: 'Cấp vai trò không được để trống' })
+  level: number;
 
   @ApiProperty({ description: 'Mô tả vai trò', default: 'Vai trò người dùng' })
   @IsNotEmpty({ message: 'Mô tả vai trò không được để trống' })
