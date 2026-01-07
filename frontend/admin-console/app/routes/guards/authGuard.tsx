@@ -4,6 +4,8 @@ import { useBoundStore } from '~/store';
 import { Spinner } from '~/components/ui/spinner';
 import { silentRefreshToken } from '~/helpers/silent-refresh-token';
 import type { Route } from './+types/authGuard';
+import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
+import { AppSidebar } from '~/components/layout/appSideBar';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   let token = useBoundStore.getState().accessToken;
@@ -83,8 +85,11 @@ export default function AuthGuard() {
         </div>
       )}
 
-      {/* Chỉ khi có User mới render cái này 👇 */}
-      <Outlet />
+      <SidebarProvider>
+        <AppSidebar/>
+        <SidebarTrigger />
+        <Outlet />
+      </SidebarProvider>
     </>
   );
 }

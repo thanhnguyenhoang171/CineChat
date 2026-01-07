@@ -32,6 +32,12 @@ export enum BusinessCode {
   INTERNAL_SERVER_ERROR = 'SYS_500',
 
   // =========================================================
+  // === FILE UPLOAD ====================================
+  // =========================================================
+
+  INVALID_FILE_TYPE = 'FIL_400',
+
+  // =========================================================
   // === USR: USER MODULE ====================================
   // =========================================================
 
@@ -73,6 +79,6 @@ export enum BusinessCode {
   ROLE_RESTORED_SUCCESS = 'ROL_004',
 
   // --- 1xx: Client Errors ---
-  ROLE_ALREADY_EXISTS = 'ROL_100', // Trùng lặp 
+  ROLE_ALREADY_EXISTS = 'ROL_100', // Trùng lặp
   ROLE_NOT_FOUND = 'ROL_101',
 }

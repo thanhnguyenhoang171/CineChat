@@ -23,6 +23,12 @@ export const ResponseMessage: Record<BusinessCode, string> = {
     'Xác thực Google thất bại. Thông tin người dùng bị thiếu hoặc không hợp lệ.',
   [BusinessCode.EMAIL_NOT_VERIFIED]:
     'Vui lòng xác nhận địa chỉ email Google của bạn trước khi đăng nhập.',
+
+  // =========================================================
+  // === FILE UPLOAD===========================
+  // =========================================================
+  [BusinessCode.INVALID_FILE_TYPE]: 'Loại tệp không hợp lệ. Vui lòng tải lên tệp hình ảnh.',
+
   // =========================================================
   // === USR: USER MODULE MESSAGES ===========================
   // =========================================================
