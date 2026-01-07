@@ -9,13 +9,17 @@ import {
   HttpException,
   HttpStatus,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { JwtPublic } from '@common/decorators/auth.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileValidationPipe } from '@common/pipes/file-validation.pipe';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -53,5 +57,18 @@ export class UsersController {
   @ResponseStatus(HttpStatus.OK)
   remove(@Param('id') id: string) {
     return this.usersService.removeUserById(+id);
+  }
+
+  @Post('upload-avatar/:id')
+  @JwtPublic()
+  @ResponseStatus(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload User Avatar' })
+  uploadUserAvatar(
+    @UploadedFile(new FileValidationPipe()) file: Express.Multer.File,
+    @Param('id') id: string,
+  ) {
+    // return this.usersService.uploadUserAvatarById(id, file);
+    return null;
   }
 }

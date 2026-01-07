@@ -12,7 +12,7 @@ export class User {
   lastName?: string;
 
   @Prop()
-  picture: string; // TODO: Handle Update picture to Cloundinary
+  picture: string;
 
   @Prop()
   username: string;

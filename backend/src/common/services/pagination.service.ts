@@ -12,7 +12,6 @@ import {
   handleSearch,
   handleSort,
   logQuery,
-  parseSort,
 } from '@common/utils/pagination-query-handle.util';
 
 @Injectable()

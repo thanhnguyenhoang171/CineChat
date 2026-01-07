@@ -1,4 +1,5 @@
 import * as Joi from 'joi';
+import { string } from 'joi';
 
 export interface JwtConfig {
   publicKey: string;
@@ -13,6 +14,12 @@ export interface AuthGGConfig {
   googleCallbackUrl: string;
 }
 
+export interface CloudinaryConfig {
+  cloudinaryName: string;
+  cloudinaryApiKey: string;
+  cloudinaryApiSecret: string;
+}
+
 export interface ConfigEnv {
   host: string;
   port: number;
@@ -20,6 +27,7 @@ export interface ConfigEnv {
   jwt: JwtConfig;
   ggAuth: AuthGGConfig;
   clientUri: string;
+  cloudinary: CloudinaryConfig;
 }
 
 export default (): ConfigEnv => ({
@@ -38,6 +46,11 @@ export default (): ConfigEnv => ({
     googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL as string,
   },
   clientUri: process.env.FRONTEND_URL as string,
+  cloudinary: {
+    cloudinaryName: process.env.CLOUDINARY_NAME as string,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY as string,
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET as string,
+  },
 });
 
 // Schema validation để kiểm tra biến môi trường khi khởi động
@@ -66,5 +79,14 @@ export const envValidationSchema = Joi.object({
   }),
   FRONTEND_URL: Joi.string().required().messages({
     'any.required': 'GOOGLE_CALLBACK_URL is required',
+  }),
+  CLOUDINARY_NAME: Joi.string().required().messages({
+    'any.required': 'CLOUDINARY_NAME is required',
+  }),
+  CLOUDINARY_API_KEY: Joi.string().required().messages({
+    'any.required': 'CLOUDINARY_API_KEY is required',
+  }),
+  CLOUDINARY_API_SECRET: Joi.string().required().messages({
+    'any.required': 'CLOUDINARY_API_SECRET is required',
   }),
 });
