@@ -5,5 +5,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 export class FileValidationPipe implements PipeTransform {
   transform(value: Express.Multer.File, metadata: ArgumentMetadata) {
     console.log('FileValidationPipe - value:', value);
+
+    return value;
   }
 }

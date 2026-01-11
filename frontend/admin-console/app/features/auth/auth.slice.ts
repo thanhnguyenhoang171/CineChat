@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import type { User } from '~/types/user';
+import type { User } from '~/types/module-types/user';
 import { authService } from '~/services/auth.service';
 
 // 1. Định nghĩa State
@@ -58,7 +58,7 @@ export const createAuthSlice: StateCreator<
       state.accessToken = token;
       state.isAuthenticated = true;
     });
-    await get().fetchAccount(); // auto call api to get user info immediately
+    // await get().fetchAccount(); // auto call api to get user info immediately
   },
 
   logout: () => {

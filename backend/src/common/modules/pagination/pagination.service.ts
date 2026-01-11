@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '@common/modules/pagination/dto/pagination-query.dto';
 import { PaginatedResponse } from '@interfaces/pagination.interface';
 
 import {

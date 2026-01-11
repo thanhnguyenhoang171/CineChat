@@ -17,9 +17,11 @@ export default [
   ]),
 
   layout('routes/guards/authGuard.tsx', [
-    route('dashboard', 'layouts/adminLayout.tsx', [
-      index('routes/dashboard/overview.tsx'),
-      route('users', 'routes/dashboard/users/userList.tsx'),
+    layout('layouts/adminLayout.tsx', [
+      route('dashboard', 'routes/dashboard/overview.tsx'),
+      route('users', 'routes/dashboard/users/userPage.tsx'),
+      route('roles', 'routes/dashboard/roles/rolePage.tsx'),
+      route('permissions', 'routes/dashboard/permissions/permissionPage.tsx'),
       route('movies', 'routes/dashboard/movies/movieList.tsx'),
     ]),
   ]),

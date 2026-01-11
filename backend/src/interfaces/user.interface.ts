@@ -9,7 +9,7 @@ export interface IUser {
   email?: string;
   role: {
     _id: string;
-    name: string;
+    level: string;
   };
   permissions?: {
     _id: string;

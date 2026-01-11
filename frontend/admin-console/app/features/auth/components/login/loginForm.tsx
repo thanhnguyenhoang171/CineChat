@@ -23,7 +23,7 @@ import { useLogin } from '~/hooks/useLogin';
 import { useState } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from '~/components/ui/label';
-import { SeparatorWithText } from '~/components/ui/separatorWithText';
+import { SeparatorWithText } from '~/components/shared/separatorWithText';
 import AuthLogo from '../authLogo';
 import ForgetPasswordText from '../forgetPasswordText';
 import GoogleLoginButton from '../googleLoginButton';

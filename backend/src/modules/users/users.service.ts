@@ -12,7 +12,7 @@ import { passwordHashing } from '@common/utils/password-bcrypt.util';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 import { RoleLevel } from '@common/constants/common-constant';
-import { CloudinaryService } from '@common/services/cloudinary.service';
+import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
@@ -97,7 +97,7 @@ export class UsersService {
         password: password, // Need return password to compare
         role: {
           _id: roleObj?._id,
-          name: roleObj?.name,
+          level: roleObj?.level,
         },
         permissions: permissions,
       };
@@ -145,7 +145,7 @@ export class UsersService {
         ...userInfo,
         role: {
           _id: roleObj?._id,
-          name: roleObj?.name,
+          level: roleObj?.level,
         },
         permissions: permissions,
       };
@@ -377,7 +377,7 @@ export class UsersService {
 
         role: {
           _id: roleObj?._id,
-          name: roleObj?.name,
+          level: roleObj?.level,
         },
         permissions: permissions,
       };
@@ -429,7 +429,7 @@ export class UsersService {
         ...userInfo,
         role: {
           _id: roleObj?._id,
-          name: roleObj?.name,
+          level: roleObj?.level,
         },
         permissions: permissions,
       };
@@ -449,37 +449,37 @@ export class UsersService {
     }
   }
 
-  async uploadUserAvatarById(id: string, file: Express.Multer.File) {
-    validateMongoId(id);
-    const user = await findModuleOrThrow(
-      this.userModel,
-      '_id',
-      id,
-      BusinessCode.USER_NOT_FOUND,
-      ResponseMessage[BusinessCode.USER_NOT_FOUND],
-      HttpStatus.NOT_FOUND,
-    );
-    try {
-      // Upload file to Cloudinary
-      await this.cloudinaryService.uploadSingleFile(file, 'user-avatars').then((result) => {
-        // Update user's avatar URL
-        this.userModel.updateOne({ _id: id }, { picture: result?.secure_url }).exec();
-      });
-      return {
-        code: BusinessCode.USER_UPDATED_SUCCESS,
-        data: {
-          _id: user._id,
-          picture: user.picture,
-        },
-      };
-    } catch (error) {
-      throw new HttpException(
-        {
-          code: BusinessCode.INTERNAL_SERVER_ERROR,
-          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+  // async uploadUserAvatarById(id: string, file: Express.Multer.File) {
+  //   validateMongoId(id);
+  //   const user = await findModuleOrThrow(
+  //     this.userModel,
+  //     '_id',
+  //     id,
+  //     BusinessCode.USER_NOT_FOUND,
+  //     ResponseMessage[BusinessCode.USER_NOT_FOUND],
+  //     HttpStatus.NOT_FOUND,
+  //   );
+  //   try {
+  //     // Upload file to Cloudinary
+  //     await this.cloudinaryService.uploadSingleFile(file, 'user-avatars').then((result) => {
+  //       // Update user's avatar URL
+  //       this.userModel.updateOne({ _id: id }, { picture: result?.secure_url }).exec();
+  //     });
+  //     return {
+  //       code: BusinessCode.USER_UPDATED_SUCCESS,
+  //       data: {
+  //         _id: user._id,
+  //         picture: user.picture,
+  //       },
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
+  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+  //       },
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 }

@@ -1,6 +1,5 @@
 import { axiosClient } from '~/lib/axios-client';
-import type { ApiResponse, User } from '~/types/user';
-
+import type { ApiResponse, User } from '~/types/module-types/user';
 
 export const userService = {
   getAll: async () => {
@@ -9,5 +8,4 @@ export const userService = {
 
     return response.data;
   },
-
 };

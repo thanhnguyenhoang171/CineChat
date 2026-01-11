@@ -4,6 +4,7 @@ import { CheckCircle, AlertTriangle, Info, XCircle } from 'lucide-react';
 export function SonnerToasterComponent() {
   return (
     <SonnerToaster
+      visibleToasts={1}
       position='top-center'
       expand={true}
       richColors

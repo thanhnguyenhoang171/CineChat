@@ -5,8 +5,8 @@ import type {
   LoginResponse,
   RegisterAccountResponse,
   RegisterRequest,
-} from '~/types/auth';
-import type { ApiResponse, User } from '~/types/user';
+} from '~/types/module-types/auth';
+import type { ApiResponse, User } from '~/types/module-types/user';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 

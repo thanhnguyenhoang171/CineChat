@@ -19,7 +19,7 @@ export interface User {
   email?: string;
   role: {
     _id: string;
-    name: string;
+    level: number;
   };
   permissions?: {
     _id: string;

@@ -1,7 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { userService } from '~/services/user.service';
 
-
 export const userKeys = {
   // Root key (Scope: All)
   all: ['users'] as const,
