@@ -10,7 +10,7 @@ import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { AppLoggerMiddleware } from '@middlewares/app-logger.middleware';
 import envConfig, { envValidationSchema } from '@config/env.config';
 import { DatabaseModule } from '@database/mongoose.module';
-import { PaginationService } from '@common/services/pagination.service';
+import { PaginationService } from '@common/modules/pagination/pagination.service';
 import { CommonModule } from '@common/common.module';
 import { RedisModule } from './redis/redis.module';
 import { HealthModule } from '@modules/health/health.module';

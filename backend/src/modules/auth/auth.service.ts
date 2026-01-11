@@ -89,6 +89,7 @@ export class AuthService {
       code: BusinessCode.LOGIN,
       data: {
         access_token: this.jwtService.sign(payload),
+        level: role?.level,
       },
     };
   }
@@ -108,7 +109,12 @@ export class AuthService {
     await this.userService.updateUserRefreshTokenById(null, user._id);
 
     // Clear cookie in Client
-    response.clearCookie('refresh_token');
+    response.clearCookie('refresh_token', {
+      httpOnly: true,
+      maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
+      secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
+      sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
+    });
 
     return {
       code: BusinessCode.LOGOUT_SUCCESS,
@@ -186,7 +192,7 @@ export class AuthService {
       response.clearCookie('refresh_token', {
         httpOnly: true,
         secure: true,
-        sameSite: 'none'
+        sameSite: 'none',
       });
 
       throw new UnauthorizedException({
@@ -197,10 +203,6 @@ export class AuthService {
   }
 
   async googleLogin(user: IGGUser, response: Response) {
-    const refreshExpiresIn = this.configService.get<string>('jwt.refreshExpiresIn', {
-      infer: true,
-    });
-
     try {
       if (!user.emailVerified) {
         throw new HttpException(
@@ -252,16 +254,18 @@ export class AuthService {
       // token in cookie
       response.cookie('refresh_token', refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        maxAge: +ms(refreshExpiresIn as any),
+        maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
+        secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
+        sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
       });
 
       const feUri = this.configService.get<string>('clientUri', {
         infer: true,
       });
       const accessToken = this.jwtService.sign(payload);
-      response.redirect(`${feUri}/auth/google-success?act=${accessToken}`);
+      response.redirect(
+        `${feUri}/auth/google-success?act=${accessToken}&lv=${currentUser?.role?.level}`,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -11,7 +11,7 @@ import { GetPermissionDto } from './dto/get-permission.dto';
 import { validateMongoId } from '@common/utils/validate.util';
 import { ensurePermissionExists } from './utils/permission-validator';
 import { validateUpdateFields } from '@common/utils/update-field-validator.util';
-import { PaginationService } from '@common/services/pagination.service';
+import { PaginationService } from '@common/modules/pagination/pagination.service';
 import mongoose from 'mongoose';
 
 @Injectable()

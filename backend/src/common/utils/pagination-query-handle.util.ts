@@ -1,4 +1,4 @@
-import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '@common/modules/pagination/dto/pagination-query.dto';
 import aqp from 'api-query-params';
 import { Logger } from '@nestjs/common';
 import { PaginatedMeta, PaginatedResponse } from '@interfaces/pagination.interface';
@@ -83,16 +83,12 @@ export const handleProjections = (
     }
 
     if (includes.length > 0 && excludes.length > 0) {
-      logger.warn(
-        'Mixing include/exclude fields in projections — defaulting to exclude mode',
-      );
+      logger.warn('Mixing include/exclude fields in projections — defaulting to exclude mode');
     }
 
     const useExclude = excludes.length > 0;
     const rawFields = useExclude ? excludes : includes;
-    const validFields = schemaPaths
-      ? rawFields.filter((f) => schemaPaths[f])
-      : rawFields;
+    const validFields = schemaPaths ? rawFields.filter((f) => schemaPaths[f]) : rawFields;
 
     if (validFields.length === 0) {
       logger.warn('No valid projection fields found, skipping projection.');
@@ -251,5 +247,3 @@ export const buildQueryOptions = (
 
   return options;
 };
-
-

@@ -49,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
-          <SonnerToasterComponent />
+          <SonnerToasterComponent  />
           <ScrollRestoration />
           <Scripts />
         </QueryClientProvider>

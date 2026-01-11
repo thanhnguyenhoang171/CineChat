@@ -1,0 +1,18 @@
+import { Search } from 'lucide-react';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '../ui/input-group';
+
+export function AppSearchBar() {
+  return (
+    <InputGroup>
+      <InputGroupInput placeholder='Search...' />
+      <InputGroupAddon>
+        <Search />
+      </InputGroupAddon>
+      <InputGroupAddon align='inline-end'>12 results</InputGroupAddon>
+    </InputGroup>
+  );
+}

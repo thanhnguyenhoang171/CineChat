@@ -19,7 +19,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
-import { SeparatorWithText } from '~/components/ui/separatorWithText';
+import { SeparatorWithText } from '~/components/shared/separatorWithText';
 import AuthLogo from '../authLogo';
 import { registerSchema, type RegisterFormValues } from './shemas';
 import { motion } from 'framer-motion';

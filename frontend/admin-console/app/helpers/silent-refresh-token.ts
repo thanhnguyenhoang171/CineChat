@@ -9,7 +9,11 @@ export const silentRefreshToken = async (): Promise<boolean> => {
     useBoundStore.getState().setAccessToken(newAccessToken);
 
     return true;
-  } catch (error) {
+  } catch (error: any) {
+    // Nếu refresh token hết hạn, logout
+    if (error.response?.status === 401) {
+      useBoundStore.getState().logout();
+    }
     return false;
   }
 };

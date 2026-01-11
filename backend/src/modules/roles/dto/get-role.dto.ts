@@ -1,4 +1,4 @@
-import { PaginationQueryDto } from '@common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '@common/modules/pagination/dto/pagination-query.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
@@ -10,5 +10,4 @@ export class GetRoleDto extends PaginationQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
-
 }

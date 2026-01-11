@@ -4,38 +4,71 @@ import { useBoundStore } from '~/store';
 import { Spinner } from '~/components/ui/spinner';
 import { silentRefreshToken } from '~/helpers/silent-refresh-token';
 import type { Route } from './+types/authGuard';
-import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
+import { SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/layout/appSideBar';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { authService } from '~/services/auth.service';
+import { toast } from 'sonner';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   let token = useBoundStore.getState().accessToken;
+  const store = useBoundStore.getState();
 
   // case 1: lose token in RAM but have cookie (httpOnly refresh token)
   if (!token) {
     const success = await silentRefreshToken();
-    if (success) {
-      token = useBoundStore.getState().accessToken;
-    } else {
+    if (!success) {
+      toast.error('Vui lòng đăng nhập để tiếp tục.');
       return redirect('/login');
     }
+    token = useBoundStore.getState().accessToken;
   }
 
-  //case 2: have token in RAM but haven't user info yet -> fetch user info
-  if (token && !useBoundStore.getState().user) {
+  // Kiểm tra nếu đã có user
+  if (store.user) {
+    if (store.user.role?.level !== 0) {
+      await authService.logout(); // call api to clear refresh token cookie
+      store.logout(); // clear all state
+      toast.error(
+        'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
+        { id: 'login-role-error' },
+      );
+      return redirect('/login');
+    }
+    return null;
+  }
+
+  // case 2: fetch user info
+  if (token && !store.user) {
     try {
-      await useBoundStore.getState().fetchAccount();
+      await store.fetchAccount();
+      const currentUser = useBoundStore.getState().user;
 
-      // After fetching user info, double check if user is valid
-      if (!useBoundStore.getState().user) {
-        throw new Error('No user info after fetching account');
+      if (currentUser?.role?.level !== 0) {
+        await authService.logout(); // call api to clear refresh token cookie
+        store.logout(); // clear all state
+
+        toast.error(
+          'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
+          { id: 'login-role-error' },
+        );
+        return redirect('/login');
       }
+
+      return null;
     } catch (error) {
-      // Token invalid or user is blocked/deleted
-      useBoundStore.getState().logout();
+      await authService.logout(); // call api to clear refresh token cookie
+      store.logout(); // clear all state
+
+      toast.error(
+        'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
+        { id: 'login-role-error' },
+      );
       return redirect('/login');
     }
-    return null; //case 3: have token and have user info --> allow access
   }
+
+  return null;
 }
 
 export function HydrateFallback() {
@@ -56,12 +89,12 @@ export default function AuthGuard() {
   const user = useBoundStore((state) => state.user);
   const isRefreshing = useBoundStore((state) => state.isRefreshToken);
   const isLoadingUser = useBoundStore((state) => state.isLoadingUser);
+  const { isMobile } = useBreakpoint();
 
   // Logic: Chỉ hiện Overlay nếu đang Refresh Token MÀ KHÔNG PHẢI đang tải user lần đầu (F5)
   // Vì nếu đang tải user lần đầu thì HydrateFallback đã hiện rồi.
   const showOverlay = isRefreshing && !isLoadingUser;
 
-  // 👇 THÊM LOGIC MỚI: CHẶN CỬA
   // Nếu chưa có User (do đang F5 load lại) -> Hiện Spinner xoay xoay
   // KHÔNG render <Outlet /> để tránh các component con chạy useQuery lung tung
   if (!user) {
@@ -72,6 +105,13 @@ export default function AuthGuard() {
     );
   }
 
+  if (user.role?.level !== 0) {
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        <h1>403 - Forbidden: Bạn không có quyền truy cập Dashboard</h1>
+      </div>
+    );
+  }
   return (
     <>
       {showOverlay && (
@@ -86,8 +126,7 @@ export default function AuthGuard() {
       )}
 
       <SidebarProvider>
-        <AppSidebar/>
-        <SidebarTrigger />
+        {!isMobile && <AppSidebar />}
         <Outlet />
       </SidebarProvider>
     </>

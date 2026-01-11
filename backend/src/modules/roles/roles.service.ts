@@ -15,7 +15,7 @@ import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';
-import { PaginationService } from '@common/services/pagination.service';
+import { PaginationService } from '@common/modules/pagination/pagination.service';
 import { validateUpdateFields } from '@common/utils/update-field-validator.util';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 
@@ -31,7 +31,7 @@ class RolesService {
 
   async createRole(createRoleDto: CreateRoleDto, user: IUser) {
     // Check existed role by name
-    const isExistedRole = await this.roleModel.findOne({level: createRoleDto.level});
+    const isExistedRole = await this.roleModel.findOne({ level: createRoleDto.level });
     if (isExistedRole) {
       throw new HttpException(
         {
@@ -71,7 +71,6 @@ class RolesService {
       },
     };
   }
-
 
   async findAllRolesWithPagination(getRoleDto: GetRoleDto) {
     const { populate } = getRoleDto;
