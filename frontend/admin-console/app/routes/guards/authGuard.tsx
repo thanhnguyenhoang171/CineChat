@@ -56,14 +56,14 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       }
 
       return null;
-    } catch (error) {
+    } catch (error: any) {
       await authService.logout(); // call api to clear refresh token cookie
       store.logout(); // clear all state
-
-      toast.error(
-        'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
-        { id: 'login-role-error' },
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Đã xảy ra lỗi xác thực. Vui lòng đăng nhập lại.';
+      toast.error(`${errorMessage}`, { id: 'login-role-error' });
       return redirect('/login');
     }
   }
