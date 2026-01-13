@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from 'react-router';
 
 import type { Route } from './+types/root';
@@ -12,21 +13,12 @@ import './styles/app-style.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/query-client';
 import NotFoundPage from './routes/notFound';
-import { GeneralError } from './components/shared/generalError';
+import { GeneralError } from './components/shared/error/generalError';
 import { SonnerToasterComponent } from './components/ui/sonnerToaster';
-
-export const links: Route.LinksFunction = () => [
-  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-  {
-    rel: 'preconnect',
-    href: 'https://fonts.gstatic.com',
-    crossOrigin: 'anonymous',
-  },
-  {
-    rel: 'stylesheet',
-    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
-  },
-];
+import i18n from './lib/i18n/i18n';
+import { getLocaleFromRequest } from './utils/i18n-server';
+import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 // Disable indexing by search engines (SEO)
 export const meta: Route.MetaFunction = () => {
@@ -37,9 +29,23 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const locale = getLocaleFromRequest(request);
+  return { locale }; // Return lang for client
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Get locale from Server sent
+  const { locale } = useLoaderData<typeof loader>();
+
+  // Sync lang -> if current lang != server lang
+
+  if (i18n.language !== locale) {
+    i18n.changeLanguage(locale);
+  }
+  
   return (
-    <html lang='en'>
+    <html lang={locale ?? 'vi'}>
       <head>
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
@@ -49,7 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           {children}
-          <SonnerToasterComponent  />
+          <SonnerToasterComponent />
           <ScrollRestoration />
           <Scripts />
         </QueryClientProvider>

@@ -1,0 +1,29 @@
+{
+  "spinner": {
+    "loading": "Đang tải dữ liệu"
+  },
+  "sidebar": {
+    "selectWorkspace": {
+      "title": "Chọn không gian làm việc",
+      "apiDocs": "Tài liệu API",
+      "bullMQ": "Bảng điều khiển BullMQ",
+      "redis": "Bảng điều khiển Redis"
+    },
+    "management": {
+      "title": "BẢNG ĐIỀU KHIỂN QUẢN TRỊ",
+      "dashboard": "Bảng điều khiển",
+      "user": "Quản lý người dùng",
+      "role": "Quản lý vai trò",
+      "permission": "Quản lý quyền",
+      "cast": "Quản lý diễn viên",
+      "genre": "Quản lý thể loại",
+      "movie": "Quản lý phim",
+      "video": "Quản lý video",
+      "account": "Tài khoản"
+    },
+
+    "logout": "Đăng xuất",
+    "loggingout": "Đang đăng xuất...",
+    "language": "Ngôn ngữ"
+  }
+}

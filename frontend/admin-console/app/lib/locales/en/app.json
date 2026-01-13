@@ -1,0 +1,28 @@
+{
+  "spinner": {
+    "loading": "Loading data"
+  },
+  "sidebar": {
+    "selectWorkspace": {
+      "title": "Select Workspace",
+      "apiDocs": "API Documentations",
+      "bullMQ": "BullMQ Dashboard",
+      "redis": "Redis Dashboard"
+    },
+    "management": {
+      "title": "ADMIN CONSOLE",
+      "dashboard": "Dashboard",
+      "user": "User Management",
+      "role": "Role Management",
+      "permission": "Permission Management",
+      "cast": "Cast Management",
+      "genre": "Genre Management",
+      "movie": "Movie Management",
+      "video": "Video Management",
+      "account": "Account"
+    },
+    "logout": "Log out",
+    "loggingout": "Logging out...",
+    "language": "Language"
+  }
+}

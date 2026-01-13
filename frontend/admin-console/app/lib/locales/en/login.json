@@ -1,0 +1,34 @@
+{
+  "form": {
+    "description": "Enter your information to access the system now!",
+    "username": "Username",
+    "password": "Password",
+    "login": "LOGIN"
+  },
+  "button": {
+    "login": "Sign in",
+    "logging": "Logging in...",
+    "ggLogin": "Sign in with Google"
+  },
+  "text": {
+    "or": "OR",
+    "register": "Register",
+    "notAccount": "Don't have an account yet?",
+    "forgetPassword": "Have you forgotten your password?",
+    "GGProcessing": "Processing Google login..."
+  },
+  "carousel": {
+    "title": "Film Project with Artificial Intelligence - Admin Dashboard",
+    "description": "Managing your film library and interacting with AI has never been easier.",
+    "version": "Dashboard v1.0"
+  },
+  "toast": {
+    "success": "Login successfully! Welcome back.",
+    "unauthorized": "The account does not have permission to access the system administration page!",
+    "warning": "Logout API failed, but continued...",
+    "errorInternal": "Internal server error!",
+    "noLogin": "Please log in to continue.",
+    "error": "An authentication error has occurred. Please log in again.",
+    "errorGG": "Google login failed!"
+  }
+}
