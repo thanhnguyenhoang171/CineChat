@@ -9,36 +9,38 @@ import { AppSidebar } from '~/components/layout/appSideBar';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { authService } from '~/services/auth.service';
 import { toast } from 'sonner';
+import { LayoutSpinner } from '~/components/shared/spinner/layoutSpinner';
+import { useTranslation } from 'react-i18next';
+
+import i18n from '~/lib/i18n/i18n';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const t = (key: string) => i18n.t(key, { ns: 'login' });
   let token = useBoundStore.getState().accessToken;
   const store = useBoundStore.getState();
 
-  // case 1: lose token in RAM but have cookie (httpOnly refresh token)
+  // Lose token in RAM but have cookie (httpOnly refresh token)
   if (!token) {
     const success = await silentRefreshToken();
     if (!success) {
-      toast.error('Vui lòng đăng nhập để tiếp tục.');
+      toast.error(t('toast.noLogin'));
       return redirect('/login');
     }
     token = useBoundStore.getState().accessToken;
   }
 
-  // Kiểm tra nếu đã có user
+  // Check if has user in state -> check level
   if (store.user) {
     if (store.user.role?.level !== 0) {
-      await authService.logout(); // call api to clear refresh token cookie
-      store.logout(); // clear all state
-      toast.error(
-        'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
-        { id: 'login-role-error' },
-      );
+      await authService.logout();
+      store.logout();
+      toast.error(t('toast.unauthorized'), { id: 'login-role-error' });
       return redirect('/login');
     }
     return null;
   }
 
-  // case 2: fetch user info
+  // Has token but hasn't user in state -> fetch and check level
   if (token && !store.user) {
     try {
       await store.fetchAccount();
@@ -48,61 +50,40 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
         await authService.logout(); // call api to clear refresh token cookie
         store.logout(); // clear all state
 
-        toast.error(
-          'Tài khoản không có quyền truy cập vào trang quản trị hệ thống',
-          { id: 'login-role-error' },
-        );
+        toast.error(t('toast.unauthorized'), { id: 'login-role-error' });
         return redirect('/login');
       }
 
       return null;
     } catch (error: any) {
-      await authService.logout(); // call api to clear refresh token cookie
-      store.logout(); // clear all state
+      await authService.logout();
+      store.logout();
       const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Đã xảy ra lỗi xác thực. Vui lòng đăng nhập lại.';
+        error?.response?.data?.message || error?.message || t('toast.error');
       toast.error(`${errorMessage}`, { id: 'login-role-error' });
       return redirect('/login');
     }
   }
 
-  return null;
+  return null; // pass
 }
 
 export function HydrateFallback() {
-  return (
-    <div className='flex h-screen w-full items-center justify-center bg-slate-50'>
-      <div className='flex flex-col items-center gap-4'>
-        <Spinner className='size-10 text-primary' />
-        <p className='text-sm text-slate-500 font-medium'>
-          Đang tải dữ liệu...
-        </p>
-      </div>
-    </div>
-  );
+  return <LayoutSpinner />;
 }
 
-// Loading when Refresh Token)
 export default function AuthGuard() {
   const user = useBoundStore((state) => state.user);
   const isRefreshing = useBoundStore((state) => state.isRefreshToken);
   const isLoadingUser = useBoundStore((state) => state.isLoadingUser);
   const { isMobile } = useBreakpoint();
 
-  // Logic: Chỉ hiện Overlay nếu đang Refresh Token MÀ KHÔNG PHẢI đang tải user lần đầu (F5)
-  // Vì nếu đang tải user lần đầu thì HydrateFallback đã hiện rồi.
+  // Only show overlay if is refreshing token but not first loading user (F5)
+  //-> because logic loading user first that HydrateFallback have already worked
   const showOverlay = isRefreshing && !isLoadingUser;
 
-  // Nếu chưa có User (do đang F5 load lại) -> Hiện Spinner xoay xoay
-  // KHÔNG render <Outlet /> để tránh các component con chạy useQuery lung tung
   if (!user) {
-    return (
-      <div className='flex h-screen w-full items-center justify-center bg-slate-50'>
-        <Spinner className='size-10 text-primary' />
-      </div>
-    );
+    return <LayoutSpinner />; // if hasn't user (F5) -> load spinner
   }
 
   if (user.role?.level !== 0) {

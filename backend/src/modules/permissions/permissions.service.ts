@@ -58,7 +58,7 @@ export class PermissionsService {
 
   async findAllPermissionsWithPagination(getPermissionDto: GetPermissionDto) {
     // Define search fields for permissions
-    const searchFields = ['apiPath', 'method', 'module'];
+    const searchFields = ['apiPath', 'method', 'module', 'name'];
     try {
       const { data, meta } = await this.paginationService.paginate(
         this.permissionModel,

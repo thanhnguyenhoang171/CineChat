@@ -11,15 +11,10 @@ export default function AdminLayout() {
   return (
     <>
       {!isMobile && (
-        <SidebarTrigger
-          className={cn(
-            !open && 'hidden',
-            isMobile && 'absolute bottom-4 left-4 border-2 border-slate-200',
-          )}
-        />
+        <SidebarTrigger className={cn(!open && 'hidden')} />
       )}
       <main className='flex-1 overflow-y-auto bg-slate-50'>
-        <div className='mx-auto max-w-7xl animate-in fade-in duration-500'>
+        <div className='mx-auto max-w-7xl animate-in fade-in duration-200'>
           <Outlet />
         </div>
       </main>

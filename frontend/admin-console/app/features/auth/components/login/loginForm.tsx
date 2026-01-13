@@ -23,7 +23,7 @@ import { useLogin } from '~/hooks/useLogin';
 import { useState } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from '~/components/ui/label';
-import { SeparatorWithText } from '~/components/shared/separatorWithText';
+import { SeparatorWithText } from '~/components/shared/text/separatorWithText';
 import AuthLogo from '../authLogo';
 import ForgetPasswordText from '../forgetPasswordText';
 import GoogleLoginButton from '../googleLoginButton';
@@ -31,11 +31,11 @@ import { motion } from 'framer-motion';
 import { fadeInLeft } from '~/components/animations/variants';
 import { fadeMotionProps } from '~/components/animations/helpers';
 import { loginSchema, type LoginFormValues } from './schemas';
+import { useTranslation } from 'react-i18next';
 
 export function LoginForm() {
   const { mutate: login, isPending } = useLogin();
-
-  const [isGGLoginPending, setGGLoginPending] = useState(false);
+  const { t } = useTranslation('login');
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -62,10 +62,10 @@ export function LoginForm() {
         </div>
         <CardHeader className='space-y-1'>
           <CardTitle className='text-2xl font-bold text-center text-primary'>
-            LOGIN
+            {t('form.login')}
           </CardTitle>
           <CardDescription className='text-center'>
-            Nhập thông tin để truy cập hệ thống ngay!
+            {t('form.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,7 +77,7 @@ export function LoginForm() {
                 name='username' // ensure it joint with schema
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel> {t('form.username')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='admin@cinechat.com'
@@ -95,7 +95,7 @@ export function LoginForm() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormLabel> {t('form.password')}</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
@@ -117,23 +117,23 @@ export function LoginForm() {
                   {isPending && (
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                   )}
-                  {isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                  {isPending ? t('button.logging') : t('button.login')}
                 </Button>
               </div>
 
-              <SeparatorWithText text='OR' />
+              <SeparatorWithText text={t('text.or')} />
 
-              <GoogleLoginButton isPending={isGGLoginPending} />
+              <GoogleLoginButton/>
 
               <ForgetPasswordText />
 
               {/* Haven't account field */}
               <div className='flex items-center justify-center gap-1'>
-                <p>Bạn chưa có tài khoản?</p>
+                <p> {t('text.notAccount')}</p>
                 <a
                   href='/register'
                   className='text-primary font-medium hover:underline hover:text-muted-foreground transition-colors'>
-                  Đăng ký
+                  {t('text.register')}
                 </a>
               </div>
             </form>

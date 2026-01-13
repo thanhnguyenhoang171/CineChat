@@ -1,21 +1,10 @@
 import {
-  EarthLock,
   ChevronDown,
   ChevronUp,
-  ShieldUser,
-  LayoutDashboard,
-  BookUser,
-  SquareUserRound,
-  ChartBarStacked,
-  Film,
-  FilePlay,
-  ChevronsLeftRightEllipsis,
-  ListEnd,
-  DatabaseZap,
   LogOut,
   ContactRound,
+  Globe,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -37,25 +26,32 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { env } from '~/lib/env';
-import type { User } from '~/types/module-types/user';
 import { useBoundStore } from '~/store';
 
 import { useLogout } from '~/hooks/useLogout';
 import { formatFullName } from '~/utils/common-utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useEffect, useState } from 'react';
-import { Link, redirect, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { modules, workspaces, type Item } from '~/types/app-types/sidebar';
+import { useTranslation } from 'react-i18next';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
+import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
+import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
 
 export function AppSidebar() {
-  const { isMobile, isDesktop, isTablet } = useBreakpoint();
+  const { t } = useTranslation('app');
+  const { isDesktop, isTablet } = useBreakpoint();
   const navigation = useNavigate();
   const user = useBoundStore((state) => state.user);
   const { mutate: logout, isPending } = useLogout();
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
 
   const [selectedModule, setSelectedModule] = useState<Item | null>(null);
 
@@ -69,6 +65,7 @@ export function AppSidebar() {
 
   const handSelectModule = (module: Item) => {
     setSelectedModule(module);
+    setOpen(false);
     navigation(module.url);
   };
 
@@ -96,7 +93,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  Select Workspace
+                  {t('sidebar.selectWorkspace.title')}
                   <ChevronDown className='ml-auto' />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -106,7 +103,7 @@ export function AppSidebar() {
                     key={workspace.id}
                     onClick={() => handSelectWorkspace(workspace)}>
                     <workspace.icon />
-                    <span>{workspace.title}</span>
+                    <span>{t(workspace.title)}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -117,7 +114,7 @@ export function AppSidebar() {
 
       <SidebarContent className={cn(!open && 'justify-center')}>
         <SidebarGroup>
-          <SidebarGroupLabel>ADMIN CONSOLE</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('sidebar.management.title')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className={cn(!open && 'items-center')}>
               {modules.map((modules) => (
@@ -129,7 +126,7 @@ export function AppSidebar() {
                     isActive={!!(modules === selectedModule)}>
                     <div>
                       <modules.icon />
-                      <span>{modules.title}</span>
+                      <span>{t(modules.title)}</span>
                     </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -141,16 +138,46 @@ export function AppSidebar() {
 
       <SidebarFooter className={cn(!open && 'items-center justify-center')}>
         {!open ? (
-          <Avatar className={cn('object-cover')}>
-            <AvatarImage
-              src={user?.picture}
-              alt={`${user?.firstName || 'User'} avatar`}
-            />
-            <AvatarFallback>
-              {(user?.firstName?.[0] || 'A').toUpperCase()}
-              {(user?.lastName?.[0] || '').toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className='flex justify-center items-center'
+              asChild>
+              <SidebarMenuButton>
+                <Avatar className={cn('object-cover')}>
+                  <AvatarImage
+                    src={user?.picture}
+                    alt={`${user?.firstName || 'User'} avatar`}
+                  />
+                  <AvatarFallback>
+                    {(user?.firstName?.[0] || 'A').toUpperCase()}
+                    {(user?.lastName?.[0] || '').toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side='top'
+              className='w-[--radix-popper-anchor-width]'>
+              <DropdownMenuItem>
+                <ContactRound />
+                <Link to='#'>{t('sidebar.management.account')}</Link>
+              </DropdownMenuItem>
+
+              <ChangeLanguageSubMenu sideOffset={5} />
+
+              <AppThemeModeButton />
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant='destructive'>
+                <LogOut />
+                {isPending ? (
+                  <span>{t('sidebar.loggingout')}</span>
+                ) : (
+                  <span onClick={handleLogout}>{t('sidebar.logout')}</span>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <SidebarMenu>
             <SidebarMenuItem>
@@ -187,16 +214,20 @@ export function AppSidebar() {
                   className='w-[--radix-popper-anchor-width]'>
                   <DropdownMenuItem>
                     <ContactRound />
-                    <Link to='#'>Tài khoản</Link>
+                    <Link to='#'>{t('sidebar.management.account')}</Link>
                   </DropdownMenuItem>
+
+                  <ChangeLanguageSubMenu sideOffset={5} />
+
+                  <AppThemeModeButton />
 
                   <DropdownMenuSeparator />
                   <DropdownMenuItem variant='destructive'>
                     <LogOut />
                     {isPending ? (
-                      <span>Đang đăng xuất...</span>
+                      <span>{t('sidebar.loggingout')}</span>
                     ) : (
-                      <span onClick={handleLogout}>Đăng xuất</span>
+                      <span onClick={handleLogout}>{t('sidebar.logout')}</span>
                     )}
                   </DropdownMenuItem>
                 </DropdownMenuContent>

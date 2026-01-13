@@ -2,25 +2,121 @@ import { ActiveStatus, LoginProvider, RoleLevel } from '@common/constants/common
 
 export const PERMISSIONS_DATA = [
   // --- User Module ---
-  { name: 'Tạo mới một người dùng', apiPath: '/api/users', method: 'POST', module: 'User Management' },
-  { name: 'Lấy tất cả người dùng có phân trang', apiPath: '/api/users', method: 'GET', module: 'User Management' },
-  { name: 'Cập nhật một người dùng bằng id', apiPath: '/api/users/:id', method: 'PATCH', module: 'User Management' },
-  { name: 'Xóa một người dùng bằng id', apiPath: '/api/users/:id', method: 'DELETE', module: 'User Management' },
+  {
+    name: 'Tạo mới một người dùng',
+    apiPath: '/api/users',
+    method: 'POST',
+    module: 'User Management',
+  },
+  {
+    name: 'Lấy tất cả người dùng có phân trang',
+    apiPath: '/api/users',
+    method: 'GET',
+    module: 'User Management',
+  },
+  {
+    name: 'Lấy thông tin chi tiết của người dùng bằng id',
+    apiPath: '/api/users/:id',
+    method: 'GET',
+    module: 'User Management',
+  },
+  {
+    name: 'Cập nhật một người dùng bằng id',
+    apiPath: '/api/users/:id',
+    method: 'PATCH',
+    module: 'User Management',
+  },
+  {
+    name: 'Xóa một người dùng bằng id',
+    apiPath: '/api/users/:id',
+    method: 'DELETE',
+    module: 'User Management',
+  },
+  {
+    name: 'Xóa một người dùng bằng id',
+    apiPath: '/api/users/:id',
+    method: 'DELETE',
+    module: 'User Management',
+  },
+  {
+    name: 'Upload avatar cho tài khoản',
+    apiPath: '/api/users/upload-avatar',
+    method: 'POST',
+    module: 'User Management',
+  },
 
   // --- Role Module ---
   { name: 'Tạo mới một vai trò', apiPath: '/api/roles', method: 'POST', module: 'Role Management' },
-  { name: 'Lấy tất cả vai trò có phân trang', apiPath: '/api/roles', method: 'GET', module: 'Role Management' },
-  { name: 'Lấy một vai trò bằng id', apiPath: '/api/roles/:id', method: 'GET', module: 'Role Management' },
-  { name: 'Cập nhật một vai trò bằng id', apiPath: '/api/roles', method: 'PATCH', module: 'Role Management' },
-  { name: 'Xóa một vai trò bằng id', apiPath: '/api/roles/:id', method: 'DELETE', module: 'Role Management' },
+  {
+    name: 'Lấy tất cả vai trò có phân trang',
+    apiPath: '/api/roles',
+    method: 'GET',
+    module: 'Role Management',
+  },
+  {
+    name: 'Lấy thông tin chi tiết vai trò bằng id',
+    apiPath: '/api/roles/:id',
+    method: 'GET',
+    module: 'Role Management',
+  },
+  {
+    name: 'Cập nhật một vai trò bằng id',
+    apiPath: '/api/roles',
+    method: 'PATCH',
+    module: 'Role Management',
+  },
+  {
+    name: 'Xóa một vai trò bằng id',
+    apiPath: '/api/roles/:id',
+    method: 'DELETE',
+    module: 'Role Management',
+  },
 
   // --- Permission Module ---
-  { name: 'Tạo mới một quyền hạn', apiPath: '/api/permissions', method: 'POST', module: 'Permission Management' },
-  { name: 'Lấy tất cả quyền hạn có phân trang', apiPath: '/api/permissions', method: 'GET', module: 'Permission Management' },
-  { name: 'Lấy một quyền hạn bằng id', apiPath: '/api/permissions/:id', method: 'GET', module: 'Permission Management' },
-  { name: 'Cập nhật một quyền hạn bằng id', apiPath: '/api/permissions', method: 'PATCH', module: 'Permission Management' },
-  { name: 'Xóa một quyền hạn bằng id', apiPath: '/api/permissions/:id', method: 'DELETE', module: 'Permission Management' },
+  {
+    name: 'Tạo mới một quyền hạn',
+    apiPath: '/api/permissions',
+    method: 'POST',
+    module: 'Permission Management',
+  },
+  {
+    name: 'Lấy tất cả quyền hạn có phân trang',
+    apiPath: '/api/permissions',
+    method: 'GET',
+    module: 'Permission Management',
+  },
+  {
+    name: 'Lấy thông tin chi tiết quyền hạn bằng id',
+    apiPath: '/api/permissions/:id',
+    method: 'GET',
+    module: 'Permission Management',
+  },
+  {
+    name: 'Cập nhật một quyền hạn bằng id',
+    apiPath: '/api/permissions',
+    method: 'PATCH',
+    module: 'Permission Management',
+  },
+  {
+    name: 'Xóa một quyền hạn bằng id',
+    apiPath: '/api/permissions/:id',
+    method: 'DELETE',
+    module: 'Permission Management',
+  },
 
+  // --- Health Module ---
+  {
+    name: 'Kiểm tra API Server',
+    apiPath: '/api/health',
+    method: 'GET',
+    module: 'Health Management',
+  },
+  {
+    name: 'Kiểm tra Redis Cache',
+    apiPath: '/api/health/redis',
+    method: 'GET',
+    module: 'Health Management',
+  },
 ];
 
 export const ROLES_DATA = [

@@ -47,11 +47,15 @@ import { formatFullName } from '~/utils/common-utils';
 import { useNavigate } from 'react-router';
 import { modules, workspaces, type Item } from '~/types/app-types/sidebar';
 import { useEffect, useState } from 'react';
+import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
+import { useTranslation } from 'react-i18next';
+import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
 
 interface AppMobileMenuProps {
   className?: string;
 }
 export function AppMobileMenu({ className }: AppMobileMenuProps) {
+  const { t } = useTranslation('app');
   const user = useBoundStore((state) => state.user);
   const navigation = useNavigate();
   const { mutate: logout, isPending } = useLogout();
@@ -110,9 +114,9 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
               <BriefcaseBusiness />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className='w-56' align='start'>
-            <DropdownMenuLabel className='justify-center flex'>
-              SELECT MODULE
+          <DropdownMenuContent className='w-55' align='start'>
+            <DropdownMenuLabel className='justify-center flex '>
+              <span>{t('sidebar.management.title')}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup
@@ -121,7 +125,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
               {modules.map((mod) => (
                 <DropdownMenuRadioItem value={mod.id}>
                   <mod.icon />
-                  <span>{mod.title}</span>
+                  <span>{t(mod.title)}</span>
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -136,7 +140,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center' className='w-53'>
             <DropdownMenuLabel className='justify-center flex'>
-              SELECT MODULE
+              {t('sidebar.selectWorkspace.title')}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -145,7 +149,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
                   key={wp.id}
                   onClick={() => handSelectWorkspace(wp)}>
                   <wp.icon />
-                  <span>{wp.title}</span>
+                  <span>{t(wp.title)}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
@@ -153,7 +157,9 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
         </DropdownMenu>
       </ButtonGroup>
       <ButtonGroup>
-        <Button variant='outline'>Tài khoản </Button>
+        <Button variant='outline'>
+          <span className='w-[62px]'>{t('sidebar.management.account')}</span>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='outline' size='icon' aria-label='More Options'>
@@ -162,14 +168,10 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='w-56'>
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                  console.log('Item clicked, dropdown stays open');
-                }}>
-                <Switch id='airplane-mode' />
-                <Label htmlFor='airplane-mode'>Theme Mode</Label>
-              </DropdownMenuItem>
+              <AppThemeModeButton />
+
+              <ChangeLanguageSubMenu sideOffset={-124} />
+
               <DropdownMenuItem>
                 <Avatar className='border border-solid border-slate-200 !rounded-full max-w-6 max-h-6 min-w-4 min-h-4'>
                   <AvatarImage src='https://lh3.googleusercontent.com/a/ACg8ocJ-7KsPVQsHPL3_pfOwrLP1rHD-p3zDLzJPbYthya_9ZkfORA=s96-c' />
@@ -184,9 +186,10 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
               <DropdownMenuItem
                 variant='destructive'
                 onClick={handleLogout}
-                disabled={isPending}>
+                disabled={isPending}
+                className='flex justify-center'>
                 <LogOut />
-                Đăng xuất
+                {t('sidebar.logout')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

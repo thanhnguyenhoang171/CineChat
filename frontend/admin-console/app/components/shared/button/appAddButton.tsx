@@ -1,8 +1,8 @@
 import type { LucideIcon } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '../../ui/button';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { cn } from '~/lib/utils';
-import { useSidebar } from '../ui/sidebar';
+import { useSidebar } from '../../ui/sidebar';
 
 interface AppAddButtonProps {
   className?: string;

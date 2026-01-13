@@ -12,6 +12,7 @@ import { fadeVariant, shakeXVariant } from '~/components/animations/variants';
 import { fadeMotionProps } from '~/components/animations/helpers';
 import { combineVariants } from '~/components/animations/combine';
 import { LOGIN_CAROUSEL_IMAGES } from '~/utils/carousel-images';
+import { useTranslation } from 'react-i18next';
 
 export function LoginCarousel() {
   // Configure autoplay and fade plugins
@@ -19,6 +20,8 @@ export function LoginCarousel() {
     Autoplay({ delay: 5000, stopOnInteraction: false }),
   );
   const fadePlugin = React.useRef(Fade());
+
+  const { t } = useTranslation('login');
 
   return (
     <>
@@ -59,7 +62,7 @@ export function LoginCarousel() {
           <Clapperboard className='h-5 w-5' />
         </motion.div>
         {/* Header text */}
-        Cinema with AI project - Admin Console
+        {t('carousel.title')}
       </motion.div>
 
       <motion.div
@@ -68,11 +71,10 @@ export function LoginCarousel() {
         className='relative z-20 mt-auto flex-col items-center'>
         <blockquote className='space-y-2 text-center'>
           <p className='text-lg font-medium leading-relaxed'>
-            &ldquo;Quản lý kho phim và tương tác AI chưa bao giờ dễ dàng đến
-            thế.&rdquo;
+            {t('carousel.description')}
           </p>
           <footer className='text-sm text-primary-foreground/80'>
-            Admin Console v1.0
+            {t('carousel.version')}
           </footer>
         </blockquote>
       </motion.div>

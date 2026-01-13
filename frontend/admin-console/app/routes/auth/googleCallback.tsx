@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { useLogout } from '~/hooks/useLogout';
@@ -6,6 +7,7 @@ import { authService } from '~/services/auth.service';
 import { useBoundStore } from '~/store';
 
 export default function GoogleCallbackPage() {
+  const { t } = useTranslation('login');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const setAccessToken = useBoundStore((state) => state.setAccessToken);
@@ -21,7 +23,7 @@ export default function GoogleCallbackPage() {
 
       // Case 1: Không có token -> Lỗi
       if (!accessToken) {
-        toast.error('Đăng nhập Google không thành công!', {
+        toast.error(t('toast.errorGG'), {
           id: 'google-login-fail',
         });
         navigate('/login', { replace: true });
@@ -38,14 +40,14 @@ export default function GoogleCallbackPage() {
 
         logout();
 
-        toast.error('Bạn không có quyền vào trang quản trị', {
+        toast.error(t('toast.unauthorized'), {
           id: 'google-login-fail-permissions',
         });
         navigate('/login', { replace: true });
         return;
       }
 
-      toast.success('Đăng nhập thành công! Chào mừng trở lại.', {
+      toast.success(t('toast.success'), {
         id: 'google-login-success',
       });
       navigate('/dashboard', { replace: true });
@@ -57,7 +59,7 @@ export default function GoogleCallbackPage() {
   return (
     <div className='flex h-screen w-full flex-col items-center justify-center gap-4'>
       <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-      <p className='text-muted-foreground'>Đang xử lý đăng nhập Google...</p>
+      <p className='text-muted-foreground'>{t('text.GGProcessing')}</p>
     </div>
   );
 }

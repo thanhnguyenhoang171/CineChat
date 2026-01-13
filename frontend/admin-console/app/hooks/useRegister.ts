@@ -19,7 +19,7 @@ export function useRegister() {
     },
 
     onError: (error: AxiosError<ApiError>) => {
-      const msg = error.response?.data?.errors;
+      const msg = error.response?.data?.errors || 'Internal Server Error!';
       toast.error(msg);
     },
   });

@@ -1,0 +1,34 @@
+{
+  "form": {
+    "description": "Nhập thông tin để truy cập hệ thống ngay!",
+    "username": "Tên người dùng",
+    "password": "Mật khẩu",
+    "login": "ĐĂNG NHẬP"
+  },
+  "button": {
+    "login": "Đăng nhập",
+    "logging": "Đang đăng nhập...",
+    "ggLogin": "Đăng nhập bằng Google"
+  },
+  "text": {
+    "or": "HOẶC",
+    "register": "Đăng ký",
+    "notAccount": "Bạn chưa có tài khoản?",
+    "forgetPassword": "Bạn đã quên mật khẩu?",
+    "GGProcessing": "Đang xử lý đăng nhập Google..."
+  },
+  "carousel": {
+    "title": "Dự án Phim với Trí tuệ Nhân tạo - Bảng điều khiển quản trị",
+    "description": "Quản lý kho phim và tương tác AI chưa bao giờ dễ dàng đến thế.",
+    "version": "Bảng điều khiển quản trị v1.0"
+  },
+  "toast": {
+    "success": "Đăng nhập thành công! Chào mừng trở lại.",
+    "unauthorized": "Tài khoản không có quyền truy cập vào trang quản trị hệ thống",
+    "warning": "API đăng xuất thất bại, nhưng vẫn tiếp tục...",
+    "errorInternal": "Lỗi máy chủ nội bộ!",
+    "noLogin": "Vui lòng đăng nhập để tiếp tục.",
+    "error": "Đã xảy ra lỗi xác thực. Vui lòng đăng nhập lại.",
+    "errorGG": "Đăng nhập Google không thành công!"
+  }
+}

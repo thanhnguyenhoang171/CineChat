@@ -1,0 +1,28 @@
+{
+  "form": {
+    "description": "Nhập thông tin của bạn để đăng ký tài khoản ngay!",
+
+    "fullname": "Họ và tên",
+
+    "username": "Tên người dùng",
+
+    "password": "Mật khẩu",
+
+    "confirmPassword": "Xác nhận mật khẩu",
+    "register": "ĐĂNG KÝ"
+  },
+
+  "button": {
+    "register": "Đăng ký",
+
+    "registering": "Đang tiến hành đăng ký..."
+  },
+
+  "text": {
+    "or": "HOẶC",
+
+    "login": "Đăng nhập",
+
+    "haveAccount": "Bạn đã có tài khoản chưa?"
+  }
+}

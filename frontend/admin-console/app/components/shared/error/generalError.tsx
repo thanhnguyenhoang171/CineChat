@@ -1,5 +1,5 @@
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '../../ui/button';
 
 interface GeneralErrorProps {
   message?: string;
@@ -20,7 +20,7 @@ export function GeneralError({
   return (
     <main className='min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50 text-center'>
       <div className='bg-white p-8 rounded-xl shadow-sm border max-w-2xl w-full'>
-        <div className='flex justify-center mb-6'>
+        <div className='flex justify-center mb-s6'>
           <div className='p-4 bg-red-100 rounded-full'>
             <AlertTriangle className='w-12 h-12 text-red-600' />
           </div>

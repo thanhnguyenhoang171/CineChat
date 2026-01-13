@@ -1,15 +1,18 @@
 import { Loader2 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
-interface GoogleLoginButtonProps {
-  isPending: boolean;
-}
+const GoogleLoginButton = () => {
+  const [isPending, setIsPending] = useState(false);
+  const { t } = useTranslation('login');
 
-const GoogleLoginButton = ({ isPending }: GoogleLoginButtonProps) => {
   const handleGGLogin = () => {
+    setIsPending(true);
     window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
+
   return (
     <div className='flex justify-center'>
       <Button
@@ -21,12 +24,12 @@ const GoogleLoginButton = ({ isPending }: GoogleLoginButtonProps) => {
         {isPending ? (
           <>
             <Loader2 className='h-4 w-4 animate-spin' />
-            <span>Đang đăng nhập...</span>
+            <span>{t('button.logging')}</span>
           </>
         ) : (
           <>
             <FcGoogle className='h-5 w-5' />
-            <span>Sign in with Google</span>
+            <span>{t('button.ggLogin')}</span>
           </>
         )}
       </Button>

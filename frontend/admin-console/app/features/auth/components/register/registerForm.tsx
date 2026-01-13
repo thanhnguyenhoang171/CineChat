@@ -19,7 +19,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
-import { SeparatorWithText } from '~/components/shared/separatorWithText';
+import { SeparatorWithText } from '~/components/shared/text/separatorWithText';
 import AuthLogo from '../authLogo';
 import { registerSchema, type RegisterFormValues } from './shemas';
 import { motion } from 'framer-motion';
@@ -27,8 +27,10 @@ import { fadeVariant } from '~/components/animations/variants';
 import { fadeMotionProps } from '~/components/animations/helpers';
 import { useRegister } from '~/hooks/useRegister';
 import { parseFullName } from '~/utils/common-utils';
+import { useTranslation } from 'react-i18next';
 
 export function RegisterForm() {
+  const { t } = useTranslation('register');
   const { mutate: registerAccount, isPending } = useRegister();
 
   const form = useForm<RegisterFormValues>({
@@ -65,10 +67,10 @@ export function RegisterForm() {
         </div>
         <CardHeader className='space-y-1'>
           <CardTitle className='text-2xl font-bold text-center text-primary'>
-            REGISTER
+            {t('form.register')}
           </CardTitle>
           <CardDescription className='text-center'>
-            Nhập thông tin để đăng ký tài khoản ngay!
+            {t('form.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,7 +82,7 @@ export function RegisterForm() {
                 name='fullName' // ensure it joint with schema
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Họ và tên</FormLabel>
+                    <FormLabel>{t('form.fullname')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Cinema AI'
@@ -98,7 +100,7 @@ export function RegisterForm() {
                 name='username' // ensure it joint with schema
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tên đăng nhập</FormLabel>
+                    <FormLabel>{t('form.username')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='newmemberusername'
@@ -116,7 +118,7 @@ export function RegisterForm() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormLabel>{t('form.password')}</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
@@ -136,7 +138,7 @@ export function RegisterForm() {
                 name='confirmPassword'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Xác nhận mật khẩu</FormLabel>
+                    <FormLabel>{t('form.confirmPassword')}</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
@@ -158,19 +160,19 @@ export function RegisterForm() {
                   {isPending && (
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                   )}
-                  {isPending ? 'Đang đăng ký...' : 'Đăng ký'}
+                  {isPending ? t('button.registering') : t('button.register')}
                 </Button>
               </div>
 
-              <SeparatorWithText text='OR' />
+              <SeparatorWithText text={t('text.or')} />
 
               {/* Have an account */}
               <div className='flex items-center justify-center gap-1'>
-                <p>Bạn đã có tài khoản?</p>
+                <p>{t('text.haveAccount')}</p>
                 <a
                   href='/login'
                   className='text-primary font-medium hover:underline hover:text-muted-foreground transition-colors'>
-                  Đăng nhập
+                  {t('text.login')}
                 </a>
               </div>
             </form>

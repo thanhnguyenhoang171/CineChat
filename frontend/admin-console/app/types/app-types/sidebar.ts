@@ -1,5 +1,18 @@
-import { BookUser, ChartBarStacked, ChevronsLeftRightEllipsis, DatabaseZap, EarthLock, FilePlay, Film, LayoutDashboard, ListEnd, ShieldUser, SquareUserRound, type LucideIcon } from "lucide-react";
-import { env } from "~/lib/env";
+import {
+  BookUser,
+  ChartBarStacked,
+  ChevronsLeftRightEllipsis,
+  DatabaseZap,
+  EarthLock,
+  FilePlay,
+  Film,
+  LayoutDashboard,
+  ListEnd,
+  ShieldUser,
+  SquareUserRound,
+  type LucideIcon,
+} from 'lucide-react';
+import { env } from '~/lib/env';
 
 export interface Item {
   id: string;
@@ -12,49 +25,49 @@ export interface Item {
 export const modules: Item[] = [
   {
     id: 'dashboard',
-    title: 'Dashboard',
+    title: 'sidebar.management.dashboard',
     url: 'dashboard',
     icon: LayoutDashboard,
   },
   {
     id: 'users',
-    title: 'User Management',
+    title: 'sidebar.management.user',
     url: 'users',
     icon: SquareUserRound,
   },
   {
     id: 'roles',
-    title: 'Role Management',
+    title: 'sidebar.management.role',
     url: 'roles',
     icon: ShieldUser,
   },
   {
     id: 'permissions',
-    title: 'Permission Management',
+    title: 'sidebar.management.permission',
     url: 'permissions',
     icon: EarthLock,
   },
   {
     id: 'casts',
-    title: 'Cast Management',
+    title: 'sidebar.management.cast',
     url: 'casts',
     icon: BookUser,
   },
   {
     id: 'genres',
-    title: 'Genre Management',
+    title: 'sidebar.management.genre',
     url: 'genres',
     icon: ChartBarStacked,
   },
   {
     id: 'movies',
-    title: 'Movie Management',
+    title: 'sidebar.management.movie',
     url: 'movies',
     icon: Film,
   },
   {
     id: 'videos',
-    title: 'Video Management',
+    title: 'sidebar.management.video',
     url: 'videos',
     icon: FilePlay,
   },
@@ -63,19 +76,19 @@ export const modules: Item[] = [
 export const workspaces: Item[] = [
   {
     id: 'api-docs',
-    title: 'API Documentations',
+    title: 'sidebar.selectWorkspace.apiDocs',
     url: `${env.apiUrl}/docs`,
     icon: ChevronsLeftRightEllipsis,
   },
   {
     id: 'bullmq',
-    title: 'BullMQ Dashboard',
+    title: 'sidebar.selectWorkspace.bullMQ',
     url: '#',
     icon: ListEnd,
   },
   {
     id: 'redis',
-    title: 'Redis Dashboard',
+    title: 'sidebar.selectWorkspace.redis',
     url: '#',
     icon: DatabaseZap,
   },
