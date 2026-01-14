@@ -1,8 +1,5 @@
 import type { Route } from './+types/movieList';
 
-export function meta({}: Route.MetaArgs) {
-  return [{ title: 'Dashboard quản trị viên' }];
-}
 
 export default function MoviesListPage() {
   return (

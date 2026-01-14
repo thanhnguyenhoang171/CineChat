@@ -19,10 +19,6 @@ import { defaultMeta } from '~/constants/app/app-pagination-constant';
 import { getItemTotal } from '~/utils/common-utils';
 import { lazy } from 'react';
 
-export function meta({}: Route.MetaArgs) {
-  return [{ title: 'Quản lý quyền truy cập hệ thống' }];
-}
-
 export default function PermissionPage() {
   const { isMobile, isTablet } = useBreakpoint();
   const { open } = useSidebar();

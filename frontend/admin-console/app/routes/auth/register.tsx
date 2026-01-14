@@ -3,9 +3,6 @@ import type { Route } from './+types/register';
 import { RegisterForm } from '~/features/auth/components/register/registerForm';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 
-export function meta({}: Route.MetaArgs) {
-  return [{ title: 'Đăng ký | CineChat Admin' }];
-}
 
 export default function RegisterPage() {
   const { isMobile } = useBreakpoint();
