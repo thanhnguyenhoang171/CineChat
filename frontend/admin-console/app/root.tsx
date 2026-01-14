@@ -25,7 +25,7 @@ export const meta: Route.MetaFunction = ({ location }) => {
   const title = 'CineChat Admin - Quản trị hệ thống';
   const description = 'Hệ thống quản lý phim và người dùng tích hợp AI.';
 
-  const domain = 'https://cinechat-admin.vercel.app';
+  const domain = import.meta.env.VITE_APP_URL || 'http://localhost:5173';
   const image = `${domain}/social-preview.jpg`;
 
   return [
