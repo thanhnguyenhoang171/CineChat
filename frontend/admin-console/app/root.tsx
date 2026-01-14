@@ -15,20 +15,43 @@ import { queryClient } from './lib/query-client';
 import NotFoundPage from './routes/notFound';
 import { GeneralError } from './components/shared/error/generalError';
 import { SonnerToasterComponent } from './components/ui/sonnerToaster';
-import i18n from './lib/i18n/i18n';
+import i18n from './lib/locales/i18n';
 import { getLocaleFromRequest } from './utils/i18n-server';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
 // Disable indexing by search engines (SEO)
-export const meta: Route.MetaFunction = () => {
+export const meta: Route.MetaFunction = ({ location }) => {
+  const title = 'CineChat Admin - Quản trị hệ thống';
+  const description = 'Hệ thống quản lý phim và người dùng tích hợp AI.';
+
+  const domain = 'https://cinechat-admin.vercel.app';
+  const image = `${domain}/social-preview.jpg`;
+
   return [
-    { title: 'CineChat Admin' },
-    // Block search engines Google, Bing, ...
+    { title },
+    { name: 'description', content: description },
+
+    // --- Open Graph (Facebook, Zalo, Discord) ---
+    { property: 'og:site_name', content: 'CineChat Admin' },
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { property: 'og:image', content: image },
+    { property: 'og:image:width', content: '1200' },
+    { property: 'og:image:height', content: '630' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: `${domain}${location.pathname}` },
+
+    // --- Twitter Cards (X, Slack) ---
+    { name: 'twitter:card', content: 'summary_large_image' }, // Hiện ảnh to
+    { name: 'twitter:title', content: title },
+    { name: 'twitter:description', content: description },
+    { name: 'twitter:image', content: image },
+
+    // Disable SEO bot
     { name: 'robots', content: 'noindex, nofollow, noarchive' },
   ];
 };
-
 export async function loader({ request }: Route.LoaderArgs) {
   const locale = getLocaleFromRequest(request);
   return { locale }; // Return lang for client
@@ -43,7 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   if (i18n.language !== locale) {
     i18n.changeLanguage(locale);
   }
-  
+
   return (
     <html lang={locale ?? 'vi'}>
       <head>

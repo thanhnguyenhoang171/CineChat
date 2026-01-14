@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { LayoutSpinner } from '~/components/shared/spinner/layoutSpinner';
 import { useTranslation } from 'react-i18next';
 
-import i18n from '~/lib/i18n/i18n';
+import i18n from '~/lib/locales/i18n';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const t = (key: string) => i18n.t(key, { ns: 'login' });
