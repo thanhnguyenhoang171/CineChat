@@ -3,10 +3,6 @@ import { MoveLeft, Home } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import type { Route } from './+types/notFound';
 
-// Meta SEO cho trang lỗi
-export function meta({}: Route.MetaArgs) {
-  return [{ title: '404 - Không tìm thấy trang | CineChat Admin' }];
-}
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
