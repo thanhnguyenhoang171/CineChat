@@ -33,7 +33,7 @@ export const meta: Route.MetaFunction = ({ location }) => {
     { name: 'description', content: description },
 
     // --- Open Graph (Facebook, Zalo, Discord) ---
-    { property: 'og:site_name', content: 'CineChat Admin' },
+    { property: 'og:site_name', content: 'CineChat Admin Console' },
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:image', content: image },
@@ -41,12 +41,6 @@ export const meta: Route.MetaFunction = ({ location }) => {
     { property: 'og:image:height', content: '630' },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: `${domain}${location.pathname}` },
-
-    // --- Twitter Cards (X, Slack) ---
-    { name: 'twitter:card', content: 'summary_large_image' }, // Hiện ảnh to
-    { name: 'twitter:title', content: title },
-    { name: 'twitter:description', content: description },
-    { name: 'twitter:image', content: image },
 
     // Disable SEO bot
     { name: 'robots', content: 'noindex, nofollow, noarchive' },
