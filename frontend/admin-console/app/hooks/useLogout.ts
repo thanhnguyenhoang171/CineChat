@@ -11,6 +11,7 @@ export function useLogout() {
   const queryClient = useQueryClient();
 
   const logoutFromStore = useBoundStore((state) => state.logout);
+  const resetAccount = useBoundStore((state) => state.resetAccount);
 
   return useMutation({
     mutationFn: () => authService.logout(),
@@ -18,6 +19,7 @@ export function useLogout() {
     // Using onSettled to ensure client logout regardless of API success or failure
     onSettled: async (response) => {
       logoutFromStore();
+      resetAccount();
 
       queryClient.clear(); // remove all queries from cache
       navigate('/login', { replace: true });

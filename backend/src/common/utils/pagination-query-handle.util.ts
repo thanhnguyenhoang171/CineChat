@@ -67,7 +67,7 @@ export const handleProjections = (
   dto: any,
   options: any,
   schemaPaths?: Record<string, any>,
-  defaultExcludes: string[] = ['createdBy'], // 👈 chỉ mặc định loại password
+  defaultExcludes: string[] = [],
 ): void => {
   const projection: Record<string, 0 | 1> = {};
 
@@ -99,7 +99,6 @@ export const handleProjections = (
     }
   }
 
-  // Luôn exclude mặc định các trường nhạy cảm
   for (const excludeField of defaultExcludes) {
     projection[excludeField] = 0;
   }

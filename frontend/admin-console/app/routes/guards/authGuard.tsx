@@ -1,4 +1,4 @@
-import { Outlet, redirect } from 'react-router';
+import { Outlet, redirect, useLocation } from 'react-router';
 
 import { useBoundStore } from '~/store';
 import { Spinner } from '~/components/ui/spinner';
@@ -13,9 +13,11 @@ import { LayoutSpinner } from '~/components/shared/spinner/layoutSpinner';
 import { useTranslation } from 'react-i18next';
 
 import i18n from '~/lib/locales/i18n';
+import { handleCleanLogout } from '~/helpers/clean-logout';
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const t = (key: string) => i18n.t(key, { ns: 'login' });
+
   let token = useBoundStore.getState().accessToken;
   const store = useBoundStore.getState();
 
@@ -24,16 +26,19 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     const success = await silentRefreshToken();
     if (!success) {
       toast.error(t('toast.noLogin'));
+      store.logout();
+      store.resetAccount();
       return redirect('/login');
     }
     token = useBoundStore.getState().accessToken;
   }
 
   // Check if has user in state -> check level
-  if (store.user) {
-    if (store.user.role?.level !== 0) {
+  if (store.account) {
+    const level = store.account.role?.level;
+    if (level !== 0 && level !== 1) {
       await authService.logout();
-      store.logout();
+      await handleCleanLogout();
       toast.error(t('toast.unauthorized'), { id: 'login-role-error' });
       return redirect('/login');
     }
@@ -41,23 +46,21 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   }
 
   // Has token but hasn't user in state -> fetch and check level
-  if (token && !store.user) {
+  if (token && !store.account) {
     try {
-      await store.fetchAccount();
-      const currentUser = useBoundStore.getState().user;
+      // Gọi API trực tiếp (Thay vì gọi qua store action cũ)
+      const response = await authService.getAccount();
+      const user = response.data;
 
-      if (currentUser?.role?.level !== 0) {
-        await authService.logout(); // call api to clear refresh token cookie
-        store.logout(); // clear all state
-
+      const level = user?.role?.level;
+      if (level !== 0 && level !== 1) {
         toast.error(t('toast.unauthorized'), { id: 'login-role-error' });
         return redirect('/login');
       }
-
+      store.setAccount(user);
       return null;
     } catch (error: any) {
-      await authService.logout();
-      store.logout();
+      await handleCleanLogout();
       const errorMessage =
         error?.response?.data?.message || error?.message || t('toast.error');
       toast.error(`${errorMessage}`, { id: 'login-role-error' });
@@ -73,20 +76,19 @@ export function HydrateFallback() {
 }
 
 export default function AuthGuard() {
-  const user = useBoundStore((state) => state.user);
+  const account = useBoundStore((state) => state.account);
   const isRefreshing = useBoundStore((state) => state.isRefreshToken);
-  const isLoadingUser = useBoundStore((state) => state.isLoadingUser);
-  const { isMobile } = useBreakpoint();
+  const isLoadingAccount = useBoundStore((state) => state.isLoadingAccount);
 
   // Only show overlay if is refreshing token but not first loading user (F5)
   //-> because logic loading user first that HydrateFallback have already worked
-  const showOverlay = isRefreshing && !isLoadingUser;
+  const showOverlay = isRefreshing && !isLoadingAccount;
 
-  if (!user) {
+  if (!account) {
     return <LayoutSpinner />; // if hasn't user (F5) -> load spinner
   }
 
-  if (user.role?.level !== 0) {
+  if (account.role?.level !== 0 && account.role?.level !== 1) {
     return (
       <div className='h-screen flex items-center justify-center'>
         <h1>403 - Forbidden: Bạn không có quyền truy cập Dashboard</h1>
@@ -105,11 +107,7 @@ export default function AuthGuard() {
           </div>
         </div>
       )}
-
-      <SidebarProvider>
-        {!isMobile && <AppSidebar />}
-        <Outlet />
-      </SidebarProvider>
+      <Outlet />
     </>
   );
 }

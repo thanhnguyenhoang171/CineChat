@@ -18,6 +18,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { AvatarValidator } from '@common/validators/file.validator';
+import { BusinessCode } from '@common/constants/business-code';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -57,58 +59,40 @@ export class UsersController {
     return this.usersService.removeUserById(+id);
   }
 
-  // @Post('upload-avatar/:id')
-  // @JwtPublic()
-  // @ResponseStatus(HttpStatus.CREATED)
-  // @UseInterceptors(FileInterceptor('file'))
-  // @ApiOperation({ summary: 'Upload User Avatar' })
-  // uploadUserAvatar(
-  //   @UploadedFile(new FileValidationPipe()) file: Express.Multer.File,
-  //   @Param('id') id: string,
-  // ) {
-  //   return this.usersService.uploadUserAvatarById(id, file);
-  //   // return null;
-  // }
-
-  @Post('upload-avatar')
+  @Post('avatar')
   @UseInterceptors(FileInterceptor('file'))
-  uploadImage(@UploadedFile() file: Express.Multer.File, @Query('folder') folder: string) {
-    //Files uploaded, variable 'file' will contain info about uploaded file
-    console.log(file);
+  @ResponseStatus(HttpStatus.OK)
+  uploadAvatar(
+    @UploadedFile(AvatarValidator) file: Express.Multer.File,
+    @Query('folder') folder: string,
+  ) {
     const data = {
       url: file.path, // Link ảnh Cloudinary
       public_id: file.filename, // ID ảnh (dùng để xóa sau này)
       folder: folder, // Folder vừa lưu}
     };
-
     return {
-      message: 'Upload successfully',
+      code: BusinessCode.UPLOAD_FILE_SUCCESS,
       data: data,
     };
   }
 
-  // @Post('test-stream')
-  // @UseInterceptors(FilesInterceptor('files', 5)) // 'files': tên field, 5: số lượng tối đa
-  // uploadMultipleFiles(
-  //   @UploadedFiles() files: Express.Multer.File[], // <--- Nhận về một MẢNG file
-  //   @Query('folder') folder: string,
-  // ) {
-  //   // Nếu user không gửi file nào thì files là mảng rỗng []
-  //   if (!files || files.length === 0) {
-  //     return { message: 'No files uploaded' };
-  //   }
+  @Post('avatars')
+  @UseInterceptors(FilesInterceptor('files', 20))
+  uploadAvatars(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Query('folder') folder: string,
+  ) {
+    console.log(files);
+    const response = files.map((file) => ({
+      url: file.path,
+      public_id: file.filename,
+      folder: folder,
+    }));
 
-  //   // Map mảng file sang mảng kết quả trả về
-  //   const response = files.map((file) => ({
-  //     url: file.path,
-  //     public_id: file.filename,
-  //     originalName: file.originalname,
-  //     folder: folder,
-  //   }));
-
-  //   return {
-  //     message: `Successfully uploaded ${files.length} files`,
-  //     data: response,
-  //   };
-  // }
+    return {
+      code: BusinessCode.UPLOAD_FILE_SUCCESS,
+      data: response,
+    };
+  }
 }

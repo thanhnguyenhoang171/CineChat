@@ -8,6 +8,7 @@ interface GetPermissionsParams {
   sortBy?: string;
   sortDir?: 'asc' | 'desc';
   search?: string;
+  projections?: string;
 }
 
 export const permissionService = {
@@ -17,6 +18,7 @@ export const permissionService = {
     sortBy,
     sortDir,
     search,
+    projections,
   }: GetPermissionsParams) => {
     let sortParam = null;
     if (sortBy) {
@@ -31,6 +33,7 @@ export const permissionService = {
         limit,
         sort: sortParam,
         search,
+        projections,
       },
     });
     console.log('Checking response.data = ', response.data);

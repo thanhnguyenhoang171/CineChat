@@ -12,6 +12,7 @@ export function useLogin() {
   const navigate = useNavigate();
   const loginSuccess = useBoundStore((state) => state.loginSuccess);
   const logout = useBoundStore((state) => state.logout);
+  const resetAccount = useBoundStore((state) => state.resetAccount);
 
   return useMutation({
     mutationFn: authService.login,
@@ -22,7 +23,7 @@ export function useLogin() {
 
         await loginSuccess(access_token); // call action loginSuccess and it will fetch user info
 
-        if (level !== 0) {
+        if (level !== 0 && level !== 1) {
           toast.error(t('toast.unauthorized'), { id: 'login-role-error' });
 
           try {
@@ -33,7 +34,7 @@ export function useLogin() {
 
           // 3. Clear state trong store
           logout();
-
+          resetAccount();
           // KHÔNG navigate đến dashboard
           return; // Dừng lại ở đây
         } else {

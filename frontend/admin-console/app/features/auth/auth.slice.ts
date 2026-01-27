@@ -4,10 +4,10 @@ import { authService } from '~/services/auth.service';
 
 // 1. Định nghĩa State
 type AuthState = {
-  user: User | null;
+  // user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
-  isLoadingUser: boolean;
+  // isLoadingUser: boolean;
   isRefreshToken: boolean;
   errorRefreshToken: string | null;
 };
@@ -16,7 +16,7 @@ type AuthActions = {
   setAccessToken: (token: string | null) => void;
   setRefreshTokenStatus: (isRefreshing: boolean, error: string | null) => void;
   logout: () => void;
-  fetchAccount: () => Promise<void>;
+  // fetchAccount: () => Promise<void>;
   loginSuccess: (token: string) => Promise<void>;
 };
 
@@ -29,10 +29,10 @@ export const createAuthSlice: StateCreator<
   AuthSlice
 > = (set, get) => ({
   // --- Initial State ---
-  user: null,
+  // user: null,
   accessToken: null,
   isAuthenticated: false,
-  isLoadingUser: false,
+  // isLoadingUser: false,
   isRefreshToken: false,
   errorRefreshToken: null,
 
@@ -43,7 +43,7 @@ export const createAuthSlice: StateCreator<
       state.accessToken = token;
       if (!token) {
         state.isAuthenticated = false;
-        state.user = null;
+        // state.user = null;
       }
     }),
 
@@ -63,7 +63,7 @@ export const createAuthSlice: StateCreator<
 
   logout: () => {
     set((state) => {
-      state.user = null;
+      // state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
       state.errorRefreshToken = null;
@@ -71,26 +71,26 @@ export const createAuthSlice: StateCreator<
     localStorage.removeItem('admin-console-storage');
   },
 
-  fetchAccount: async () => {
-    // Avoid multiple simultaneous fetches if already loading
-    if (get().isLoadingUser) return;
+  // fetchAccount: async () => {
+  //   // Avoid multiple simultaneous fetches if already loading
+  //   if (get().isLoadingUser) return;
 
-    set((state) => {
-      state.isLoadingUser = true;
-    });
+  //   set((state) => {
+  //     state.isLoadingUser = true;
+  //   });
 
-    try {
-      const response = await authService.getAccount();
-      set((state) => {
-        state.user = response.data;
-        state.isAuthenticated = true;
-        state.isLoadingUser = false;
-      });
-    } catch (error) {
-      set((state) => {
-        state.isLoadingUser = false;
-      });
-      throw error;
-    }
-  },
+  //   try {
+  //     const response = await authService.getAccount();
+  //     set((state) => {
+  //       state.user = response.data;
+  //       state.isAuthenticated = true;
+  //       state.isLoadingUser = false;
+  //     });
+  //   } catch (error) {
+  //     set((state) => {
+  //       state.isLoadingUser = false;
+  //     });
+  //     throw error;
+  //   }
+  // },
 });

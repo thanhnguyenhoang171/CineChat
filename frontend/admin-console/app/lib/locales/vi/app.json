@@ -10,7 +10,7 @@
       "redis": "Bảng điều khiển Redis"
     },
     "management": {
-      "title": "BẢNG ĐIỀU KHIỂN QUẢN TRỊ",
+      "title": "BẢNG ĐIỀU KHIỂN {{var}}",
       "dashboard": "Bảng điều khiển",
       "user": "Quản lý người dùng",
       "role": "Quản lý vai trò",
@@ -19,11 +19,42 @@
       "genre": "Quản lý thể loại",
       "movie": "Quản lý phim",
       "video": "Quản lý video",
-      "account": "Tài khoản"
+      "account": "Tài khoản",
+      "setting": "Cài đặt"
     },
 
     "logout": "Đăng xuất",
     "loggingout": "Đang đăng xuất...",
     "language": "Ngôn ngữ"
-  }
+  },
+  "text": {
+    "searchResult": "{{var} kết quả}",
+    "searchPlaceHolder": "Tìm kiếm theo từ khóa...",
+    "userTable": "Quản lý danh sách người dùng",
+    "permissionTable": "Quản lý danh sách quyền try cập",
+    "pageRowNum": "Dòng mỗi trang:",
+    "page": "Trang {{var}}"
+  },
+  "tableHeader": {
+    "permission": {
+      "id": "ID",
+      "name": "Tên quyền",
+      "apiPath": "Đường dẫn API",
+      "method": " Phương thức",
+      "module": "Mô-đun",
+      "status": "Trạng thái",
+      "createdDate": "Ngày tạo",
+      "updatedDate": "Ngày sửa",
+      "action": "Hành động"
+    }
+  },
+  "status": {
+    "inactive": "Không hoạt động",
+    "active": "Đang hoạt động",
+    "pending": "Đang xử lý"
+  },
+  "button": {
+    "addPermission": "Thêm một quyền mới"
+  },
+  "noData": "Không có dữ liệu"
 }

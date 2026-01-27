@@ -33,15 +33,9 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { useBoundStore } from '~/store';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
 import { useLogout } from '~/hooks/useLogout';
 import { formatFullName } from '~/utils/common-utils';
 import { useNavigate } from 'react-router';
@@ -50,13 +44,17 @@ import { useEffect, useState } from 'react';
 import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
 import { useTranslation } from 'react-i18next';
 import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
+import { Badge } from '../ui/badge';
+import { cn } from '~/lib/utils';
+import { UserAvatar } from '../shared/image/userAvatar';
 
 interface AppMobileMenuProps {
   className?: string;
 }
 export function AppMobileMenu({ className }: AppMobileMenuProps) {
-  const { t } = useTranslation('app');
-  const user = useBoundStore((state) => state.user);
+  const { t, i18n } = useTranslation('app');
+  const currentLang = i18n.language;
+  const user = useBoundStore((state) => state.account);
   const navigation = useNavigate();
   const { mutate: logout, isPending } = useLogout();
   const [activeModuleId, setActiveModuleId] = useState<string>('dashboard');
@@ -116,7 +114,23 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-55' align='start'>
             <DropdownMenuLabel className='justify-center flex '>
-              <span>{t('sidebar.management.title')}</span>
+              <Badge
+                className={cn(
+                  'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300s w-full flex justify-center items-center',
+                  user?.role?.level === 0 &&
+                    'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+                )}>
+                {t('sidebar.management.title', {
+                  var:
+                    currentLang === 'vi'
+                      ? user?.role.level === 0
+                        ? 'QUẢN TRỊ'
+                        : 'QUẢN LÝ'
+                      : user?.role.level === 0
+                        ? 'ADMIN'
+                        : 'MANAGER',
+                })}
+              </Badge>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup
@@ -158,7 +172,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
       </ButtonGroup>
       <ButtonGroup>
         <Button variant='outline'>
-          <span className='w-[62px]'>{t('sidebar.management.account')}</span>
+          <span className='w-[62px]'>{t('sidebar.management.setting')}</span>
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -172,11 +186,12 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
 
               <ChangeLanguageSubMenu sideOffset={-124} />
 
-              <DropdownMenuItem>
-                <Avatar className='border border-solid border-slate-200 !rounded-full max-w-6 max-h-6 min-w-4 min-h-4'>
-                  <AvatarImage src='https://lh3.googleusercontent.com/a/ACg8ocJ-7KsPVQsHPL3_pfOwrLP1rHD-p3zDLzJPbYthya_9ZkfORA=s96-c' />
-                  <AvatarFallback>{'U'.toUpperCase()}</AvatarFallback>
-                </Avatar>
+              <DropdownMenuItem
+                onClick={() => navigation(`/account/${user?._id}`)}>
+                <UserAvatar
+                  user={user}
+                  className='border border-solid border-slate-200 !rounded-full max-w-6 max-h-6 min-w-4 min-h-4'
+                />
                 {formatFullName(user?.firstName, user?.lastName) || 'UNKNOWN'}
               </DropdownMenuItem>
             </DropdownMenuGroup>

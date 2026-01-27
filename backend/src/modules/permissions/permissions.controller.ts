@@ -64,6 +64,6 @@ export class PermissionsController {
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete permission by id' })
   removePermissionByIdController(@Param('id') id: string, @User() user: IUser) {
-    return this.permissionsService.removePermisionById(id, user);
+    return this.permissionsService.removePermissionById(id, user);
   }
 }

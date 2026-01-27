@@ -24,8 +24,9 @@ export default [
       route('permissions', 'routes/dashboard/permissions/permissionPage.tsx'),
       route('movies', 'routes/dashboard/movies/movieList.tsx'),
     ]),
+    route('account/:id', 'routes/account/accountInfo.tsx'),
   ]),
 
-  // Fallback 404
+  // Fallback 404a
   route('*', 'routes/notFound.tsx'),
 ] satisfies RouteConfig;
