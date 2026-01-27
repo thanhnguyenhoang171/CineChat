@@ -28,6 +28,7 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   // === FILE UPLOAD===========================
   // =========================================================
   [BusinessCode.INVALID_FILE_TYPE]: 'Loại tệp không hợp lệ. Vui lòng tải lên tệp hình ảnh.',
+  [BusinessCode.UPLOAD_FILE_SUCCESS]: 'Upload file thành công!s',
 
   // =========================================================
   // === USR: USER MODULE MESSAGES ===========================

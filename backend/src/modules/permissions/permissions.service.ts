@@ -13,13 +13,17 @@ import { ensurePermissionExists } from './utils/permission-validator';
 import { validateUpdateFields } from '@common/utils/update-field-validator.util';
 import { PaginationService } from '@common/modules/pagination/pagination.service';
 import mongoose from 'mongoose';
+import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
+import { async } from 'rxjs';
 
 @Injectable()
 export class PermissionsService {
   constructor(
+    private readonly paginationService: PaginationService,
     @InjectModel(Permission.name)
     private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
-    private readonly paginationService: PaginationService,
+    @InjectModel(Role.name)
+    private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
   ) {}
 
   async createPermission(createPermissionDto: CreatePermissionDto, user: IUser) {
@@ -41,11 +45,17 @@ export class PermissionsService {
     const createdPermission = await this.permissionModel.create({
       ...createPermissionDto,
       createdBy: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
+        _id: user?._id,
       },
     });
+
+    // auto attach permission for role admin
+    await this.roleModel.updateOne(
+      { level: 0 },
+      {
+        $push: { permissions: createdPermission },
+      },
+    );
 
     return {
       code: BusinessCode.PERMISSION_CREATED_SUCCESS,
@@ -85,8 +95,8 @@ export class PermissionsService {
   async findPermissionById(id: string) {
     // Check valid id
     validateMongoId(id);
-    const permissison = await this.permissionModel.findById(id);
-    if (!permissison) {
+    const permission = await this.permissionModel.findById(id);
+    if (!permission) {
       throw new HttpException(
         {
           code: BusinessCode.PERMISSION_NOT_FOUND,
@@ -97,7 +107,7 @@ export class PermissionsService {
     }
     return {
       code: BusinessCode.PERMISSION_GET_SUCCESS,
-      data: permissison,
+      data: permission,
     };
   }
 
@@ -199,8 +209,7 @@ export class PermissionsService {
     }
   }
 
-  async removePermisionById(id: string, user: IUser) {
-    // Soft delete
+  async removePermissionById(id: string, user: IUser) {
     validateMongoId(id);
     await ensurePermissionExists(this.permissionModel, id);
 

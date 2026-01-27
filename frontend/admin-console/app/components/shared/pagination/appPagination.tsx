@@ -17,6 +17,7 @@ import {
 } from '../../ui/select';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { generatePaginationEllipsis } from '~/utils/common-utils';
+import { useTranslation } from 'react-i18next';
 
 interface AppPaginationProps {
   className?: string;
@@ -35,6 +36,7 @@ export function AppPagination({
   onPageSizeChange,
   pageSize,
 }: AppPaginationProps) {
+  const { t } = useTranslation('app');
   const pageSizeOptions = [10, 20, 50, 100];
 
   const handlePageChange = (page: number, e: React.MouseEvent) => {
@@ -50,7 +52,7 @@ export function AppPagination({
     <div className={`flex items-center justify-between px-2 ${className}`}>
       {/* Select limit row data */}
       <div className='flex items-center space-x-2'>
-        <p className='text-sm font-medium'>Dòng mỗi trang:</p>
+        <p className='text-sm font-medium'>{t('text.pageRowNum')}</p>
         <Select
           value={`${pageSize}`}
           onValueChange={(value) => {
@@ -155,7 +157,7 @@ export function AppPagination({
         </Pagination>
       </div>
       <div className='flex w-[100px] items-center justify-center text-sm font-medium'>
-        Trang {currentPage} / {totalPages}
+        {t('text.page', { var: `${currentPage}/${totalPages}` })}
       </div>
     </div>
   );

@@ -44,12 +44,6 @@ async function bootstrap() {
       permissions: allPermissionIds
     });
 
-    // Create USER Role
-    // Lọc ra permission id tương ứng
-    // const userPermissions = createdPermissions
-    //   .filter(p => ['Login', 'Get All Users'].includes(p.name))
-    //   .map(p => p._id);
-
     const userRoleData = ROLES_DATA.find(r => r.level === RoleLevel.USER);
     const userRole = await roleModel.create({
       ...userRoleData,
@@ -67,7 +61,7 @@ async function bootstrap() {
       permissions: managerPermissions
     });
 
-    console.log(`   - Created Roles: ADMIN (${adminRole._id}), MANAGER (${managerRole._id}), USER (${userRole._id})`);
+    console.log(`- Created Roles: ADMIN (${adminRole._id}), MANAGER (${managerRole._id}), USER (${userRole._id})`);
 
     // Step 3: Seeding USER
     console.log('Seeding Users');

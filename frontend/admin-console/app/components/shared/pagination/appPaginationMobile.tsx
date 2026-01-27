@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '../../ui/select';
 import { pageSizeOptions } from '~/constants/app/app-pagination-constant';
+import { useTranslation } from 'react-i18next';
 
 interface AppPaginationMobileProps {
   className?: string;
@@ -37,6 +38,7 @@ export function AppPaginationMobile({
   onPageSizeChange,
   pageSize,
 }: AppPaginationMobileProps) {
+  const { t } = useTranslation('app');
   const handlePageChange = (page: number, e: React.MouseEvent) => {
     e.preventDefault();
     if (page > 0 && page <= totalPages) {
@@ -51,7 +53,7 @@ export function AppPaginationMobile({
       <div className='flex flex-row justify-between'>
         {/* Select limit row data */}
         <div className='flex items-center space-x-2'>
-          <p className='text-sm font-medium'>Dòng mỗi trang:</p>
+          <p className='text-sm font-medium'>{t('text.pageRowNum')}</p>
           <Select
             value={`${pageSize}`}
             onValueChange={(value) => {

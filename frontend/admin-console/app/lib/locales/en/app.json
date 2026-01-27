@@ -10,7 +10,7 @@
       "redis": "Redis Dashboard"
     },
     "management": {
-      "title": "ADMIN CONSOLE",
+      "title": "{{var}} CONSOLE",
       "dashboard": "Dashboard",
       "user": "User Management",
       "role": "Role Management",
@@ -19,10 +19,41 @@
       "genre": "Genre Management",
       "movie": "Movie Management",
       "video": "Video Management",
-      "account": "Account"
+      "account": "Account",
+      "setting": "Settings"
     },
     "logout": "Log out",
     "loggingout": "Logging out...",
     "language": "Language"
-  }
+  },
+  "text": {
+    "searchResult": "{{var} results}",
+    "searchPlaceHolder": "Search by keyword...",
+    "userTable": "Manage the list of users",
+    "permissionTable": "Manage the list of permissions",
+    "pageRowNum": "Line per pages:",
+    "page": "Page {{var}}"
+  },
+  "tableHeader": {
+    "permission": {
+      "id": "ID",
+      "name": "Permission Name",
+      "apiPath": "API Path",
+      "method": "Method",
+      "module": "Module",
+      "status": "Status",
+      "createdDate": "Created Date",
+      "updatedDate": "Updated Date",
+      "action": "Action"
+    }
+  },
+  "status": {
+    "inactive": "Inactive",
+    "active": "Active",
+    "pending": "Processing"
+  },
+  "button": {
+    "addPermission": "Add a new permission"
+  },
+  "noData": "No data"
 }

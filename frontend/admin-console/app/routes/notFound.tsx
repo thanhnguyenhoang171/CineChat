@@ -1,8 +1,6 @@
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { MoveLeft, Home } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import type { Route } from './+types/notFound';
-
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
@@ -32,11 +30,11 @@ export default function NotFoundPage() {
             Quay lại
           </Button>
 
-          <Button asChild className='gap-2'>
-            <Link to='/dashboard'>
-              <Home size={16} />
-              Về Dashboard
-            </Link>
+          <Button
+            className='gap-2'
+            onClick={() => navigate(`/dashboard`, { replace: true })}>
+            <Home size={16} />
+            Về Dashboard
           </Button>
         </div>
       </div>

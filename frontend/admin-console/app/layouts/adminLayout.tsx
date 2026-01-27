@@ -1,26 +1,25 @@
-import { Outlet, NavLink, Link, redirect, useLocation } from 'react-router';
+import { Outlet } from 'react-router';
 import { AppMobileMenu } from '~/components/layout/appMobileMenu';
-import { SidebarTrigger, useSidebar } from '~/components/ui/sidebar';
+import { SidebarProvider } from '~/components/ui/sidebar';
+import { AppSidebar } from '~/components/layout/appSideBar';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
-import { useLogout } from '~/hooks/useLogout';
-import { cn } from '~/lib/utils';
+import { SidebarTriggerWrapper } from '~/components/shared/sidebar/sidebarTriggerWrapper';
 
 export default function AdminLayout() {
-  const { open } = useSidebar();
-  const { isMobile, isDesktop, isTablet } = useBreakpoint();
+  const { isMobile } = useBreakpoint();
+
   return (
-    <>
-      {!isMobile && (
-        <SidebarTrigger className={cn(!open && 'hidden')} />
-      )}
-      <main className='flex-1 overflow-y-auto bg-slate-50'>
-        <div className='mx-auto max-w-7xl animate-in fade-in duration-200'>
+    <SidebarProvider>
+      {!isMobile && <AppSidebar />}
+      <main className='flex-1 overflow-y-auto bg-slate-50 relative w-full'>
+        <div className='mx-auto max-w-8xl animate-in fade-in duration-200 p-4'>
+          <SidebarTriggerWrapper className='absolute' isMobile={isMobile} />
           <Outlet />
         </div>
       </main>
       {isMobile && (
         <AppMobileMenu className='fixed bottom-4 left-1/2 -translate-x-1/2' />
       )}
-    </>
+    </SidebarProvider>
   );
 }

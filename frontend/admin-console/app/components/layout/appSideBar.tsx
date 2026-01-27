@@ -35,21 +35,21 @@ import { useBoundStore } from '~/store';
 
 import { useLogout } from '~/hooks/useLogout';
 import { formatFullName } from '~/utils/common-utils';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { modules, workspaces, type Item } from '~/types/app-types/sidebar';
 import { useTranslation } from 'react-i18next';
-import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
 import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
 import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
+import { UserAvatar } from '../shared/image/userAvatar';
+import { Badge } from '../ui/badge';
 
 export function AppSidebar() {
-  const { t } = useTranslation('app');
+  const { t, i18n } = useTranslation('app');
+  const currentLang = i18n.language;
   const { isDesktop, isTablet } = useBreakpoint();
   const navigation = useNavigate();
-  const user = useBoundStore((state) => state.user);
+  const user = useBoundStore((state) => state.account);
   const { mutate: logout, isPending } = useLogout();
   const { open, setOpen } = useSidebar();
 
@@ -114,7 +114,25 @@ export function AppSidebar() {
 
       <SidebarContent className={cn(!open && 'justify-center')}>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('sidebar.management.title')}</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <Badge
+              className={cn(
+                'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300s w-full flex justify-center items-center',
+                user?.role?.level === 0 &&
+                  'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+              )}>
+              {t('sidebar.management.title', {
+                var:
+                  currentLang === 'vi'
+                    ? user?.role.level === 0
+                      ? 'QUẢN TRỊ'
+                      : 'QUẢN LÝ'
+                    : user?.role.level === 0
+                      ? 'ADMIN'
+                      : 'MANAGER',
+              })}
+            </Badge>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className={cn(!open && 'items-center')}>
               {modules.map((modules) => (
@@ -143,24 +161,16 @@ export function AppSidebar() {
               className='flex justify-center items-center'
               asChild>
               <SidebarMenuButton>
-                <Avatar className={cn('object-cover')}>
-                  <AvatarImage
-                    src={user?.picture}
-                    alt={`${user?.firstName || 'User'} avatar`}
-                  />
-                  <AvatarFallback>
-                    {(user?.firstName?.[0] || 'A').toUpperCase()}
-                    {(user?.lastName?.[0] || '').toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <UserAvatar user={user} />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               side='top'
               className='w-[--radix-popper-anchor-width]'>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigation(`/account/${user?._id}`)}>
                 <ContactRound />
-                <Link to='#'>{t('sidebar.management.account')}</Link>
+                <span>{t('sidebar.management.account')}</span>
               </DropdownMenuItem>
 
               <ChangeLanguageSubMenu sideOffset={5} />
@@ -188,16 +198,7 @@ export function AppSidebar() {
                   <SidebarMenuButton>
                     <div className='flex items-center gap-3'>
                       {/* Avatar Component */}
-                      <Avatar className={cn('object-cover')}>
-                        <AvatarImage
-                          src={user?.picture}
-                          alt={`${user?.firstName || 'User'} avatar`}
-                        />
-                        <AvatarFallback>
-                          {(user?.firstName?.[0] || 'A').toUpperCase()}
-                          {(user?.lastName?.[0] || '').toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserAvatar user={user} />
 
                       <div className='flex flex-col overflow-hidden'>
                         <span className='text-sm font-semibold text-slate-700 truncate'>
@@ -212,9 +213,10 @@ export function AppSidebar() {
                 <DropdownMenuContent
                   side='top'
                   className='w-[--radix-popper-anchor-width]'>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigation(`/account/${user?._id}`)}>
                     <ContactRound />
-                    <Link to='#'>{t('sidebar.management.account')}</Link>
+                    <span>{t('sidebar.management.account')}</span>
                   </DropdownMenuItem>
 
                   <ChangeLanguageSubMenu sideOffset={5} />
@@ -222,12 +224,14 @@ export function AppSidebar() {
                   <AppThemeModeButton />
 
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem variant='destructive'>
+                  <DropdownMenuItem
+                    variant='destructive'
+                    onClick={handleLogout}>
                     <LogOut />
                     {isPending ? (
                       <span>{t('sidebar.loggingout')}</span>
                     ) : (
-                      <span onClick={handleLogout}>{t('sidebar.logout')}</span>
+                      <span>{t('sidebar.logout')}</span>
                     )}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
