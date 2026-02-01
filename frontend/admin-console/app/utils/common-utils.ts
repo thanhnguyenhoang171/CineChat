@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export function formatFullName(
   firstName?: string | null,
   lastName?: string | null,
@@ -122,4 +124,19 @@ export const get4LastDigitsFromId = (id: string) => {
 
 export const getItemTotal = (itemArr: any[]) => {
   return itemArr.length;
+};
+
+export const formatDateTime = (
+  date?: Date | string | number | null,
+): string => {
+  if (!date) return '---';
+
+  try {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return 'Invalid Date';
+
+    return format(d, 'dd/MM/yyyy HH:mm:ss');
+  } catch (error) {
+    return 'Invalid Date';
+  }
 };

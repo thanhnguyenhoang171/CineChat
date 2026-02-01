@@ -1,4 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { TypographyH2 } from '~/components/shared/text/typographyH2';
 import { Button } from '~/components/ui/button';
@@ -10,14 +11,24 @@ interface AccountInfoHeaderProps {
 export function AccountInfoHeader({ account }: AccountInfoHeaderProps) {
   const navigate = useNavigate();
   const { isDesktop } = useBreakpoint();
+  const { t } = useTranslation(['account', 'role']);
   return (
     <div className='flex items-center justify-between'>
       <div>
         <TypographyH2
-          text={`MCA ${account?.role?.level === 0 ? 'Admin' : 'Manager'} Account`}
+          text={
+            account?.role
+              ? t('account:header.title', {
+                  var:
+                    account.role.level === 0
+                      ? t('role:level.admin')
+                      : t('role:level.manager'),
+                })
+              : ''
+          }
         />
         <p className='text-sm text-slate-500'>
-          Quản lý thông tin chi tiết và cài đặt tài khoản.
+          {t('account:header.description')}
         </p>
       </div>
 

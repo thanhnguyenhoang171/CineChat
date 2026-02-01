@@ -1,5 +1,3 @@
-// 📂 File: app/types/user.ts
-
 import type { D } from 'node_modules/react-router/dist/development/router-CAvh_Drx.mjs';
 
 // Enum cho Role giúp code an toàn hơn, tránh gõ nhầm string 'admin'
@@ -31,6 +29,8 @@ export interface User {
   deletedAt?: Date | null;
 
   isDeleted?: boolean;
+
+  isActive: number;
 
   createdAt?: Date;
   updatedAt?: Date;

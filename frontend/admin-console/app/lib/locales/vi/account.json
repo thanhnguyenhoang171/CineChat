@@ -1,0 +1,18 @@
+{
+  "header": {
+    "title": "MCA Tài Khoản {{var}} ",
+    "description": "Quản lý thông tin chi tiết và cài đặt tài khoản."
+  },
+  "detail": {
+    "title": "Thông tin chi tiết",
+    "description": "Dữ liệu cá nhân và trạng thái hệ thống.",
+    "status": {
+      "text": "TRẠNG THÁI",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "role": {
+      "text": "VAI TRÒ"
+    }
+  }
+}

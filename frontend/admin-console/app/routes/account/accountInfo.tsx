@@ -34,7 +34,7 @@ export default function AccountInfo() {
         <AccountInfoHeader account={user} />
 
         <div className='grid gap-6 grid-cols-1 lg:grid-cols-12'>
-          <AccountInfoLeftHero account={user}/>
+          <AccountInfoLeftHero account={user} />
 
           <AccountInfoRightHero account={user} />
         </div>
