@@ -6,20 +6,26 @@ import {
   ShieldCheck,
   User as UserIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CustomLabel } from '~/components/shared/text/customLabel';
 import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 import type { User } from '~/types/module-types/user';
+import { formatDateTime, formatFullName } from '~/utils/common-utils';
 interface AccountInfoRightHeroProps {
   account: User;
 }
 export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
+  const { t } = useTranslation(['account', 'role']);
   return (
     <div className='lg:col-span-8 flex flex-col gap-6'>
       <div className='rounded-xl border bg-white shadow-sm h-full flex flex-col'>
         <div className='border-b p-6'>
-          <h3 className='text-lg text-slate-900'>Thông tin chi tiết</h3>
+          <h3 className='text-lg text-slate-900'>
+            {t('account:detail.title')}
+          </h3>
           <p className='text-sm text-slate-500'>
-            Dữ liệu cá nhân và trạng thái hệ thống.
+            {t('account:detail.description')}
           </p>
         </div>
 
@@ -40,7 +46,7 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
               icon={<CalendarDays className='size-4' />}
             />
             <div className='text-sm font-medium text-slate-900'>
-              {account.createdAt?.toString()}
+              {formatDateTime(account?.createdAt)}
             </div>
           </div>
 
@@ -50,20 +56,40 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
               icon={<UserIcon className='size-4' />}
             />
             <div className='text-sm font-medium text-slate-900'>
-              {account?.firstName}
+              {formatFullName(account?.firstName, account?.lastName)}
             </div>
           </div>
 
           <div className='space-y-1'>
-            <CustomLabel text='Vai trò' />
-            <div className='text-sm font-medium text-slate-900'>Admin</div>
+            <CustomLabel text={t('account:detail.role.text')} />
+            <div className='text-sm font-medium text-slate-900'>
+              {t(
+                account?.role?.level === 0
+                  ? 'role:level.admin'
+                  : 'role:level.manager',
+              )}
+            </div>
           </div>
 
           <div className='space-y-1'>
-            <CustomLabel text='Trạng thái' />
+            <CustomLabel text={t('account:detail.status.text')} />
             <div className='flex items-center gap-2'>
-              <span className='flex h-2 w-2 rounded-full bg-green-600'></span>
-              <span className='text-sm font-medium text-green-700'>Active</span>
+              <span
+                className={cn(
+                  'flex h-2 w-2 rounded-full bg-green-600',
+                  account?.isActive !== 1 && 'bg-red-600',
+                )}></span>
+              <span
+                className={cn(
+                  'text-sm font-medium text-green-700',
+                  account?.isActive !== 1 && 'text-red-700',
+                )}>
+                {t(
+                  account?.isActive === 1
+                    ? 'account:detail.status.active'
+                    : 'account:detail.status.inactive',
+                )}
+              </span>
             </div>
           </div>
 

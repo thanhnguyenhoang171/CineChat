@@ -1,0 +1,18 @@
+{
+  "header": {
+    "title": "MCA {{var}} Account",
+    "description": "Manage account details and settings."
+  },
+  "detail": {
+    "title": "Detailed information",
+    "description": "Personal data and system status.",
+    "status": {
+      "text": "STATUS",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "role": {
+      "text": "ROLE"
+    }
+  }
+}

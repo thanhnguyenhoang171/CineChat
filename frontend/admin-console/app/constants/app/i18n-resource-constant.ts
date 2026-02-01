@@ -13,6 +13,9 @@ import logoutVi from '~/lib/locales/vi/logout.json';
 import roleEn from '~/lib/locales/en/role.json';
 import roleVi from '~/lib/locales/vi/role.json';
 
+import accountEn from '~/lib/locales/en/account.json';
+import accountVi from '~/lib/locales/vi/account.json';
+
 export const i18nResources = {
   en: {
     app: appEn,
@@ -20,6 +23,7 @@ export const i18nResources = {
     register: registerEn,
     logout: logoutEn,
     role: roleEn,
+    account: accountEn,
   },
   vi: {
     app: appVi,
@@ -27,5 +31,6 @@ export const i18nResources = {
     register: registerVi,
     logout: logoutVi,
     role: roleVi,
+    account: accountVi,
   },
 } as const;

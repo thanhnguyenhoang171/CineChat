@@ -14,7 +14,7 @@ export const silentRefreshToken = async (): Promise<boolean> => {
     // if refresh token expired -> logout
     if (error.response?.status === 401) {
       toast.error(
-        `${error.response?.message} || 'Đã hết phiên làm việc, vui lòng đăng nhập lại!'`,
+        `${error.response?.message}` || 'Đã hết phiên làm việc, vui lòng đăng nhập lại!',
       );
       useBoundStore.getState().logout();
     }
