@@ -36,17 +36,17 @@ export default function GoogleCallbackPage() {
       // --- CHECK Sai quyền (Forbidden) ---
 
       if (level !== '0' && level !== '1') {
-        try {
-          await authService.logout();
-        } catch (error) {
-          console.error('Logout error', error);
-        }
+        // try {
+        //   await authService.logout();
+        // } catch (error) {
+        //   console.error('Logout error', error);
+        // }
 
         // Cleanup
         logout(); // Xóa Token
         resetAccount(); // Xóa User Data
 
-        toast.error(t('toast.unauthorized'), {
+        toast.error(t('toast.unauthorized3'), {
           id: 'google-login-fail-permissions',
         });
         navigate('/login', { replace: true });

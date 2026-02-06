@@ -36,7 +36,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { useBoundStore } from '~/store';
-import { useLogout } from '~/hooks/useLogout';
+import { useLogout } from '~/hooks/auth/useLogout';
 import { formatFullName } from '~/utils/common-utils';
 import { useNavigate } from 'react-router';
 import { modules, workspaces, type Item } from '~/types/app-types/sidebar';

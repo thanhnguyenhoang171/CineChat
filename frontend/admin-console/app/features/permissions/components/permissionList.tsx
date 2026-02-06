@@ -17,7 +17,7 @@ import {
 } from '~/components/ui/table';
 
 import { PermissionTableHeader } from '~/constants/app/permisson-constant';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
 import type {
   PaginationMeta,

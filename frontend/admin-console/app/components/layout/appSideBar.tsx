@@ -20,7 +20,7 @@ import {
   useSidebar,
 } from '../ui/sidebar';
 import { cn } from '~/lib/utils';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +33,7 @@ import {
 } from '../ui/dropdown-menu';
 import { useBoundStore } from '~/store';
 
-import { useLogout } from '~/hooks/useLogout';
+import { useLogout } from '~/hooks/auth/useLogout';
 import { formatFullName } from '~/utils/common-utils';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';

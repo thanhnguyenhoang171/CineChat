@@ -11,7 +11,7 @@ export function UserAvatar({ className, user }: UserAvatarProps) {
   return (
     <Avatar className={cn('object-cover', className)}>
       <AvatarImage
-        src={user?.picture}
+        src={user?.picture?.url}
         alt={`${user?.firstName || 'User'} avatar`}
       />
       <AvatarFallback>

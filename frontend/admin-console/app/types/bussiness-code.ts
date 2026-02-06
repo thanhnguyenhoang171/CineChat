@@ -22,11 +22,23 @@ export enum BusinessCode {
   TOKEN_EXPIRED = 'SYS_301',
   INVALID_TOKEN = 'SYS_302',
 
+  GOOGLE_AUTH_FAILED = 'SYS_401',
+  EMAIL_NOT_VERIFIED = 'SYS_403',
+
   ACCOUNT_INFO = 'SYS_205',
   REFRESH_TOKEN_SUCCESS = 'SYS_206',
 
   // --- 5xx: Server Errors ---
   INTERNAL_SERVER_ERROR = 'SYS_500',
+
+  // =========================================================
+  // === FILE UPLOAD ====================================
+  // =========================================================
+
+  INVALID_FILE_TYPE = 'FIL_400',
+  UPLOAD_FILE_SUCCESS = 'FIL_200',
+  UPLOAD_FILE_FAILD = 'FIL_500',
+  PUBLIC_ID_FILE_NOT_FOUND = 'FIL_404',
 
   // =========================================================
   // === USR: USER MODULE ====================================
@@ -37,6 +49,12 @@ export enum BusinessCode {
   USER_CREATED_SUCCESS = 'USR_001',
   USER_UPDATED_SUCCESS = 'USR_002',
   USER_DELETED_SUCCESS = 'USR_003',
+
+  CANCEL_ACCOUNT_SUCCESS = 'USR_210',
+  CANCEL_ACCOUNT_FAILD = 'USR_310',
+
+  ACCOUNT_DELETED = 'USR_320',
+  ACCOUNT_DISABLED = 'USR_330',
 
   // --- 1xx: Client Errors ---
   USER_NOT_FOUND = 'USR_100',

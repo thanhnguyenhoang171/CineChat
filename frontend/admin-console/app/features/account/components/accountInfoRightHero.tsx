@@ -3,6 +3,7 @@ import {
   Fingerprint,
   Lock,
   Mail,
+  ShieldBan,
   ShieldCheck,
   User as UserIcon,
 } from 'lucide-react';
@@ -32,7 +33,7 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
         <div className='p-6 grid gap-y-6 gap-x-10 md:grid-cols-2 flex-1'>
           <div className='space-y-1'>
             <CustomLabel
-              text='User ID'
+              text={t('account:detail.userId')}
               icon={<Fingerprint className='size-4' />}
             />
             <div className='font-mono text-sm text-slate-700 bg-slate-100 p-2 rounded w-fit'>
@@ -42,7 +43,7 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
 
           <div className='space-y-1'>
             <CustomLabel
-              text='Ngày tạo'
+              text={t('account:detail.createdDate')}
               icon={<CalendarDays className='size-4' />}
             />
             <div className='text-sm font-medium text-slate-900'>
@@ -52,7 +53,7 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
 
           <div className='space-y-1 md:col-span-2'>
             <CustomLabel
-              text='Họ và tên'
+              text={t('account:detail.fullname')}
               icon={<UserIcon className='size-4' />}
             />
             <div className='text-sm font-medium text-slate-900'>
@@ -93,21 +94,38 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
             </div>
           </div>
 
-          <div className='space-y-1 md:col-span-2'>
-            <CustomLabel text='Xác thực Email' />
-            <div className='flex items-center gap-2 text-green-700 bg-green-50 w-fit px-3 py-1.5 rounded-md border border-green-100'>
-              <ShieldCheck className='size-4' />
-              <span className='text-sm font-medium'>Đã xác minh</span>
+          {account?.email && account?.emailVerified !== undefined && (
+            <div className='space-y-1 md:col-span-2'>
+              <CustomLabel text={t('account:detail.email.verify')} />
+              <div
+                className={cn(
+                  'flex items-center gap-2 text-green-700 bg-green-50 w-fit px-3 py-1.5 rounded-md border border-green-100',
+                  account.emailVerified === false &&
+                    'text-red-700 bg-red-50 border-red-100',
+                )}>
+                {account?.emailVerified ? (
+                  <ShieldCheck className='size-4' />
+                ) : (
+                  <ShieldBan className='size-4' />
+                )}
+                <span className='text-sm font-medium'>
+                  {t(
+                    account?.emailVerified === true
+                      ? 'account:detail.email.verify'
+                      : 'account:detail.email.unverified',
+                  )}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className='border-t bg-slate-50/50 p-6 flex justify-end gap-3 rounded-b-xl mt-auto'>
           <Button variant='outline' className='gap-2'>
             <Lock className='size-4 text-slate-500' />
-            Đổi mật khẩu
+            {t('account:detail.changePass')}
           </Button>
-          <Button>Cập nhật hồ sơ</Button>
+          <Button>{t('account:detail.update')}</Button>
         </div>
       </div>
     </div>

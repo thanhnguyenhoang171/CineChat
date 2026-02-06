@@ -20,6 +20,8 @@ import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AvatarValidator } from '@common/validators/file.validator';
 import { BusinessCode } from '@common/constants/business-code';
+import { User } from '@common/decorators/user.decorator';
+import type { IUser } from '@interfaces/user.interface';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -59,22 +61,15 @@ export class UsersController {
     return this.usersService.removeUserById(+id);
   }
 
-  @Post('avatar')
+  @Post('upload-avatar')
   @UseInterceptors(FileInterceptor('file'))
   @ResponseStatus(HttpStatus.OK)
   uploadAvatar(
     @UploadedFile(AvatarValidator) file: Express.Multer.File,
     @Query('folder') folder: string,
+    @User() user: IUser,
   ) {
-    const data = {
-      url: file.path, // Link ảnh Cloudinary
-      public_id: file.filename, // ID ảnh (dùng để xóa sau này)
-      folder: folder, // Folder vừa lưu}
-    };
-    return {
-      code: BusinessCode.UPLOAD_FILE_SUCCESS,
-      data: data,
-    };
+    return this.usersService.uploadUserAvatarById(user, folder, file);
   }
 
   @Post('avatars')

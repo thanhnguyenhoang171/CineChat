@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { useBoundStore } from '~/store'; // Đảm bảo import đúng store tổng
+import { useBoundStore } from '~/store';
 import { Mutex } from 'async-mutex';
-
+import i18n from '~/lib/locales/i18n';
 import { authService } from '~/services/auth.service';
 import { BusinessCode } from '~/types/bussiness-code';
+import { toast } from 'sonner';
 
 const mutex = new Mutex();
 
@@ -37,6 +38,27 @@ axiosClient.interceptors.response.use(
 
     const originalRequest = error.config;
     const store = useBoundStore.getState();
+    /// Account deleted or locked
+    if (
+      error.response?.status === 401 &&
+      (error.response?.data?.code === BusinessCode.ACCOUNT_DELETED ||
+        error.response?.data?.code === BusinessCode.ACCOUNT_DISABLED)
+    ) {
+      // Thông báo cho người dùng
+      const msg =
+        error.response?.data?.code === BusinessCode.ACCOUNT_DELETED
+          ? i18n.t('account:deleted_msg')
+          : i18n.t('account:disabled_msg');
+
+      console.warn(msg);
+      toast.error(msg);
+
+      store.logout();
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+      return Promise.reject(error);
+    }
 
     // Checking for 401 error and token expiration
     if (

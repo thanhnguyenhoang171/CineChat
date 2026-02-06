@@ -1,5 +1,6 @@
 import { BusinessCode } from '@common/constants/business-code';
-import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service'; // Import Service
+import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service'; 
+import { cleanupFiles } from '@common/utils/file-uploaded-cleanup.util';
 import {
   ArgumentsHost,
   Catch,
@@ -46,11 +47,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // handle remove file in cloudinary
     try {
-      await this.cleanupFiles(request);
+      await cleanupFiles(request);
     } catch (err) {
       this.logger.warn('Cleanup file failed:', err);
     }
-
 
     response.status(status).json({
       status,
@@ -59,32 +59,5 @@ export class HttpExceptionFilter implements ExceptionFilter {
       path: request.url,
       errors,
     });
-  }
-
-
-  private async cleanupFiles(request: Request): Promise<void> {
-    const filesToDelete: any[] = [];
-
-    if (request.file) filesToDelete.push(request.file);
-    if (request.files) {
-      if (Array.isArray(request.files)) {
-        filesToDelete.push(...request.files);
-      } else {
-        Object.values(request.files).forEach((files) => filesToDelete.push(...files));
-      }
-    }
-
-    if (filesToDelete.length === 0) return;
-
-    this.logger.warn(`Error detected! Cleaning up ${filesToDelete.length} file(s)...`);
-
-    await Promise.all(
-      filesToDelete.map((file) => {
-        const publicId = file.filename || file.public_id;
-        if (publicId) {
-          return this.cloudinaryService.deleteFile(publicId);
-        }
-      }),
-    );
   }
 }

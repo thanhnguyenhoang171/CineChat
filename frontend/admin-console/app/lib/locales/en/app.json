@@ -53,7 +53,27 @@
     "pending": "Processing"
   },
   "button": {
-    "addPermission": "Add a new permission"
+    "addPermission": "Add a new permission",
+    "back": "Back"
   },
-  "noData": "No data"
+  "noData": "No data",
+  "notFoundPage": {
+    "title": "Oops! This page doesn't exist.",
+    "description": "It seems the URL you're trying to access is broken or the page has been deleted. Please check the URL again or return to the homepage.",
+    "backBtn": "Back to Dashboard"
+  },
+  "upload": {
+    "text": "Upload an image to preview and crop",
+    "ready": "Ready to upload!",
+    "editBtn": "Edit",
+    "saveBtn": "Save Changes",
+    "cancelBtn": "Cancel",
+    "clear": "Clear image",
+    "processing": "Uploading...",
+    "field": {
+      "dragAndDrop": "Drag and drop an image here or click to browse",
+      "accepted": "Accepted formats: {{var}}",
+      "maxSize": "Max size: {{var}}MB"
+    }
+  }
 }

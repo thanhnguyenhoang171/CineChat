@@ -95,7 +95,11 @@ export class RegisterGGAccountDto {
 
   @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
   @IsOptional()
-  picture: string;
+  picture: {
+    url: string;
+    public_id: string;
+    folder: string;
+  };
 
   @ApiProperty({ example: 'thanhnguyen@gmail.com', description: 'Email' })
   @IsOptional()

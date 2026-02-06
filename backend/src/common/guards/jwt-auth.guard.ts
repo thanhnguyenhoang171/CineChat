@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { BusinessCode } from '@common/constants/business-code';
 import { Request } from 'express';
 import { ResponseMessage } from '@common/constants/response-message';
-import {  matchPermission } from '@common/helpers/auth.helper';
+import { matchPermission } from '@common/helpers/auth.helper';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -14,7 +14,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
-   canActivate(context: ExecutionContext) {
+  canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -26,10 +26,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
+    if (err) {
+      throw err;
+    }
     this.logger.log('>>> JWT AUTH GUARD INFO = ' + info?.message);
-    this.logger.log('>>> JWT AUTH USER INFO = ' +  user?._id);
+    this.logger.log('>>> JWT AUTH USER INFO = ' + user?._id);
 
-    if (err || !user) {
+    if (!user) {
       this.logger.error('>>> JWT AUTH GUARD ERRORS = ' + err?.message);
 
       //  Xử lý các loại lỗi JWT cụ thể
@@ -90,9 +93,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     //  Check permissions từ user
     const permissionList = user?.permissions ?? [];
-    const isAllowAccess = permissionList.some(
-      (permission: any) =>
-        matchPermission(permission, targetMethod, targetEndpoint),
+    const isAllowAccess = permissionList.some((permission: any) =>
+      matchPermission(permission, targetMethod, targetEndpoint),
     );
 
     if (!isAllowAccess) {

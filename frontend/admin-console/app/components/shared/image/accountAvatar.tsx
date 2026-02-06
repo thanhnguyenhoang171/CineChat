@@ -28,7 +28,7 @@ export function AccountAvatar({
       onClick={() => setOpenUploadAvatar?.(true)}>
       <Avatar className='size-full border-none'>
         <AvatarImage
-          src={user?.picture}
+          src={user?.picture?.url}
           className={cn(
             'object-cover transition-all duration-300',
             editAvatarHover && 'scale-110 blur-[1px]', // light zoom and blur when hover

@@ -3,6 +3,8 @@
     "title": "MCA {{var}} Account",
     "description": "Manage account details and settings."
   },
+  "deleted_msg": "Account has been cancelled.",
+  "disabled_msg": "Account has been disabled.",
   "detail": {
     "title": "Detailed information",
     "description": "Personal data and system status.",
@@ -11,8 +13,29 @@
       "active": "Active",
       "inactive": "Inactive"
     },
+    "createdDate": "Created date",
+    "fullname": "fullname",
+    "userId": "User ID",
     "role": {
       "text": "ROLE"
+    },
+    "email": {
+      "verify": "Email Verification",
+      "verified": "Verified",
+      "unverified": "Unverified"
+    },
+    "update": "Update profile",
+    "uploadAvatar": {
+      "title": "Upload A New Avatar",
+      "success": "Updated profile picture successfully!"
+    },
+    "changePass": "Change password",
+    "cancelAccount": {
+      "text": "Cancel account from the system",
+      "warning": "This action cannot be undone.",
+      "cancelBtn": "Cancel",
+      "success": "Account cancelled successfully!",
+      "failure": "Account cancellation failed. Please try again."
     }
   }
 }

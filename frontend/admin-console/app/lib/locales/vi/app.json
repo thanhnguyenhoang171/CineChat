@@ -54,7 +54,27 @@
     "pending": "Đang xử lý"
   },
   "button": {
-    "addPermission": "Thêm một quyền mới"
+    "addPermission": "Thêm một quyền mới",
+    "back": "Quay lại"
   },
-  "noData": "Không có dữ liệu"
+  "noData": "Không có dữ liệu",
+  "notFoundPage": {
+    "title": "Oops! Trang này không tồn tại.",
+    "description": "Có vẻ như đường dẫn bạn đang truy cập bị lỗi hoặc trang đã bị xóa. Hãy kiểm tra lại URL hoặc quay về trang chủ.",
+    "backBtn": "Về Dashboard"
+  },
+  "upload": {
+    "text": "Tải hình ảnh lên để xem trước và cắt",
+    "ready": "Đã sẵn sàng tải lên!",
+    "editBtn": "Chỉnh sửa",
+    "saveBtn": "Lưu thay đổi",
+    "cancelBtn": "Hủy",
+    "clear": "Dọn hình ảnh",
+    "processing": "Đang tải lên...",
+    "field": {
+      "dragAndDrop": "Kéo và thả hình ảnh vào đây hoặc nhấp để duyệt",
+      "accepted": "Các định dạng được chấp nhận: {{var}}",
+      "maxSize": "Kích thước tối đa: {{var}}MB"
+    }
+  }
 }

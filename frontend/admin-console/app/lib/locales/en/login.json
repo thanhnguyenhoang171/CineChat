@@ -30,5 +30,24 @@
     "noLogin": "Please log in to continue.",
     "error": "An authentication error has occurred. Please log in again.",
     "errorGG": "Google login failed!"
+  },
+  "googleLogin": {
+    "errors": {
+      "google_unknown": "An unknown error occurred during authentication.",
+      "google_default": "Login request denied.",
+      "SYS_201": "This Google account does not have permission to access the system.",
+      "SYS_500": "The system is experiencing a technical issue, please try again later.",
+      "USR_320": "Your account has been removed from the system.",
+      "USR_330": "Your account is currently temporarily suspended.",
+      "ACCOUNT_DELETED": "Your account has been deleted from the system.",
+      "ACCOUNT_DISABLED": "Your account is currently temporarily suspended."
+    },
+    "text": {
+      "google_failed_title": "Sorry!",
+      "contact_admin_hint": "If you believe this is an error, please contact the admin."
+    },
+    "button": {
+      "back_to_login": "Return to the Login page"
+    }
   }
 }

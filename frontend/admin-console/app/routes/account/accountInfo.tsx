@@ -7,7 +7,7 @@ import {
   AccountInfoLeftHero,
   AccountInfoRightHero,
 } from '~/features/account';
-import { useAccount } from '~/hooks/useAccount';
+import { useAccount } from '~/hooks/account/useAccount';
 
 export default function AccountInfo() {
   const { id } = useParams();

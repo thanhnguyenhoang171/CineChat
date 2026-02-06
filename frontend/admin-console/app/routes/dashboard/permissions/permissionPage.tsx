@@ -4,7 +4,7 @@ import { TypographyH2 } from '~/components/shared/text/typographyH2';
 import { AppAddButton } from '~/components/shared/button/appAddButton';
 import { Plus } from 'lucide-react';
 import { AppSearchBar } from '~/components/shared/search/appSearchBar';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
 import { useSidebar } from '~/components/ui/sidebar';
 import { useSearchParams } from 'react-router';
