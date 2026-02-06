@@ -1,6 +1,3 @@
-import type { D } from 'node_modules/react-router/dist/development/router-CAvh_Drx.mjs';
-
-// Enum cho Role giúp code an toàn hơn, tránh gõ nhầm string 'admin'
 export enum UserRole {
   ADMIN = 'ADMIN',
   USER = 'USER',
@@ -11,13 +8,17 @@ export interface User {
   _id: string;
   firstName: string;
   lastName: string;
-  picture: string;
+  picture: {
+    url: string;
+  };
   username?: string;
   //   password: string;  // Thông tin nhạy cảm, thường không trả về từ API
   email?: string;
+  emailVerified?: boolean;
   role: {
     _id: string;
     level: number;
+    description?: string;
   };
   permissions?: {
     _id: string;
@@ -44,9 +45,19 @@ export interface CreateUserDto {
   role?: UserRole;
 }
 
+export interface UploadAvatar {
+  _id: string;
+  picture: {
+    url: string;
+  };
+}
+
 export interface ApiResponse<T> {
   status: number;
   code: string;
   message: string;
   data: T;
+  path?: string;
+  timestamp?: string;
+  errors?: any;
 }

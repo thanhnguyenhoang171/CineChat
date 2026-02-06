@@ -6,7 +6,7 @@ import { silentRefreshToken } from '~/helpers/silent-refresh-token';
 import type { Route } from './+types/authGuard';
 import { SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/layout/appSideBar';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { authService } from '~/services/auth.service';
 import { toast } from 'sonner';
 import { LayoutSpinner } from '~/components/shared/spinner/layoutSpinner';

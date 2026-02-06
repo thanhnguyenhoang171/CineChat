@@ -5,7 +5,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
 
-import { useIsMobile } from '~/hooks/use-mobile';
+import { useIsMobile } from '~/hooks/layout/use-mobile';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -488,7 +488,7 @@ const sidebarMenuButtonVariants = cva(
   },
 );
 
-function  SidebarMenuButton({
+function SidebarMenuButton({
   asChild = false,
   isActive = false,
   variant = 'default',

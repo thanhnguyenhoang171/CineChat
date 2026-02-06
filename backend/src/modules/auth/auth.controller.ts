@@ -9,18 +9,12 @@ import {
   UnauthorizedException,
   HttpException,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  JwtPublic,
-  PublicPermission,
-} from '@common/decorators/auth.decorator';
-import {
-  LoginAccountDto,
-  RegisterAccountDto,
-  RegisterGGAccountDto,
-} from '@modules/users/dto/create-user.dto';
+import { JwtPublic, PublicPermission } from '@common/decorators/auth.decorator';
+import { LoginAccountDto, RegisterAccountDto } from '@modules/users/dto/create-user.dto';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { LocalAuthGuard } from '@common/guards/local-auth-guard';
 import type { Request, Response } from 'express';
@@ -41,7 +35,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new account' })
   @ResponseStatus(HttpStatus.CREATED)
   async registerController(@Body() registerAccountDto: RegisterAccountDto) {
-    console.log("Checking register account dto = ", registerAccountDto);
+    console.log('Checking register account dto = ', registerAccountDto);
     return this.authService.register(registerAccountDto);
   }
 
@@ -77,6 +71,17 @@ export class AuthController {
     return this.authService.getAccount(user);
   }
 
+  @Delete('cancel-account')
+  @PublicPermission()
+  @ApiOperation({ summary: 'Cancel account from system' })
+  @ResponseStatus(HttpStatus.OK)
+  async delAccountController(
+    @Res({ passthrough: true }) response: Response,
+    @User() user: IUser,
+  ): Promise<any> {
+    return this.authService.cancelAccount(user, response);
+  }
+
   @JwtPublic()
   @Post('/refresh')
   @ApiOperation({ summary: 'Get refresh information' })
@@ -98,7 +103,7 @@ export class AuthController {
   @Get('google/callback')
   @ResponseStatus(HttpStatus.OK)
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+  async googleAuthRedirect(@Req() req: Request, @Res() response: Response) {
     if (!req.user) {
       throw new HttpException(
         {
@@ -110,4 +115,5 @@ export class AuthController {
     }
     return this.authService.googleLogin(req.user as IGGUser, response);
   }
+  
 }

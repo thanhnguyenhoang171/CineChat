@@ -37,6 +37,8 @@ export enum BusinessCode {
 
   INVALID_FILE_TYPE = 'FIL_400',
   UPLOAD_FILE_SUCCESS = 'FIL_200',
+  UPLOAD_FILE_FAILD = 'FIL_500',
+  PUBLIC_ID_FILE_NOT_FOUND = 'FIL_404',
 
   // =========================================================
   // === USR: USER MODULE ====================================
@@ -47,6 +49,13 @@ export enum BusinessCode {
   USER_CREATED_SUCCESS = 'USR_001',
   USER_UPDATED_SUCCESS = 'USR_002',
   USER_DELETED_SUCCESS = 'USR_003',
+
+  CANCEL_ACCOUNT_SUCCESS = 'USR_210',
+  CANCEL_ACCOUNT_FAILD = 'USR_310',
+
+  ACCOUNT_DELETED = 'USR_320',
+  LAST_ACCOUNT_DELETED = 'USR_321',
+  ACCOUNT_DISABLED = 'USR_330',
 
   // --- 1xx: Client Errors ---
   USER_NOT_FOUND = 'USR_100',

@@ -1,15 +1,23 @@
+export interface IPicture {
+  url?: string;
+  public_id?: string;
+  folder?: string;
+}
+
 export interface IUser {
   _id: string;
   firstName?: string;
   lastName?: string;
-  picture?: string;
+  picture?: IPicture;
   username?: string;
   password?: string;
   provider?: string;
   email?: string;
+  isDeleted?: boolean;
+  isActive?: number;
   role: {
     _id: string;
-    level: string;
+    level: number;
   };
   permissions?: {
     _id: string;

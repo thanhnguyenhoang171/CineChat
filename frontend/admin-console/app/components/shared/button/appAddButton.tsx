@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
 import { useSidebar } from '../../ui/sidebar';
 

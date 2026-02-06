@@ -1,8 +1,6 @@
-
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { LoginCarousel } from '~/features/auth/components/login/loginCarousel';
 import { LoginForm } from '~/features/auth/components/login/loginForm';
-
 
 export default function LoginPage() {
   const { isMobile } = useBreakpoint();

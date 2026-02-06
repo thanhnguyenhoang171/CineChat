@@ -3,6 +3,8 @@
     "title": "MCA Tài Khoản {{var}} ",
     "description": "Quản lý thông tin chi tiết và cài đặt tài khoản."
   },
+  "deleted_msg": "Tài khoản đã bị hủy.",
+  "disabled_msg": "Tài khoản đã bị khóa.",
   "detail": {
     "title": "Thông tin chi tiết",
     "description": "Dữ liệu cá nhân và trạng thái hệ thống.",
@@ -11,8 +13,29 @@
       "active": "Hoạt động",
       "inactive": "Không hoạt động"
     },
+    "createdDate": "Ngày tạo",
+    "fullname": "Họ và tên",
+    "userId": "ID người dùng",
     "role": {
       "text": "VAI TRÒ"
+    },
+    "email": {
+      "verify": "Xác thực Email",
+      "verified": "Đã xác minh",
+      "unverified": "Chưa xác minh"
+    },
+    "update": "Cập nhật hồ sơ",
+    "uploadAvatar": {
+      "title": "Tải lên hình đại diện mới",
+      "success": "Cập nhật ảnh hồ sơ thành công!"
+    },
+    "changePass": "Đổi mật khẩu",
+    "cancelAccount": {
+      "text": "Hủy tài khoản khỏi hệ thống",
+      "warning": "Hành động này không thể hoàn tác.",
+      "cancelBtn": "Hủy",
+      "success": "Hủy tài khoản thành công!",
+      "failure": "Hủy tài khoản thất bại. Vui lòng thử lại."
     }
   }
 }

@@ -4,15 +4,42 @@ import { UserAvatar } from '~/components/shared/image/userAvatar';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import type { User } from '~/types/module-types/user';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { ImageUploader } from '~/components/shared/image/imageUploader';
 import { AccountAvatar } from '~/components/shared/image/accountAvatar';
+import { useUploadAvatar } from '~/hooks/account/useUploadAvatar';
+import { useCancel } from '~/hooks/auth/useCancel';
 interface AccountInfoLeftHeroProps {
   account: User;
 }
 export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
-  const { t } = useTranslation('role');
+  const { t } = useTranslation(['role', 'account']);
+  const { mutate: cancelAccount, isPending: isCanceling } = useCancel();
   const [openUploadAvatar, setOpenUploadAvatar] = useState(false);
+  const [uploadData, setUploadData] = useState<{
+    blob: Blob;
+    fileInfo: { name: string; type: string };
+  } | null>(null);
+  const { mutate: uploadAvatar, isPending } = useUploadAvatar();
+
+  const handleSaveAvatar = () => {
+    if (!uploadData) return;
+
+    uploadAvatar(
+      {
+        folder: 'account-avatars',
+        blob: uploadData.blob,
+        originalFile: uploadData.fileInfo,
+      },
+      {
+        onSuccess: () => {
+          setOpenUploadAvatar(false);
+          setUploadData(null);
+        },
+      },
+    );
+    // setOpenUploadAvatar(false);
+  };
   return (
     <>
       <div className='lg:col-span-4 flex flex-col gap-6'>
@@ -40,33 +67,45 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
                 {t(account?.role.level === 0 ? 'level.admin' : 'level.manager')}
               </span>
             </div>
-
-            <div className='w-full border-t pt-4'>
-              <p className='text-sm text-slate-600 leading-relaxed text-justify'>
-                System administrator, full rights. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit. Quia eos nam omnis rerum nulla
-                dolor ut sequi.
-              </p>
-            </div>
+            {account?.role?.description && (
+              <div className='w-full border-t pt-4'>
+                <p className='text-sm text-slate-600 leading-relaxed text-justify'>
+                  <div
+                    className='prose prose-sm max-w-none'
+                    dangerouslySetInnerHTML={{
+                      __html: account.role.description,
+                    }}
+                  />
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
         <div className='rounded-xl border border-red-100 bg-red-50/50 p-6'>
           <h3 className='font-medium text-red-900 mb-2'>
-            Hủy tài khoản khỏi hệ thống
+            {t('account:detail.cancelAccount.text')}
           </h3>
           <p className='text-xs text-red-600 mb-4'>
-            Hành động này không thể hoàn tác.
+            {t('account:detail.cancelAccount.warning')}
           </p>
-          <Button variant='destructive' className='w-full shadow-none'>
-            Hủy
+          <Button
+            variant='destructive'
+            className='w-full shadow-none'
+            onClick={() => cancelAccount()}
+            disabled={isCanceling}>
+            {t('account:detail.cancelAccount.cancelBtn')}
           </Button>
         </div>
       </div>
       <ImageUploader
+        headerTitle={t('account:detail.uploadAvatar.title')}
         open={openUploadAvatar}
+        maxSize={5 * 1024 * 1024}
         setOpen={setOpenUploadAvatar}
-        onImageCropped={(blob) => console.log(blob)}
+        isUploading={isPending}
+        onImageCropped={(blob, fileInfo) => setUploadData({ blob, fileInfo })}
+        onSave={handleSaveAvatar}
       />
     </>
   );

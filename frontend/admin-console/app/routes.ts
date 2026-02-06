@@ -12,6 +12,7 @@ export default [
     layout('layouts/authLayout.tsx', [
       route('login', 'routes/auth/login.tsx'),
       route('auth/google-success', 'routes/auth/googleCallback.tsx'),
+      route('auth/google-failure', 'routes/auth/googleError.tsx'),
       route('register', 'routes/auth/register.tsx'),
     ]),
   ]),

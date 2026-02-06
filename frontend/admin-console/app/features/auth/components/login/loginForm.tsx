@@ -19,7 +19,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
-import { useLogin } from '~/hooks/useLogin';
+import { useLogin } from '~/hooks/auth/useLogin';
 import { useState } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Label } from '~/components/ui/label';
@@ -123,7 +123,7 @@ export function LoginForm() {
 
               <SeparatorWithText text={t('text.or')} />
 
-              <GoogleLoginButton/>
+              <GoogleLoginButton />
 
               <ForgetPasswordText />
 

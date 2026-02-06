@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, RegisterAccountDto, RegisterGGAccountDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,6 +13,7 @@ import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 import { RoleLevel } from '@common/constants/common-constant';
 import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
+import { IUser } from '@interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -405,7 +406,7 @@ export class UsersService {
             select: '_id name method apiPath module',
           },
         })
-        .select('-password -refreshToken -__v -deletedAt -isDeleted')
+        .select('-password -refreshToken -__v -deletedAt')
         .lean()
         .exec();
 
@@ -430,6 +431,7 @@ export class UsersService {
         role: {
           _id: roleObj?._id,
           level: roleObj?.level,
+          description: roleObj?.description,
         },
         permissions: permissions,
       };
@@ -449,37 +451,138 @@ export class UsersService {
     }
   }
 
-  // async uploadUserAvatarById(id: string, file: Express.Multer.File) {
-  //   validateMongoId(id);
-  //   const user = await findModuleOrThrow(
-  //     this.userModel,
-  //     '_id',
-  //     id,
-  //     BusinessCode.USER_NOT_FOUND,
-  //     ResponseMessage[BusinessCode.USER_NOT_FOUND],
-  //     HttpStatus.NOT_FOUND,
-  //   );
-  //   try {
-  //     // Upload file to Cloudinary
-  //     await this.cloudinaryService.uploadSingleFile(file, 'user-avatars').then((result) => {
-  //       // Update user's avatar URL
-  //       this.userModel.updateOne({ _id: id }, { picture: result?.secure_url }).exec();
-  //     });
-  //     return {
-  //       code: BusinessCode.USER_UPDATED_SUCCESS,
-  //       data: {
-  //         _id: user._id,
-  //         picture: user.picture,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
-  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
-  //       },
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+  async uploadUserAvatarById(user: IUser, folder: string, file: Express.Multer.File) {
+    if (!file) {
+      throw new HttpException(
+        {
+          code: BusinessCode.UPLOAD_FILE_FAILD,
+          errors: ResponseMessage[BusinessCode.UPLOAD_FILE_FAILD],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const account = await this.userModel.findById(user._id);
+    const oldPublicId = account?.picture?.public_id;
+
+    let newUserAvatar;
+    try {
+      newUserAvatar = await this.userModel
+        .findByIdAndUpdate(
+          user._id,
+          {
+            $set: {
+              picture: {
+                url: file.path,
+                public_id: file.filename,
+                folder,
+              },
+            },
+          },
+          {
+            new: true,
+            runValidators: true,
+          },
+        )
+        .lean();
+
+      if (!newUserAvatar) {
+        throw new HttpException(
+          {
+            code: BusinessCode.USER_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    } catch (error) {
+      //  DB fail → rollback NEW avatar
+      await this.cloudinaryService.deleteFile(file.filename);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // DB OK → remove old avatar
+    if (oldPublicId) {
+      await this.cloudinaryService.deleteFile(oldPublicId);
+    }
+
+    return {
+      code: BusinessCode.UPLOAD_FILE_SUCCESS,
+      data: {
+        _id: newUserAvatar._id,
+        picture: {
+          url: newUserAvatar.picture?.url,
+        },
+      },
+    };
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    validateMongoId(id);
+    const user = (await this.userModel.findById(id).populate('role').lean()) as IUser;
+
+    if (!user) {
+      throw new HttpException(
+        {
+          code: BusinessCode.USER_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (user.role.level === RoleLevel.ADMIN) {
+      const adminRoles = await this.roleModel.find({ level: RoleLevel.ADMIN }).select('_id').lean();
+      const adminRoleIds = adminRoles.map((role) => role._id.toString());
+      const adminCount = await this.userModel.countDocuments({
+        role: { $in: adminRoleIds },
+        isDeleted: false,
+      });
+
+      if (adminCount <= 1) {
+        throw new HttpException(
+          {
+            code: BusinessCode.LAST_ACCOUNT_DELETED,
+            errors: ResponseMessage[BusinessCode.LAST_ACCOUNT_DELETED],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    const result = await this.userModel.softDelete({ _id: id });
+
+    console.log('Checking delete user result = ', result);
+    if (!result?.deleted) {
+      throw new HttpException(
+        {
+          code: BusinessCode.CANCEL_ACCOUNT_FAILD,
+          errors: 'Xóa thất bại từ phía hệ thống lưu trữ',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return true;
+  }
+
+  async getAccountActiveStatus(id: string) {
+    const result = await this.userModel.findById(id).select('deleted isActive').lean();
+    if (!result) {
+      throw new NotFoundException(`User với ID ${id} không tồn tại`);
+    }
+
+    return {
+      isDeleted: result.isDeleted,
+      isActive: result.isActive,
+    };
+  }
 }

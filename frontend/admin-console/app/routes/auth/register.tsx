@@ -1,8 +1,7 @@
 import { RegisterCarousel } from '~/features/auth/components/register/registerCarousel';
 import type { Route } from './+types/register';
 import { RegisterForm } from '~/features/auth/components/register/registerForm';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
-
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 
 export default function RegisterPage() {
   const { isMobile } = useBreakpoint();

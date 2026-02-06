@@ -2,7 +2,7 @@ import { Outlet } from 'react-router';
 import { AppMobileMenu } from '~/components/layout/appMobileMenu';
 import { SidebarProvider } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/layout/appSideBar';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { SidebarTriggerWrapper } from '~/components/shared/sidebar/sidebarTriggerWrapper';
 
 export default function AdminLayout() {

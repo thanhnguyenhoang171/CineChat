@@ -28,7 +28,9 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   // === FILE UPLOAD===========================
   // =========================================================
   [BusinessCode.INVALID_FILE_TYPE]: 'Loại tệp không hợp lệ. Vui lòng tải lên tệp hình ảnh.',
-  [BusinessCode.UPLOAD_FILE_SUCCESS]: 'Upload file thành công!s',
+  [BusinessCode.UPLOAD_FILE_SUCCESS]: 'Upload file thành công!',
+  [BusinessCode.PUBLIC_ID_FILE_NOT_FOUND]: 'Public Id của file không tồn tại!',
+  [BusinessCode.UPLOAD_FILE_FAILD]: 'Upload file thất bại!',
 
   // =========================================================
   // === USR: USER MODULE MESSAGES ===========================
@@ -40,6 +42,13 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.USER_NOT_FOUND]: 'Không tìm thấy người dùng.',
   [BusinessCode.DUPLICATE_USERNAME]: 'Tên người dùng này đã tồn tại.',
   [BusinessCode.DUPLICATE_EMAIL]: 'Email này đã tồn tại.',
+
+  [BusinessCode.CANCEL_ACCOUNT_SUCCESS]: 'Hủy tài khoản thành công!',
+  [BusinessCode.CANCEL_ACCOUNT_FAILD]: 'Hủy tài khoản thất bại!',
+
+  [BusinessCode.ACCOUNT_DELETED]: 'Tài khoản đã bị xóa khỏi hệ thống',
+  [BusinessCode.LAST_ACCOUNT_DELETED]: 'Không thể xóa tài khoản admin cuối cùng trong hệ thống',
+  [BusinessCode.ACCOUNT_DISABLED]: 'Tài khoản không hoạt động',
 
   // =========================================================
   // === PER: PERMISSION MODULE MESSAGES =====================

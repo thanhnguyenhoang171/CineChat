@@ -11,8 +11,12 @@ export class User {
   @Prop()
   lastName?: string;
 
-  @Prop()
-  picture: string;
+  @Prop({ type: Object })
+  picture?: {
+    url?: string;
+    public_id?: string;
+    folder?: string;
+  };
 
   @Prop()
   username: string;
@@ -73,6 +77,9 @@ export class User {
 
   @Prop()
   deletedAt: Date;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

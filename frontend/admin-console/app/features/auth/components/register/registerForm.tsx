@@ -25,7 +25,7 @@ import { registerSchema, type RegisterFormValues } from './shemas';
 import { motion } from 'framer-motion';
 import { fadeVariant } from '~/components/animations/variants';
 import { fadeMotionProps } from '~/components/animations/helpers';
-import { useRegister } from '~/hooks/useRegister';
+import { useRegister } from '~/hooks/auth/useRegister';
 import { parseFullName } from '~/utils/common-utils';
 import { useTranslation } from 'react-i18next';
 

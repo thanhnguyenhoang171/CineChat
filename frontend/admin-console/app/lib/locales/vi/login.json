@@ -30,5 +30,24 @@
     "noLogin": "Vui lòng đăng nhập để tiếp tục.",
     "error": "Đã xảy ra lỗi xác thực. Vui lòng đăng nhập lại.",
     "errorGG": "Đăng nhập Google không thành công!"
+  },
+  "googleLogin": {
+    "errors": {
+      "google_unknown": "Đã có lỗi không xác định xảy ra trong quá trình xác thực.",
+      "google_default": "Yêu cầu đăng nhập bị từ chối.",
+      "SYS_201": "Tài khoản Google này không có quyền truy cập vào hệ thống.",
+      "SYS_500": "Hệ thống đang gặp sự cố kỹ thuật, vui lòng thử lại sau.",
+      "USR_320": "Tài khoản của bạn đã bị hủy khỏi hệ thống.",
+      "USR_330": "Tài khoản của bạn hiện đang bị tạm khóa.",
+      "ACCOUNT_DELETED": "Tài khoản của bạn đã bị xóa khỏi hệ thống.",
+      "ACCOUNT_DISABLED": "Tài khoản của bạn hiện đang bị tạm khóa."
+    },
+    "text": {
+      "google_failed_title": "Rất tiếc!",
+      "contact_admin_hint": "Nếu bạn tin rằng đây là lỗi, vui lòng liên hệ admin."
+    },
+    "button": {
+      "back_to_login": "Quay lại trang Đăng nhập"
+    }
   }
 }

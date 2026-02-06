@@ -1,4 +1,4 @@
-import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
 
 interface TypographyH2Props {
