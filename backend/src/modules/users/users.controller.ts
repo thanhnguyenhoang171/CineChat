@@ -22,6 +22,7 @@ import { AvatarValidator } from '@common/validators/file.validator';
 import { BusinessCode } from '@common/constants/business-code';
 import { User } from '@common/decorators/user.decorator';
 import type { IUser } from '@interfaces/user.interface';
+import { PublicPermission } from '@common/decorators/auth.decorator';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -33,6 +34,13 @@ export class UsersController {
   @ResponseStatus(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createNewUser(createUserDto);
+  }
+
+  @Patch('update-full-name')
+  @PublicPermission()
+  @ResponseStatus(HttpStatus.OK)
+  updateFullName(@User() user: IUser, @Body() dto: UpdateUserDto) {
+    return this.usersService.updateFullNameById(user, dto.firstName, dto.lastName);
   }
 
   // TODO: Handle get all users with pagination

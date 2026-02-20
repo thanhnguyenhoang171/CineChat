@@ -47,45 +47,59 @@ export class AuthService {
 
   // validate user
   async validateUser(username: string, pass: string): Promise<any> {
-    // get user info by username:
     const userData = await this.userService.findUserByUsername(username);
-    // decode password and compare
-    if (userData) {
-      const isMatch = await passwordCompare(pass, userData.password);
-      if (isMatch) {
-        // remove password before return
-        const { password, __v, refreshToken, ...result } = userData;
-        return result;
-      }
+
+    if (!userData) {
+      return null;
     }
+
+    if (userData.isDeleted || userData.isActive === 0) {
+      const errorStatus = userData.isDeleted
+        ? BusinessCode.ACCOUNT_DELETED
+        : BusinessCode.ACCOUNT_DISABLED;
+
+      throw new HttpException(
+        { code: errorStatus, errors: ResponseMessage[errorStatus] },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const isMatch = await passwordCompare(pass, userData.password);
+
+    if (isMatch) {
+      const { password, __v, refreshToken, ...result } = userData;
+      return result;
+    }
+
     return null;
   }
 
   // handle login account
   async login(userRequest: IUser, response: Response) {
     try {
-      if (userRequest.isDeleted || userRequest.isActive === 0) {
-        // clear old cookie if has
-        response.clearCookie('refresh_token', {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-        });
+      // if (userRequest.isDeleted || userRequest.isActive === 0) {
+      //   // clear old cookie if has
+      //   response.clearCookie('refresh_token', {
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //   });
 
-        const errorStatus = userRequest.isDeleted
-          ? BusinessCode.ACCOUNT_DELETED
-          : BusinessCode.ACCOUNT_DISABLED;
+      //   const errorStatus = userRequest.isDeleted
+      //     ? BusinessCode.ACCOUNT_DELETED
+      //     : BusinessCode.ACCOUNT_DISABLED;
 
-        throw new HttpException(
-          { code: errorStatus, errors: ResponseMessage[errorStatus] },
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
+      //   throw new HttpException(
+      //     { code: errorStatus, errors: ResponseMessage[errorStatus] },
+      //     HttpStatus.UNAUTHORIZED,
+      //   );
+      // }
 
       const { _id, role } = userRequest;
       const payload = {
         sub: _id,
         r: role._id,
+        v: userRequest.tokenVersion || 0, // Thêm tokenVersion vào payload để kiểm soát token cũ
       };
 
       this.logger.log(' Checking role info = ', role);
@@ -270,20 +284,20 @@ export class AuthService {
         currentUser = await this.userService.registerGoogleAccount(registerData);
       }
 
-      if (currentUser?.isDeleted || currentUser?.isActive === 0) {
-        response.clearCookie('refresh_token', {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'none',
-        });
+      // if (currentUser?.isDeleted || currentUser?.isActive === 0) {
+      //   response.clearCookie('refresh_token', {
+      //     httpOnly: true,
+      //     secure: true,
+      //     sameSite: 'none',
+      //   });
 
-        const errorStatus = currentUser.isDeleted
-          ? BusinessCode.ACCOUNT_DELETED
-          : BusinessCode.ACCOUNT_DISABLED;
+      //   const errorStatus = currentUser.isDeleted
+      //     ? BusinessCode.ACCOUNT_DELETED
+      //     : BusinessCode.ACCOUNT_DISABLED;
 
-        const feUri = this.configService.get<string>('clientUri', { infer: true });
-        return response.redirect(`${feUri}/auth/google-failure?error_code=${errorStatus}`);
-      }
+      //   const feUri = this.configService.get<string>('clientUri', { infer: true });
+      //   return response.redirect(`${feUri}/auth/google-failure?error_code=${errorStatus}`);
+      // }
 
       const level = currentUser?.role?.level;
       if (level !== 0 && level !== 1) {
@@ -345,6 +359,58 @@ export class AuthService {
 
       return {
         code: BusinessCode.CANCEL_ACCOUNT_SUCCESS,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async changePassword(
+    user: IUser,
+    currentPassword: string,
+    newPassword: string,
+    response: Response,
+  ) {
+    try {
+      await this.userService.changePasswordById(user, currentPassword, newPassword);
+
+      const updatedUser = await this.userService.findUserById(user._id);
+
+      const payload = {
+        sub: updatedUser._id,
+        r: updatedUser.role._id,
+        v: updatedUser.tokenVersion || 0,
+      };
+
+      const newRefreshToken = createRefreshToken(payload, this.jwtService, this.configService);
+      const newAccessToken = this.jwtService.sign(payload);
+
+      await this.userService.updateUserRefreshTokenById(
+        newRefreshToken,
+        updatedUser._id.toString(),
+      );
+
+      response.cookie('refresh_token', newRefreshToken, {
+        httpOnly: true,
+        maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
+        secure: true, // Nên để true vì đang set sameSite: 'none'
+        sameSite: 'none',
+      });
+
+      return {
+        code: BusinessCode.CHANGE_PASSWORD_SUCCESS,
+        data: {
+          access_token: newAccessToken,
+        },
       };
     } catch (error) {
       if (error instanceof HttpException) {

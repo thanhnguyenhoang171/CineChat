@@ -10,6 +10,7 @@ import {
   HttpException,
   HttpStatus,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -93,6 +94,18 @@ export class AuthController {
     const refreshToken = request.cookies?.['refresh_token'];
     return this.authService.refresh(refreshToken, response);
   }
+
+  @Post('/change-password')
+  @ApiOperation({ summary: 'Change password' })
+  @HttpCode(HttpStatus.OK)
+  async changePasswordController(
+    @User() user: IUser,
+    @Body() body: { currentPassword: string; newPassword: string },
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<any> {
+    return this.authService.changePassword(user, body.currentPassword, body.newPassword, response);
+  }
+
   @JwtPublic()
   @Get('google')
   @ResponseStatus(HttpStatus.OK)
@@ -115,5 +128,4 @@ export class AuthController {
     }
     return this.authService.googleLogin(req.user as IGGUser, response);
   }
-  
 }

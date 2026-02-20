@@ -30,6 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   //     const payload = {
   //       sub: _id,
   //       r: role._id,
+  //       v: userRequest.tokenVersion || 0, // Thêm tokenVersion vào payload để kiểm soát token cũ
   //     };
 
   async validate(payload: any) {
@@ -64,6 +65,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
+    if ((payload.v || 0) !== (user.tokenVersion || 0)) {
+      throw new HttpException(
+        {
+          code: BusinessCode.RECALLL_TOKEN,
+          errors: ResponseMessage[BusinessCode.RECALLL_TOKEN],
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
     const RoleWithPermissions = await this.rolesService.findRoleWithPermissionsById(
       payload.r.toString(),
     );

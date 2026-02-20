@@ -31,8 +31,11 @@ export function useCancel() {
     },
 
     onError: (error: AxiosError<ApiError>) => {
-      const msg =
-        error.response?.data?.errors || t('login:toast.errorInternal');
+      let msg = error.response?.data?.errors || t('login:toast.errorInternal');
+
+      if (error.response?.data?.code === 'USR_321') {
+        msg = t('account:detail.cancelAccount.lastAccountFailure');
+      }
       toast.error(msg);
     },
   });

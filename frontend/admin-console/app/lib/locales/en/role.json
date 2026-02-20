@@ -2,5 +2,9 @@
   "level": {
     "admin": "System Administrator",
     "manager": "System Manager"
+  },
+  "description": {
+    "admin": "Senior System Administrators are responsible for managing, configuring, and operating the entire system. They have full access and control over all subsystems, including user management, permission management, system configuration, data, content, and other business functions.",
+    "manager": "System administrator, responsible for coordinating, monitoring, and managing business operations within their assigned scope. Has access to and manipulation of subsystems related to data, content, and user management under their authority, but excluding global or sensitive system configurations."
   }
 }

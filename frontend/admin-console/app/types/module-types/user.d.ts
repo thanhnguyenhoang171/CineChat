@@ -14,6 +14,7 @@ export interface User {
   username?: string;
   //   password: string;  // Thông tin nhạy cảm, thường không trả về từ API
   email?: string;
+  provider?: number;
   emailVerified?: boolean;
   role: {
     _id: string;

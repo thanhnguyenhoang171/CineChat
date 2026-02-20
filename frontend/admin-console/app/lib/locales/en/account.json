@@ -24,10 +24,14 @@
       "verified": "Verified",
       "unverified": "Unverified"
     },
-    "update": "Update profile",
+    "update": "Update",
     "uploadAvatar": {
       "title": "Upload A New Avatar",
       "success": "Updated profile picture successfully!"
+    },
+    "updateFullName": {
+      "success": "Full name updated successfully!",
+      "failure": "Failed to update full name. Please try again."
     },
     "changePass": "Change password",
     "cancelAccount": {
@@ -35,7 +39,14 @@
       "warning": "This action cannot be undone.",
       "cancelBtn": "Cancel",
       "success": "Account cancelled successfully!",
-      "failure": "Account cancellation failed. Please try again."
+      "failure": "Account cancellation failed. Please try again.",
+      "lastAccountFailure": "Cannot cancel the last account in the system.",
+      "alert": {
+        "title": "Confirm Account Cancellation",
+        "description": "Are you sure you want to cancel your account? This action cannot be undone.",
+        "confirmBtn": "Confirm",
+        "cancelBtn": "Cancel"
+      }
     }
   }
 }
