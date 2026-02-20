@@ -24,10 +24,14 @@
       "verified": "Đã xác minh",
       "unverified": "Chưa xác minh"
     },
-    "update": "Cập nhật hồ sơ",
+    "update": "Cập nhật",
     "uploadAvatar": {
       "title": "Tải lên hình đại diện mới",
       "success": "Cập nhật ảnh hồ sơ thành công!"
+    },
+    "updateFullName": {
+      "success": "Cập nhật họ tên thành công!",
+      "failure": "Cập nhật họ tên thất bại. Vui lòng thử lại."
     },
     "changePass": "Đổi mật khẩu",
     "cancelAccount": {
@@ -35,7 +39,14 @@
       "warning": "Hành động này không thể hoàn tác.",
       "cancelBtn": "Hủy",
       "success": "Hủy tài khoản thành công!",
-      "failure": "Hủy tài khoản thất bại. Vui lòng thử lại."
+      "failure": "Hủy tài khoản thất bại. Vui lòng thử lại.",
+      "lastAccountFailure": "Không thể hủy tài khoản cuối cùng trong hệ thống.",
+      "alert": {
+        "title": "Xác nhận hủy tài khoản",
+        "description": "Bạn có chắc chắn muốn hủy tài khoản của mình không? Hành động này không thể hoàn tác.",
+        "confirmBtn": "Xác nhận",
+        "cancelBtn": "Hủy"
+      }
     }
   }
 }

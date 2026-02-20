@@ -50,6 +50,9 @@ export class User {
   @Prop({ type: String, default: null })
   refreshToken: string | null;
 
+  @Prop({ type: Number, default: 0 })
+  tokenVersion: number;
+
   @Prop({ type: Object })
   createdBy: {
     _id: mongoose.Schema.Types.ObjectId;

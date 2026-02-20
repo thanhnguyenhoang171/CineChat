@@ -17,8 +17,6 @@ import { GeneralError } from './components/shared/error/generalError';
 import { SonnerToasterComponent } from './components/ui/sonnerToaster';
 import i18n from './lib/locales/i18n';
 import { getLocaleFromRequest } from './utils/i18n-server';
-import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 
 // Disable indexing by search engines (SEO)
 export const meta: Route.MetaFunction = ({ location }) => {

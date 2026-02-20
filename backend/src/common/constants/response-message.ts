@@ -19,6 +19,9 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.EMPTY_UPDATE_DTO]: 'Không có dữ liệu nào để cập nhật.',
   [BusinessCode.ACCOUNT_INFO]: 'Lấy thông tin tài khoản thành công.',
   [BusinessCode.REFRESH_TOKEN_SUCCESS]: 'Refresh tài khoản thành công.',
+  [BusinessCode.RECALLL_TOKEN]: 'Tài khoản đã được thu hồi. Vui lòng đăng nhập lại.',
+  [BusinessCode.CHANGE_PASSWORD_SUCCESS]: 'Đổi mật khẩu thành công!',
+  [BusinessCode.CHANGE_PASSWORD_FAILD]: 'Đổi mật khẩu thất bại!',
   [BusinessCode.GOOGLE_AUTH_FAILED]:
     'Xác thực Google thất bại. Thông tin người dùng bị thiếu hoặc không hợp lệ.',
   [BusinessCode.EMAIL_NOT_VERIFIED]:

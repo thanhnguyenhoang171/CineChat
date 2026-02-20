@@ -36,4 +36,12 @@ export const userService = {
 
     return response.data;
   },
+  updateFullName: async (firstName: string, lastName: string) => {
+    const response = await axiosClient.patch<ApiResponse<User>>(
+      '/users/update-full-name',
+      { firstName, lastName },
+    );
+    console.log('Checking response.data = ', response.data);
+    return response.data;
+  },
 };

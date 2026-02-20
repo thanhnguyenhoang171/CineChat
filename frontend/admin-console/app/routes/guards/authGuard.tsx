@@ -107,7 +107,9 @@ export default function AuthGuard() {
           </div>
         </div>
       )}
-      <Outlet />
+      <SidebarProvider>
+        <Outlet />
+      </SidebarProvider>
     </>
   );
 }

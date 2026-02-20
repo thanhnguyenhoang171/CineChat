@@ -9,6 +9,8 @@ import { ImageUploader } from '~/components/shared/image/imageUploader';
 import { AccountAvatar } from '~/components/shared/image/accountAvatar';
 import { useUploadAvatar } from '~/hooks/account/useUploadAvatar';
 import { useCancel } from '~/hooks/auth/useCancel';
+import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
+import { ca } from 'zod/v4/locales';
 interface AccountInfoLeftHeroProps {
   account: User;
 }
@@ -20,6 +22,9 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
     blob: Blob;
     fileInfo: { name: string; type: string };
   } | null>(null);
+
+  const [openAlertDialog, setOpenAlertDialog] = useState(false);
+
   const { mutate: uploadAvatar, isPending } = useUploadAvatar();
 
   const handleSaveAvatar = () => {
@@ -40,6 +45,7 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
     );
     // setOpenUploadAvatar(false);
   };
+
   return (
     <>
       <div className='lg:col-span-4 flex flex-col gap-6'>
@@ -67,18 +73,15 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
                 {t(account?.role.level === 0 ? 'level.admin' : 'level.manager')}
               </span>
             </div>
-            {account?.role?.description && (
-              <div className='w-full border-t pt-4'>
-                <p className='text-sm text-slate-600 leading-relaxed text-justify'>
-                  <div
-                    className='prose prose-sm max-w-none'
-                    dangerouslySetInnerHTML={{
-                      __html: account.role.description,
-                    }}
-                  />
-                </p>
-              </div>
-            )}
+            <div className='w-full border-t pt-4'>
+              <p className='text-sm text-slate-600 leading-relaxed text-justify wrap-break-word [hyphens:auto] [text-justify:inter-word]'>
+                {t(
+                  `role:description.${
+                    account?.role.level === 0 ? 'admin' : 'manager'
+                  }`,
+                )}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -92,12 +95,22 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
           <Button
             variant='destructive'
             className='w-full shadow-none'
-            onClick={() => cancelAccount()}
+            onClick={() => setOpenAlertDialog(true)}
             disabled={isCanceling}>
             {t('account:detail.cancelAccount.cancelBtn')}
           </Button>
         </div>
       </div>
+      <AppAlertDialog
+        title={t('account:detail.cancelAccount.alert.title')}
+        description={t('account:detail.cancelAccount.alert.description')}
+        variantConfirmBtn='destructive'
+        confirmText={t('account:detail.cancelAccount.alert.confirmBtn')}
+        cancelText={t('account:detail.cancelAccount.alert.cancelBtn')}
+        openAlertDialog={openAlertDialog}
+        onConfirm={cancelAccount}
+        setOpenAlertDialog={setOpenAlertDialog}
+      />
       <ImageUploader
         headerTitle={t('account:detail.uploadAvatar.title')}
         open={openUploadAvatar}

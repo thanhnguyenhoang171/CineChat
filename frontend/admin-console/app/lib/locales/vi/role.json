@@ -2,5 +2,9 @@
   "level": {
     "admin": "Quản trị viên hệ thống",
     "manager": "Người quản lý hệ thống"
+  },
+  "description": {
+    "admin": "Quản trị viên hệ thống cấp cao, chịu trách nhiệm quản lý, cấu hình và vận hành toàn bộ hệ thống. Có toàn quyền truy cập và thao tác trên tất cả các phân hệ, bao gồm quản lý người dùng, phân quyền, cấu hình hệ thống, dữ liệu, nội dung và các chức năng nghiệp vụ khác.",
+    "manager": "Quản lý hệ thống, chịu trách nhiệm điều phối, giám sát và quản lý các hoạt động nghiệp vụ trong phạm vi được phân công. Có quyền truy cập và thao tác trên các phân hệ liên quan đến quản lý dữ liệu, nội dung và người dùng thuộc quyền quản lý, nhưng không bao gồm các cấu hình hệ thống mang tính toàn cục hoặc nhạy cảm."
   }
 }

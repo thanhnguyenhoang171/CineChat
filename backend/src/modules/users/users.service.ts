@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { findModuleOrThrow, isModuleExist, validateMongoId } from '@common/utils/validate.util';
-import { passwordHashing } from '@common/utils/password-bcrypt.util';
+import { passwordCompare, passwordHashing } from '@common/utils/password-bcrypt.util';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 import { RoleLevel } from '@common/constants/common-constant';
@@ -584,5 +584,91 @@ export class UsersService {
       isDeleted: result.isDeleted,
       isActive: result.isActive,
     };
+  }
+
+  async updateFullNameById(user: IUser, firstName: string, lastName: string) {
+    const id = user._id;
+    console.log('Checking user id in service = ', id);
+    const foundUser = await findModuleOrThrow(
+      this.userModel,
+      '_id',
+      id,
+      BusinessCode.USER_NOT_FOUND,
+      ResponseMessage[BusinessCode.USER_NOT_FOUND],
+      HttpStatus.NOT_FOUND,
+    );
+
+    if (foundUser.firstName === firstName && foundUser.lastName === lastName) {
+      throw new HttpException(
+        {
+          code: BusinessCode.NO_FIELD_UPDATED,
+          errors: ResponseMessage[BusinessCode.NO_FIELD_UPDATED],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const result = await this.userModel.updateOne(
+      { _id: id },
+      { firstName, lastName },
+      {
+        runValidators: true,
+        strict: 'throw',
+      },
+    );
+
+    return {
+      code: BusinessCode.USER_UPDATED_SUCCESS,
+      data: result.matchedCount === 1 ? { _id: id, firstName, lastName } : null,
+    };
+  }
+
+  async changePasswordById(user: IUser, currentPassword: string, newPassword: string) {
+    // 1. Tìm user (Lưu ý: Nếu Schema của bạn đang set trường password là { select: false } thì phải thêm .select('+password') vào đây)
+    const foundUser = await this.userModel.findById(user._id);
+
+    if (!foundUser) {
+      throw new HttpException(
+        { code: BusinessCode.UNAUTHORIZED, errors: 'Không tìm thấy tài khoản!' },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    // 2. CHECK MẬT KHẨU CŨ
+    const isMatch = await passwordCompare(currentPassword, foundUser.password);
+    if (!isMatch) {
+      throw new HttpException(
+        {
+          code: 400, // Bạn có thể định nghĩa thêm mã INVALID_CURRENT_PASSWORD
+          errors: 'Mật khẩu hiện tại không chính xác!',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // 3. (Tùy chọn) CHECK MẬT KHẨU MỚI KHÔNG ĐƯỢC TRÙNG MẬT KHẨU CŨ
+    const isSamePassword = await passwordCompare(newPassword, foundUser.password);
+    if (isSamePassword) {
+      throw new HttpException(
+        {
+          code: 400,
+          errors: 'Mật khẩu mới không được trùng với mật khẩu cũ!',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // 4. Băm mật khẩu mới và lưu DB
+    const newPasswordHashed = await passwordHashing(newPassword);
+
+    const result = await this.userModel.updateOne(
+      { _id: user._id },
+      {
+        password: newPasswordHashed,
+        tokenVersion: (foundUser.tokenVersion || 0) + 1,
+      },
+    );
+
+    return result.matchedCount === 1;
   }
 }

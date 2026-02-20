@@ -60,4 +60,14 @@ export const authService = {
     );
     return response.data;
   },
+  changePassword: async (payload: {
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<ApiResponse<any>> => {
+    const response = await axiosClient.post<ApiResponse<any>>(
+      `/auth/change-password`,
+      payload,
+    );
+    return response.data;
+  },
 };

@@ -44,7 +44,7 @@ import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
 import { UserAvatar } from '../shared/image/userAvatar';
 import { Badge } from '../ui/badge';
 
-export function AppSidebar() {
+export function AppSidebar({ id }: { id?: string }) {
   const { t, i18n } = useTranslation('app');
   const currentLang = i18n.language;
   const { isDesktop, isTablet } = useBreakpoint();

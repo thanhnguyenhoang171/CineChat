@@ -15,6 +15,7 @@ export interface IUser {
   email?: string;
   isDeleted?: boolean;
   isActive?: number;
+  tokenVersion?: number;
   role: {
     _id: string;
     level: number;

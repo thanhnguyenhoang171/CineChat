@@ -12,5 +12,7 @@ export function SidebarTriggerWrapper({
 
   if (isMobile) return null;
 
-  return <SidebarTrigger className={cn(!open && 'hidden', className)} />;
+  return (
+    <SidebarTrigger open={open} className={cn(!open && 'hidden', className)} />
+  );
 }
