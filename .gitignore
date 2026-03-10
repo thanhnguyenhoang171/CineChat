@@ -4,9 +4,8 @@
 node_modules/
 backend/node_modules/
 frontend/node_modules/
-.settings.json
-.package-lock.json
-.package.json
+settings.json
+.vscode
 
 
 # =========================
@@ -40,6 +39,8 @@ lerna-debug.log*
 backend/.env
 frontend/.env
 
+backend/.vscode
+backend/.env.docker
 # =========================
 # Runtime data
 # =========================
