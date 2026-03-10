@@ -1,0 +1,44 @@
+{
+  "createDialog": {
+    "title": "Add Cast / Crew",
+    "description": "Enter the details below to add a new person to the system.",
+    "name": "Full Name",
+    "namePlaceholder": "e.g., Leonardo DiCaprio",
+    "biography": "Biography",
+    "biographyPlaceholder": "Brief description of career...",
+    "birthday": "Birthday",
+    "placeOfBirth": "Place of Birth",
+    "placeOfBirthPlaceholder": "e.g., Los Angeles, California",
+    "gender": "Gender",
+    "role": "Role",
+    "status": "Status",
+    "avatar": "Profile Picture",
+    "submit": "Add person",
+    "success": "Added successfully"
+  },
+  "updateDialog": {
+    "title": "Update Information",
+    "success": "Updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Person",
+    "description": "Are you sure you want to delete '{{name}}'? This action cannot be undone.",
+    "success": "Deleted successfully",
+    "confirm": "Delete now",
+    "cancel": "Cancel"
+  },
+  "table": {
+    "name": "Full Name",
+    "role": "Role",
+    "birthday": "Birthday",
+    "popularity": "Popularity",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "gender": {
+    "notSet": "Not Set",
+    "female": "Female",
+    "male": "Male",
+    "nonBinary": "Non-binary"
+  }
+}

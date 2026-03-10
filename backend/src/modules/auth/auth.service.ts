@@ -199,6 +199,7 @@ export class AuthService {
       const payload = {
         sub: _id,
         r: role._id,
+        v: user.tokenVersion || 0,
       };
 
       // 5. Sign new refresh token
@@ -320,6 +321,7 @@ export class AuthService {
       const payload = {
         sub: currentUser._id,
         r: currentUser.role._id,
+        v: currentUser.tokenVersion || 0,
       };
 
       const refreshToken = createRefreshToken(payload, this.jwtService, this.configService);

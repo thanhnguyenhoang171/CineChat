@@ -1,0 +1,44 @@
+{
+  "createDialog": {
+    "title": "Thêm Diễn Viên / Đạo Diễn",
+    "description": "Nhập thông tin chi tiết bên dưới để thêm nhân sự mới vào hệ thống.",
+    "name": "Họ và Tên",
+    "namePlaceholder": "Ví dụ: Leonardo DiCaprio",
+    "biography": "Tiểu sử",
+    "biographyPlaceholder": "Mô tả ngắn gọn về sự nghiệp...",
+    "birthday": "Ngày sinh",
+    "placeOfBirth": "Nơi sinh",
+    "placeOfBirthPlaceholder": "Ví dụ: Los Angeles, California",
+    "gender": "Giới tính",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "avatar": "Ảnh chân dung",
+    "submit": "Thêm nhân sự",
+    "success": "Thêm nhân sự thành công"
+  },
+  "updateDialog": {
+    "title": "Cập Nhật Thông Tin",
+    "success": "Cập nhật thông tin thành công"
+  },
+  "deleteDialog": {
+    "title": "Xóa Nhân Sự",
+    "description": "Bạn có chắc chắn muốn xóa '{{name}}'? Hành động này không thể hoàn tác.",
+    "success": "Xóa nhân sự thành công",
+    "confirm": "Xóa ngay",
+    "cancel": "Hủy bỏ"
+  },
+  "table": {
+    "name": "Họ và Tên",
+    "role": "Vai trò",
+    "birthday": "Ngày sinh",
+    "popularity": "Độ phổ biến",
+    "status": "Trạng thái",
+    "actions": "Hành động"
+  },
+  "gender": {
+    "notSet": "Chưa thiết lập",
+    "female": "Nữ",
+    "male": "Nam",
+    "nonBinary": "Khác"
+  }
+}

@@ -28,7 +28,7 @@
     "language": "Ngôn ngữ"
   },
   "text": {
-    "searchResult": "{{var} kết quả}",
+    "searchResult": "{{var}} kết quả",
     "searchPlaceHolder": "Tìm kiếm theo từ khóa...",
     "userTable": "Quản lý danh sách người dùng",
     "permissionTable": "Quản lý danh sách quyền try cập",
@@ -51,11 +51,24 @@
   "status": {
     "inactive": "Không hoạt động",
     "active": "Đang hoạt động",
-    "pending": "Đang xử lý"
+    "pending": "Đang xử lý",
+    "all": "Tất cả"
   },
   "button": {
     "addPermission": "Thêm một quyền mới",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "submit": "Gửi đi",
+    "cancel": "Hủy",
+    "update": "Cập nhật",
+    "reset": "Đặt lại",
+    "apply": "Áp dụng"
+  },
+  "sort": {
+    "asc": "Tăng dần",
+    "desc": "Giảm dần"
+  },
+  "select": {
+    "placeholder": "Vui lòng chọn"
   },
   "noData": "Không có dữ liệu",
   "notFoundPage": {

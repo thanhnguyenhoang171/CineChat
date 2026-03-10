@@ -23,6 +23,7 @@ export default [
       route('users', 'routes/dashboard/users/userPage.tsx'),
       route('roles', 'routes/dashboard/roles/rolePage.tsx'),
       route('permissions', 'routes/dashboard/permissions/permissionPage.tsx'),
+      route('casts', 'routes/dashboard/casts/castPage.tsx'),
       route('movies', 'routes/dashboard/movies/movieList.tsx'),
     ]),
     route('account/:id', 'routes/account/accountInfo.tsx'),

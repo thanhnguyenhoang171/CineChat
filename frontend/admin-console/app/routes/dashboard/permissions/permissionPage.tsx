@@ -2,7 +2,7 @@ import { PermissionList } from '~/features/permissions/components/permissionList
 import type { Route } from './+types/permissionPage';
 import { TypographyH2 } from '~/components/shared/text/typographyH2';
 import { AppAddButton } from '~/components/shared/button/appAddButton';
-import { Plus } from 'lucide-react';
+import { Plus, Filter } from 'lucide-react';
 import { AppSearchBar } from '~/components/shared/search/appSearchBar';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
@@ -16,15 +16,21 @@ import type {
 } from '~/types/module-types/permission';
 import { defaultMeta } from '~/constants/app/app-pagination-constant';
 import { getItemTotal } from '~/utils/common-utils';
-import { lazy } from 'react';
-import { PermissionFilterDialog } from '~/features/permissions/components/permissionFilterDialog';
+import { lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '~/components/ui/button';
+import { PermissionFilter } from '~/features/permissions/components/permissionFilter';
+import { Badge } from '~/components/ui/badge';
+
+import { CreatePermissionModal } from '~/features/permissions/components/modal/createPermissionModal';
 
 export default function PermissionPage() {
-  const { t } = useTranslation('app');
+  const { t } = useTranslation(['app', 'permission']);
   const { isMobile, isTablet } = useBreakpoint();
   const { open } = useSidebar();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const page = Number(searchParams.get('page')) || defaultMeta.page;
   const pageSize = Number(searchParams.get('limit')) || defaultMeta.limit;
@@ -32,6 +38,11 @@ export default function PermissionPage() {
   const sortDir = (searchParams.get('sortDir') as 'asc' | 'desc') || 'desc';
   const search = searchParams.get('search') || '';
   const projections = searchParams.get('projections') || '';
+  
+  // Filters from URL
+  const method = searchParams.get('method') || '';
+  const module = searchParams.get('module') || '';
+  const isActive = searchParams.get('isActive') || 'all';
 
   const { data, isLoading, error } = useQuery(
     permissionQueries.list(
@@ -41,34 +52,62 @@ export default function PermissionPage() {
       sortDir,
       search,
       projections,
+      method,
+      module,
+      isActive,
     ),
   );
 
   const permissionsList: Permission[] = data?.data || [];
   const permissionMeta: PaginationMeta = data?.meta || defaultMeta;
 
-  const handleProjections = (newProjections: string) => {
-    setSearchParams((prev) => {
-      if (newProjections) {
-        prev.set('projections', newProjections);
-      } else {
-        prev.delete('projections');
-      }
-      return prev;
-    });
-  };
-
   const handleSearch = (newKeyword: string) => {
     setSearchParams((prev) => {
       if (newKeyword) {
         prev.set('search', newKeyword);
       } else {
-        prev.delete('search'); // remove params empty
+        prev.delete('search');
       }
-      prev.set('page', '1'); //: Reset page to  1 when searching
+      prev.set('page', '1');
       return prev;
     });
   };
+
+  const handleApplyFilters = (filters: { 
+    method: string; 
+    module: string; 
+    isActive: string;
+    sortBy: string;
+    sortDir: 'asc' | 'desc';
+  }) => {
+    setSearchParams((prev) => {
+      // Handle Filtering
+      if (filters.method) prev.set('method', filters.method); else prev.delete('method');
+      if (filters.module) prev.set('module', filters.module); else prev.delete('module');
+      if (filters.isActive !== 'all') prev.set('isActive', filters.isActive); else prev.delete('isActive');
+      
+      // Handle Sorting
+      prev.set('sortBy', filters.sortBy);
+      prev.set('sortDir', filters.sortDir);
+      
+      prev.set('page', '1');
+      return prev;
+    });
+  };
+
+  const handleResetFilters = () => {
+    setSearchParams((prev) => {
+      prev.delete('method');
+      prev.delete('module');
+      prev.delete('isActive');
+      prev.set('sortBy', 'createdAt');
+      prev.set('sortDir', 'desc');
+      prev.set('page', '1');
+      return prev;
+    });
+  };
+
+  const activeFiltersCount = [method, module, isActive !== 'all' ? isActive : ''].filter(Boolean).length;
 
   const handleSort = (key: string) => {
     const newDir = sortBy === key && sortDir === 'asc' ? 'desc' : 'asc';
@@ -101,36 +140,61 @@ export default function PermissionPage() {
     ? undefined
     : isTablet && open
       ? undefined
-      : t('button.addPermission');
+      : t('app:button.addPermission');
 
   return (
-    <div className='min-h-screen flex bg-slate-100 p-4 flex-col h-full'>
-      <div
-        className={cn(
-          'flex flex-row justify-between items-center mt-3 mb-3',
-          (isMobile || isTablet) && 'flex-col mt-3 mb-3',
-        )}>
-        <TypographyH2 text={t('text.permissionTable')} />
-        <div className='flex flex-row gap-3 items-center'>
-          {!error && (
-            <>
-              <AppSearchBar
-                totalSearchResult={getItemTotal(permissionsList)}
-                initialValue={search}
-                onSearch={handleSearch}
-                placeholder={t('text.searchPlaceHolder')}
-                isLoading={isLoading}
-              />
-              <PermissionFilterDialog />
-              <AppAddButton
-                text={textShow}
-                icon={Plus}
-                handleOnClick={() => alert('Thêm người dùng mới')}
-              />
-            </>
-          )}
+    <div className='flex flex-col gap-4 p-4'>
+      <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
+        <div>
+          <h1 className='text-2xl font-bold'>{t('app:text.permissionTable')}</h1>
+          <p className='text-muted-foreground text-sm italic'>
+            {t('app:text.searchResult', { var: permissionMeta.total || 0 })}
+          </p>
+        </div>
+        <div className='flex items-center gap-2 w-full md:w-auto'>
+          <AppSearchBar
+            placeholder={t('app:text.searchPlaceHolder')}
+            onSearch={handleSearch}
+            initialValue={search}
+            className='w-full md:w-[300px]'
+          />
+          <div className='relative'>
+            <Button
+              variant='outline'
+              size='default'
+              className={cn(
+                'bg-background border-muted-foreground/20 hover:bg-muted/50 h-10 px-3 transition-all',
+                activeFiltersCount > 0 && 'border-primary/50 bg-primary/[0.02]'
+              )}
+              onClick={() => setIsFilterOpen(true)}>
+              <Filter className={cn('w-4 h-4 mr-2', activeFiltersCount > 0 && 'text-primary')} />
+              <span className='hidden sm:inline font-bold text-sm'>
+                {t('app:button.apply')}
+              </span>
+              {activeFiltersCount > 0 && (
+                <Badge 
+                  variant='default' 
+                  className='ml-2 h-5 min-w-5 flex items-center justify-center p-0 text-[10px] bg-primary'
+                >
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
+          </div>
+          <AppAddButton
+            handleOnClick={() => setIsCreateDialogOpen(true)}
+            title={t('app:button.addPermission')}
+          />
         </div>
       </div>
+
+      <PermissionFilter
+        open={isFilterOpen}
+        onOpenChange={setIsFilterOpen}
+        filters={{ method, module, isActive, sortBy, sortDir }}
+        onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+      />
       <PermissionList
         error={error}
         handleOnChangePageSize={handleOnChangePageSize}
@@ -142,6 +206,11 @@ export default function PermissionPage() {
         permissionsList={permissionsList}
         sortBy={sortBy}
         sortDir={sortDir}
+      />
+
+      <CreatePermissionModal
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
       />
 
       <div className='w-full h-8 end-page -z-10'></div>

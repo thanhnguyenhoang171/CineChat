@@ -1,34 +1,58 @@
-import { queryOptions } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import { userService } from '~/services/user.service';
 
 export const userKeys = {
-  // Root key (Scope: All)
   all: ['users'] as const,
-
-  //  branch list (Scope: List) - ['users', 'list']
   lists: () => [...userKeys.all, 'list'] as const,
-
-  //  Specific [Branch] with filters (Specific List)
-  // Result: ['users', 'list', { filters: 'role=admin' }]
-  list: (filters: string) => [...userKeys.lists(), { filters }] as const,
-
-  details: () => [...userKeys.all, 'detail'] as const,
-
-  detail: (id: string) => [...userKeys.details(), id] as const,
+  list: (
+    page: number,
+    limit: number,
+    sortBy: string,
+    sortDir: string,
+    search: string,
+    projections: string,
+    isActive?: string,
+    roleId?: string,
+  ) =>
+    [
+      ...userKeys.lists(),
+      { page, limit, sortBy, sortDir, search, projections, isActive, roleId },
+    ] as const,
 };
 
 export const userQueries = {
-  list: () =>
+  list: (
+    page: number = 1,
+    limit: number = 10,
+    sortBy: string = 'createdAt',
+    sortDir: 'asc' | 'desc' = 'desc',
+    search: string = '',
+    projections: string = '',
+    isActive: string = 'all',
+    roleId: string = 'all',
+  ) =>
     queryOptions({
-      queryKey: userKeys.lists(), // Key: ['users', 'list']
-      queryFn: userService.getAll,
+      queryKey: userKeys.list(
+        page,
+        limit,
+        sortBy,
+        sortDir,
+        search,
+        projections,
+        isActive,
+        roleId,
+      ),
+      queryFn: () =>
+        userService.getAllUsersWithPagination({
+          page,
+          limit,
+          sortBy,
+          sortDir,
+          search,
+          projections,
+          isActive,
+          roleId,
+        }),
+      placeholderData: keepPreviousData,
     }),
-
-  //   // Option để lấy chi tiết 1 user
-  //   detail: (id: string) =>
-  //     queryOptions({
-  //       queryKey: userKeys.detail(id), // Key: ['users', 'detail', '123']
-  //       queryFn: () => userService.getById(id),
-  //       enabled: !!id, // Chỉ fetch khi có id
-  //     }),
 };

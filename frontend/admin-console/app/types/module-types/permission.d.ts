@@ -8,6 +8,7 @@ export interface Permission {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  roleIds?: string[];
 }
 
 export interface PaginationMeta {

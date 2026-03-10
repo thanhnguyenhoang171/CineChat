@@ -18,10 +18,13 @@ export const permissionKeys = {
     sortDir: string,
     search: string,
     projections: string,
+    method?: string,
+    module?: string,
+    isActive?: string,
   ) =>
     [
       ...permissionKeys.lists(),
-      { page, limit, sortBy, sortDir, search, projections },
+      { page, limit, sortBy, sortDir, search, projections, method, module, isActive },
     ] as const,
 
   details: () => [...permissionKeys.all, 'detail'] as const,
@@ -38,6 +41,9 @@ export const permissionQueries = {
     sortDir: 'asc' | 'desc' = 'desc',
     search: string = '',
     projections: string = '',
+    method: string = '',
+    module: string = '',
+    isActive: string = 'all',
   ) =>
     queryOptions({
       queryKey: permissionKeys.list(
@@ -47,6 +53,9 @@ export const permissionQueries = {
         sortDir,
         search,
         projections,
+        method,
+        module,
+        isActive,
       ),
       queryFn: () =>
         permissionService.getAllPermissionWithPagination({
@@ -56,6 +65,9 @@ export const permissionQueries = {
           sortDir,
           search,
           projections,
+          method,
+          module,
+          isActive,
         }),
       // Giữ lại data cũ trong khi đang fetch trang mới (tránh giật màn hình)
       placeholderData: keepPreviousData,

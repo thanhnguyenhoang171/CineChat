@@ -1,0 +1,42 @@
+{
+  "createDialog": {
+    "title": "Add New User",
+    "description": "Enter the details below to create a new user account.",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter first name...",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter last name...",
+    "email": "Email Address",
+    "emailPlaceholder": "example@domain.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password (at least 6 chars)",
+    "role": "Role",
+    "status": "Status",
+    "avatar": "Avatar",
+    "submit": "Create user",
+    "success": "User added successfully"
+  },
+  "updateDialog": {
+    "title": "Update User",
+    "success": "User updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete User",
+    "description": "Are you sure you want to delete user '{{name}}'? Data will be marked as deleted.",
+    "success": "User deleted successfully",
+    "confirm": "Delete now",
+    "cancel": "Cancel"
+  },
+  "table": {
+    "fullName": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "filter": {
+    "title": "User Filter",
+    "status": "Status",
+    "role": "System Role"
+  }
+}

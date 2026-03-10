@@ -1,0 +1,49 @@
+{
+  "createDialog": {
+    "title": "Tạo Permission Mới",
+    "description": "Điền các thông tin dưới đây để tạo quyền truy cập mới cho hệ thống.",
+    "name": "Tên Permission",
+    "namePlaceholder": "Ví dụ: View Dashboard",
+    "apiPath": "API Path",
+    "apiPathPlaceholder": "/api/v1/...",
+    "method": "Method",
+    "methodPlaceholder": "Chọn method",
+    "module": "Module",
+    "modulePlaceholder": "Ví dụ: DASHBOARD",
+    "status": "Trạng thái",
+    "statusPlaceholder": "Chọn trạng thái",
+    "active": "Hoạt động",
+    "inactive": "Tạm ngưng",
+    "apiConfig": "Cấu hình API",
+    "assignRoles": "Gán quyền cho Role",
+    "assignUsers": "Gán cho người dùng (Tùy chọn)",
+    "searchUser": "Tìm user...",
+    "noUserFound": "Không tìm thấy user",
+    "cancel": "Hủy",
+    "submit": "Tạo mới",
+    "success": "Tạo permission thành công"
+  },
+  "deleteDialog": {
+    "title": "Xóa Permission",
+    "description": "Bạn có chắc chắn muốn xóa permission '{{name}}'? Hành động này không thể hoàn tác.",
+    "success": "Xóa permission thành công",
+    "confirm": "Xóa ngay",
+    "cancel": "Hủy bỏ"
+  },
+  "filter": {
+    "title": "Bộ lọc quyền hạn",
+    "status": "Trạng thái",
+    "statusPlaceholder": "Chọn trạng thái",
+    "method": "Phương thức API",
+    "module": "Mô-đun",
+    "modulePlaceholder": "Nhập tên mô-đun...",
+    "sort": {
+      "title": "Sắp xếp theo",
+      "placeholder": "Chọn tiêu chí...",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật",
+      "name": "Tên quyền",
+      "method": "Phương thức"
+    }
+  }
+}

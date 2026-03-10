@@ -1,10 +1,40 @@
 {
-  "level": {
-    "admin": "Quản trị viên hệ thống",
-    "manager": "Người quản lý hệ thống"
+  "createDialog": {
+    "title": "Tạo Vai Trò Mới",
+    "description": "Điền các thông tin dưới đây để tạo vai trò mới cho hệ thống.",
+    "name": "Tên Vai Trò",
+    "namePlaceholder": "Ví dụ: Editor",
+    "description": "Mô tả",
+    "descriptionPlaceholder": "Mô tả trách nhiệm của vai trò này...",
+    "status": "Trạng thái",
+    "active": "Hoạt động",
+    "inactive": "Tạm ngưng",
+    "assignPermissions": "Gán Quyền cho Vai Trò",
+    "submit": "Tạo mới",
+    "success": "Tạo vai trò thành công",
+    "noPermissionsFound": "Không tìm thấy quyền nào"
   },
-  "description": {
-    "admin": "Quản trị viên hệ thống cấp cao, chịu trách nhiệm quản lý, cấu hình và vận hành toàn bộ hệ thống. Có toàn quyền truy cập và thao tác trên tất cả các phân hệ, bao gồm quản lý người dùng, phân quyền, cấu hình hệ thống, dữ liệu, nội dung và các chức năng nghiệp vụ khác.",
-    "manager": "Quản lý hệ thống, chịu trách nhiệm điều phối, giám sát và quản lý các hoạt động nghiệp vụ trong phạm vi được phân công. Có quyền truy cập và thao tác trên các phân hệ liên quan đến quản lý dữ liệu, nội dung và người dùng thuộc quyền quản lý, nhưng không bao gồm các cấu hình hệ thống mang tính toàn cục hoặc nhạy cảm."
+  "updateDialog": {
+    "title": "Cập Nhật Vai Trò",
+    "success": "Cập nhật vai trò thành công"
+  },
+  "deleteDialog": {
+    "title": "Xóa Vai Trò",
+    "description": "Bạn có chắc chắn muốn xóa vai trò '{{name}}'? Hành động này không thể hoàn tác.",
+    "success": "Xóa vai trò thành công",
+    "confirm": "Xóa ngay",
+    "cancel": "Hủy bỏ"
+  },
+  "filter": {
+    "title": "Bộ lọc vai trò",
+    "status": "Trạng thái",
+    "statusPlaceholder": "Chọn trạng thái",
+    "sort": {
+      "title": "Sắp xếp theo",
+      "placeholder": "Chọn tiêu chí...",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật",
+      "name": "Tên vai trò"
+    }
   }
 }

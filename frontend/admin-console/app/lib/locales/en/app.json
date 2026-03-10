@@ -27,7 +27,7 @@
     "language": "Language"
   },
   "text": {
-    "searchResult": "{{var} results}",
+    "searchResult": "{{var}} results",
     "searchPlaceHolder": "Search by keyword...",
     "userTable": "Manage the list of users",
     "permissionTable": "Manage the list of permissions",
@@ -50,11 +50,24 @@
   "status": {
     "inactive": "Inactive",
     "active": "Active",
-    "pending": "Processing"
+    "pending": "Processing",
+    "all": "All"
   },
   "button": {
     "addPermission": "Add a new permission",
-    "back": "Back"
+    "back": "Back",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "update": "Update",
+    "reset": "Reset",
+    "apply": "Apply"
+  },
+  "sort": {
+    "asc": "Ascending",
+    "desc": "Descending"
+  },
+  "select": {
+    "placeholder": "Please select"
   },
   "noData": "No data",
   "notFoundPage": {

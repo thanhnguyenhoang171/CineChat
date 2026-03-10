@@ -1,23 +1,26 @@
-import { PencilLine, SquareX } from 'lucide-react';
+import { PencilLine } from 'lucide-react';
 import { Button } from '../../ui/button';
 
 interface AppModifyButtonProps {
-  // onModify: () => void;
-  // item?: string;
+  handleOnClick?: () => void;
   className?: string;
+  title?: string;
 }
 
 export function AppModifyButton({
-  // onModify,
-  // item,
+  handleOnClick,
   className,
+  title = 'Sửa',
 }: AppModifyButtonProps) {
   return (
     <Button
       variant='ghost'
       size='icon'
       className={`text-secondary hover:text-secondary hover:bg-secondary/10 ${className}`}
-      title='Sửa'>
+      title={title}
+      onClick={handleOnClick}
+      type="button"
+    >
       <PencilLine />
     </Button>
   );

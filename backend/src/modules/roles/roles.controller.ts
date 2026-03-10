@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpStatus,
+} from '@nestjs/common';
 import RolesService from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -54,4 +64,6 @@ export class RolesController {
   removeRoleByIdController(@Param('id') id: string, @User() user: IUser) {
     return this.rolesService.removeRoleById(id, user);
   }
+
+
 }

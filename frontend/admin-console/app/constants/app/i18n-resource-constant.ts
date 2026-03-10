@@ -16,6 +16,15 @@ import roleVi from '~/lib/locales/vi/role.json';
 import accountEn from '~/lib/locales/en/account.json';
 import accountVi from '~/lib/locales/vi/account.json';
 
+import permissionEn from '~/lib/locales/en/permission.json';
+import permissionVi from '~/lib/locales/vi/permission.json';
+
+import userEn from '~/lib/locales/en/user.json';
+import userVi from '~/lib/locales/vi/user.json';
+
+import castEn from '~/lib/locales/en/cast.json';
+import castVi from '~/lib/locales/vi/cast.json';
+
 export const i18nResources = {
   en: {
     app: appEn,
@@ -24,6 +33,9 @@ export const i18nResources = {
     logout: logoutEn,
     role: roleEn,
     account: accountEn,
+    permission: permissionEn,
+    user: userEn,
+    cast: castEn,
   },
   vi: {
     app: appVi,
@@ -32,5 +44,8 @@ export const i18nResources = {
     logout: logoutVi,
     role: roleVi,
     account: accountVi,
+    permission: permissionVi,
+    user: userVi,
+    cast: castVi,
   },
 } as const;
