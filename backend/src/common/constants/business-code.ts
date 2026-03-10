@@ -68,7 +68,7 @@ export enum BusinessCode {
   // =========================================================
   // === PER: PERMISSION MODULE ==============================
   // =========================================================
-
+  USER_SIGNED_ROLE_SUCCESS = 'USR_110', // Gán role cho user thành công
   // --- 0xx: Success ---
   PERMISSION_GET_SUCCESS = 'PER_000', // Gộp cả get-one và get-all
   PERMISSION_CREATED_SUCCESS = 'PER_001',
@@ -76,6 +76,8 @@ export enum BusinessCode {
   PERMISSION_DELETED_SUCCESS = 'PER_003',
   PERMISSION_RESTORED_SUCCESS = 'PER_004',
 
+  PERMISSION_NOT_ASSIGNED = 'PER_010', // Permission chưa được gán cho role nào
+  PERMISSION_ASSIGNED_SUCCESS = 'PER_011', // Gán permission cho role thành công
   // --- 1xx: Client Errors ---
   PERMISSION_ALREADY_EXISTS = 'PER_100', // Trùng lặp apiPath & method
   PERMISSION_NOT_FOUND = 'PER_101',

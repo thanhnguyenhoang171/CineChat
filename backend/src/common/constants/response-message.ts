@@ -42,6 +42,7 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.USER_CREATED_SUCCESS]: 'Tạo người dùng thành công.',
   [BusinessCode.USER_UPDATED_SUCCESS]: 'Cập nhật thông tin người dùng thành công.',
   [BusinessCode.USER_DELETED_SUCCESS]: 'Xóa người dùng thành công.',
+  [BusinessCode.USER_SIGNED_ROLE_SUCCESS]: 'Gán vai trò cho người dùng thành công.',
   [BusinessCode.USER_NOT_FOUND]: 'Không tìm thấy người dùng.',
   [BusinessCode.DUPLICATE_USERNAME]: 'Tên người dùng này đã tồn tại.',
   [BusinessCode.DUPLICATE_EMAIL]: 'Email này đã tồn tại.',
@@ -63,7 +64,8 @@ export const ResponseMessage: Record<BusinessCode, string> = {
   [BusinessCode.PERMISSION_RESTORED_SUCCESS]: 'Khôi phục quyền thành công.',
   [BusinessCode.PERMISSION_ALREADY_EXISTS]: 'Quyền với API Path và Method này đã tồn tại.',
   [BusinessCode.PERMISSION_NOT_FOUND]: 'Không tìm thấy quyền này.',
-
+  [BusinessCode.PERMISSION_NOT_ASSIGNED]: 'Quyền này chưa được gán cho vai trò nào.',
+  [BusinessCode.PERMISSION_ASSIGNED_SUCCESS]: 'Gán quyền cho vai trò thành công.',
   //=========================================================
   // === ROL: ROLE MODULE MESSAGES =====================
   // =========================================================

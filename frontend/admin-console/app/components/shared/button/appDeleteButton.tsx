@@ -1,24 +1,26 @@
-import { PencilLine, SquareX } from 'lucide-react';
+import { SquareX } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { AppModifyButton } from './appModifyButton';
 
 interface AppDeleteButtonProps {
-  // onDelete: () => void;
-  // item?: string;
+  handleOnClick?: () => void;
   className?: string;
+  title?: string;
 }
 
 export function AppDeleteButton({
-  // onDelete,
-  // item,
+  handleOnClick,
   className,
+  title = 'Xóa',
 }: AppDeleteButtonProps) {
   return (
     <Button
       variant='ghost'
       size='icon'
       className={`text-destructive hover:text-destructive hover:bg-destructive/10 ${className}`}
-      title='Xóa'>
+      title={title}
+      onClick={handleOnClick}
+      type="button"
+    >
       <SquareX />
     </Button>
   );

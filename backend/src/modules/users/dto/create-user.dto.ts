@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { LoginProvider } from '@common/constants/common-constant';
 
 export class CreateUserDto {
@@ -136,4 +136,15 @@ export class LoginAccountDto {
   @IsString({ message: 'Mật khẩu phải là một chuỗi' })
   @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
   password: string;
+}
+
+export class SignRoleToUserDto {
+  @ApiProperty({
+    example: ['652e456bf12a3c2b8c71e9f1', '652e456bf12a3c2b8c71e9f2'],
+    description: 'Danh sách ID user cần gán quyền',
+  })
+  @IsArray({ message: 'userIds phải là mảng' })
+  @IsString({ each: true, message: 'Mỗi ID user phải là chuỗi' })
+  @IsNotEmpty({ each: true, message: 'ID user không được để trống' })
+  userIds: string[];
 }

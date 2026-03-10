@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateRoleDto {
@@ -23,3 +23,4 @@ export class CreateRoleDto {
   @IsArray({ message: 'permissions phải là một mảng' })
   permissions: mongoose.Schema.Types.ObjectId[];
 }
+

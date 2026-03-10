@@ -14,15 +14,19 @@ import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 import { RoleLevel } from '@common/constants/common-constant';
 import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
 import { IUser } from '@interfaces/user.interface';
+import { GetUserListToSignRoleDto } from './dto/get-user.dto';
+import { PaginationService } from '@common/modules/pagination/pagination.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly paginationService: PaginationService,
+    private readonly cloudinaryService: CloudinaryService,
+
     @InjectModel(User.name)
     private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
     @InjectModel(Role.name)
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
-    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async createNewUser(createUserDto: CreateUserDto) {
@@ -670,5 +674,125 @@ export class UsersService {
     );
 
     return result.matchedCount === 1;
+  }
+
+  async fetchUserListToSignRole(getUserListToSignRoleDto: GetUserListToSignRoleDto) {
+    try {
+      const { page = 1, limit = 10, search } = getUserListToSignRoleDto;
+      const skip = (page - 1) * limit;
+      const userSearchMatch = search
+        ? {
+            $or: [
+              { firstName: { $regex: search, $options: 'i' } },
+              { email: { $regex: search, $options: 'i' } },
+              { username: { $regex: search, $options: 'i' } },
+            ],
+          }
+        : {};
+
+      const pipeline = [
+        { $match: userSearchMatch },
+        {
+          $lookup: {
+            from: 'roles', // Tên collection của Role trong DB
+            localField: 'role',
+            foreignField: '_id',
+            as: 'roleData',
+          },
+        },
+        { $unwind: '$roleData' },
+        { $match: { 'roleData.level': { $ne: 0 } } }, // Lọc bỏ level 0 ngay tại đây
+        {
+          $facet: {
+            metadata: [{ $count: 'total' }],
+            data: [
+              { $skip: skip },
+              { $limit: limit },
+              {
+                $project: {
+                  _id: 1,
+                  firstName: 1,
+                  lastName: 1,
+                  username: 1,
+                  email: 1,
+                  picture: '$picture.url',
+                },
+              },
+            ],
+          },
+        },
+      ];
+
+      const result = await this.userModel.aggregate(pipeline);
+      const total = result[0].metadata[0]?.total || 0;
+
+      return {
+        code: BusinessCode.USER_GET_SUCCESS,
+        data: result[0].data,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // TODO: implement sign role to users
+  async signRoleToUser(id: string, dto: any) {
+    try {
+      const { userIds } = dto;
+
+      // Check valid role id
+      validateMongoId(id);
+
+      // Check valid user ids
+      userIds.forEach((userId) => validateMongoId(userId));
+
+      // Check exist role
+      const role = await findModuleOrThrow(
+        this.roleModel,
+        '_id',
+        id,
+        BusinessCode.ROLE_NOT_FOUND,
+        ResponseMessage[BusinessCode.ROLE_NOT_FOUND],
+        HttpStatus.NOT_FOUND,
+      );
+
+      const result = await this.userModel.updateMany(
+        { _id: { $in: userIds } },
+        { role: role._id },
+        { new: true },
+      );
+
+      return {
+        code: BusinessCode.USER_SIGNED_ROLE_SUCCESS,
+        data: {
+          updatedCount: result.modifiedCount,
+        },
+      };
+    } catch (error) {
+      // Re-throw business exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

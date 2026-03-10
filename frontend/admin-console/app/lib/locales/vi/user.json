@@ -1,0 +1,42 @@
+{
+  "createDialog": {
+    "title": "Thêm Người Dùng Mới",
+    "description": "Nhập thông tin chi tiết bên dưới để tạo tài khoản người dùng mới.",
+    "firstName": "Họ",
+    "firstNamePlaceholder": "Nhập họ...",
+    "lastName": "Tên",
+    "lastNamePlaceholder": "Nhập tên...",
+    "email": "Địa chỉ Email",
+    "emailPlaceholder": "example@domain.com",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu (ít nhất 6 ký tự)",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "avatar": "Ảnh đại diện",
+    "submit": "Tạo người dùng",
+    "success": "Thêm người dùng thành công"
+  },
+  "updateDialog": {
+    "title": "Cập Nhật Người Dùng",
+    "success": "Cập nhật người dùng thành công"
+  },
+  "deleteDialog": {
+    "title": "Xóa Người Dùng",
+    "description": "Bạn có chắc chắn muốn xóa người dùng '{{name}}'? Dữ liệu sẽ bị đánh dấu là đã xóa.",
+    "success": "Xóa người dùng thành công",
+    "confirm": "Xóa ngay",
+    "cancel": "Hủy bỏ"
+  },
+  "table": {
+    "fullName": "Họ và Tên",
+    "email": "Email",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "actions": "Hành động"
+  },
+  "filter": {
+    "title": "Bộ lọc người dùng",
+    "status": "Trạng thái",
+    "role": "Vai trò hệ thống"
+  }
+}

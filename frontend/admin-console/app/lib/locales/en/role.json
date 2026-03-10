@@ -1,10 +1,28 @@
 {
-  "level": {
-    "admin": "System Administrator",
-    "manager": "System Manager"
+  "createDialog": {
+    "title": "Create New Role",
+    "description": "Fill in the details below to create a new role for the system.",
+    "name": "Role Name",
+    "namePlaceholder": "e.g., Editor",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the responsibilities of this role...",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "assignPermissions": "Assign Permissions to Role",
+    "submit": "Create",
+    "success": "Role created successfully",
+    "noPermissionsFound": "No permissions found"
   },
-  "description": {
-    "admin": "Senior System Administrators are responsible for managing, configuring, and operating the entire system. They have full access and control over all subsystems, including user management, permission management, system configuration, data, content, and other business functions.",
-    "manager": "System administrator, responsible for coordinating, monitoring, and managing business operations within their assigned scope. Has access to and manipulation of subsystems related to data, content, and user management under their authority, but excluding global or sensitive system configurations."
+  "updateDialog": {
+    "title": "Update Role",
+    "success": "Role updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Role",
+    "description": "Are you sure you want to delete the role '{{name}}'? This action cannot be undone.",
+    "success": "Role deleted successfully",
+    "confirm": "Delete now",
+    "cancel": "Cancel"
   }
 }

@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreatePermissionDto } from './dto/create-permission.dto';
+import { CreatePermissionDto, SignPermissionToUserDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
@@ -14,7 +14,7 @@ import { validateUpdateFields } from '@common/utils/update-field-validator.util'
 import { PaginationService } from '@common/modules/pagination/pagination.service';
 import mongoose from 'mongoose';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
-import { async } from 'rxjs';
+import { User, UserDocument } from '@modules/users/schemas/user.schema';
 
 @Injectable()
 export class PermissionsService {
@@ -24,6 +24,8 @@ export class PermissionsService {
     private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
     @InjectModel(Role.name)
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
   ) {}
 
   async createPermission(createPermissionDto: CreatePermissionDto, user: IUser) {
@@ -242,5 +244,86 @@ export class PermissionsService {
         _id: id,
       },
     };
+  }
+
+  // TODO: implement sign permission to roles
+  async signPermissionToRole(id: string, dto: SignPermissionToUserDto) {
+    const { roleIds } = dto;
+
+    // Check valid permission id
+    validateMongoId(id);
+
+    // Check valid role ids
+    roleIds.forEach((roleId) => validateMongoId(roleId));
+
+    // Check exist permission
+    const permission = await ensurePermissionExists(this.permissionModel, id);
+
+    if (!permission) {
+      throw new HttpException(
+        {
+          code: BusinessCode.PERMISSION_NOT_FOUND,
+          errors: ResponseMessage[BusinessCode.PERMISSION_NOT_FOUND],
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    try {
+      const result = await this.roleModel.updateMany(
+        { _id: { $in: roleIds } },
+        {
+          $addToSet: { permissions: id },
+        },
+      );
+
+      if (result.modifiedCount === 0) {
+        throw new HttpException(
+          {
+            code: BusinessCode.PERMISSION_NOT_ASSIGNED,
+            errors: ResponseMessage[BusinessCode.PERMISSION_NOT_ASSIGNED],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return {
+        code: BusinessCode.PERMISSION_ASSIGNED_SUCCESS,
+        data: {
+          count: result.modifiedCount,
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (error instanceof mongoose.Error.StrictModeError) {
+        throw new HttpException(
+          {
+            code: BusinessCode.VALIDATION_FAILED,
+            errors: ResponseMessage[BusinessCode.VALIDATION_FAILED],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (error instanceof mongoose.Error.ValidationError) {
+        throw new HttpException(
+          {
+            code: BusinessCode.VALIDATION_FAILED,
+            errors: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

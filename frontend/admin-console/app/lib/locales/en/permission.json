@@ -1,0 +1,49 @@
+{
+  "createDialog": {
+    "title": "Create New Permission",
+    "description": "Fill in the information below to create a new access permission for the system.",
+    "name": "Permission Name",
+    "namePlaceholder": "Example: View Dashboard",
+    "apiPath": "API Path",
+    "apiPathPlaceholder": "/api/v1/...",
+    "method": "Method",
+    "methodPlaceholder": "Select method",
+    "module": "Module",
+    "modulePlaceholder": "Example: DASHBOARD",
+    "status": "Status",
+    "statusPlaceholder": "Select status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "apiConfig": "API Configuration",
+    "assignRoles": "Assign to Roles",
+    "assignUsers": "Assign to users (Optional)",
+    "searchUser": "Search user...",
+    "noUserFound": "No user found",
+    "cancel": "Cancel",
+    "submit": "Create",
+    "success": "Permission created successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Permission",
+    "description": "Are you sure you want to delete permission '{{name}}'? This action cannot be undone.",
+    "success": "Permission deleted successfully",
+    "confirm": "Delete now",
+    "cancel": "Cancel"
+  },
+  "filter": {
+    "title": "Permission Filter",
+    "status": "Status",
+    "statusPlaceholder": "Select status",
+    "method": "API Method",
+    "module": "Module",
+    "modulePlaceholder": "Enter module name...",
+    "sort": {
+      "title": "Sort by",
+      "placeholder": "Select criteria...",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "name": "Permission Name",
+      "method": "Method"
+    }
+  }
+}

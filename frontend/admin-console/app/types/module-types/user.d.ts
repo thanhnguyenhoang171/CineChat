@@ -12,7 +12,6 @@ export interface User {
     url: string;
   };
   username?: string;
-  //   password: string;  // Thông tin nhạy cảm, thường không trả về từ API
   email?: string;
   provider?: number;
   emailVerified?: boolean;
@@ -20,6 +19,7 @@ export interface User {
     _id: string;
     level: number;
     description?: string;
+    name?: string;
   };
   permissions?: {
     _id: string;
@@ -28,22 +28,34 @@ export interface User {
     module: string;
   }[];
 
-  deletedAt?: Date | null;
-
+  deletedAt?: string | null;
   isDeleted?: boolean;
-
   isActive: number;
-
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-// Interface cho việc tạo mới (DTO) - Chuẩn bị sẵn cho tương lai
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface UserWithPagination {
+  data: User[];
+  meta: PaginationMeta;
+}
+
+// Interface cho việc tạo mới (DTO)
 export interface CreateUserDto {
+  firstName: string;
+  lastName: string;
   email: string;
-  fullName: string;
   password?: string;
-  role?: UserRole;
+  roleId: string;
+  isActive: number;
+  pictureUrl?: string;
 }
 
 export interface UploadAvatar {

@@ -10,7 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto } from './dto/create-permission.dto';
+import { CreatePermissionDto, SignPermissionToUserDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
@@ -58,6 +58,16 @@ export class PermissionsController {
     @User() user: IUser,
   ) {
     return this.permissionsService.updatePermissionById(id, updatePermissionDto, user);
+  }
+
+  @Patch('sign-permission-to-roles/:id')
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign permission to roles' })
+  signPermissionController(
+    @Param('id') id: string,
+    @Body() signPermissionToUserDto: SignPermissionToUserDto,
+  ) {
+    return this.permissionsService.signPermissionToRole(id, signPermissionToUserDto);
   }
 
   @Delete(':id')

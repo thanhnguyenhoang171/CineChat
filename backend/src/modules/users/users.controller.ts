@@ -13,7 +13,7 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, SignRoleToUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
@@ -23,6 +23,7 @@ import { BusinessCode } from '@common/constants/business-code';
 import { User } from '@common/decorators/user.decorator';
 import type { IUser } from '@interfaces/user.interface';
 import { PublicPermission } from '@common/decorators/auth.decorator';
+import { GetUserListToSignRoleDto } from './dto/get-user.dto';
 
 @ApiBearerAuth('jwt')
 @ApiTags('Users')
@@ -48,6 +49,13 @@ export class UsersController {
   @ResponseStatus(HttpStatus.OK)
   findAll() {
     return this.usersService.findAllUsersWithPagination();
+  }
+
+  @Get('list-to-sign-role')
+  @ApiOperation({ summary: 'Get user list to sign role with pagination' })
+  @ResponseStatus(HttpStatus.OK)
+  getAllUserToSignRole(@Query() getUserListToSignRoleDto: GetUserListToSignRoleDto) {
+    return this.usersService.fetchUserListToSignRole(getUserListToSignRoleDto);
   }
 
   @Get(':username')
@@ -97,5 +105,12 @@ export class UsersController {
       code: BusinessCode.UPLOAD_FILE_SUCCESS,
       data: response,
     };
+  }
+
+  @Patch('sign-role-to-users/:id')
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign role to users' })
+  signRoleToUserController(@Param('id') id: string, @Body() signRoleToUserDto: SignRoleToUserDto) {
+    return this.usersService.signRoleToUser(id, signRoleToUserDto);
   }
 }
