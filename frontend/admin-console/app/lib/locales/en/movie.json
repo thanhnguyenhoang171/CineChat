@@ -1,0 +1,21 @@
+{
+  "table": {
+    "title": "Title",
+    "releaseDate": "Release Date",
+    "status": "Status",
+    "rating": "Rating",
+    "actions": "Actions"
+  },
+  "createDialog": {
+    "title": "Add New Movie",
+    "name": "Movie Title",
+    "namePlaceholder": "Enter movie title",
+    "releaseDate": "Release Date",
+    "status": "Status",
+    "genres": "Genres",
+    "overview": "Overview",
+    "overviewPlaceholder": "Movie overview...",
+    "submit": "Create Movie",
+    "success": "Movie created successfully!"
+  }
+}

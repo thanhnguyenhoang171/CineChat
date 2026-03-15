@@ -1,53 +1,24 @@
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ActiveStatus } from '@common/constants/common-constant';
+import { BaseSchema } from '@common/schemas/base.schema';
 
 @Schema({ timestamps: true })
-export class Permission {
-  @Prop()
+export class Permission extends BaseSchema{
+  @Prop({ required: true, trim: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true, trim: true })
   apiPath: string;
 
-  @Prop()
+  @Prop({ required: true, trim: true, uppercase: true })
   method: string;
 
-  @Prop()
+  @Prop({ required: true, trim: true })
   module: string;
-
-  @Prop({
-    type: Number,
-    enum: ActiveStatus,
-    default: ActiveStatus.ACTIVE,
-  })
-  isActive: ActiveStatus;
-
-  @Prop({ type: Object })
-  createdBy: {
-    _id: mongoose.Schema.Types.ObjectId;
-    username?: string;
-    email?: string;
-  };
-  @Prop({ type: Object })
-  updatedBy: {
-    _id: mongoose.Schema.Types.ObjectId;
-    username?: string;
-    email?: string;
-  };
-  @Prop({ type: Object })
-  deletedBy: {
-    _id: mongoose.Schema.Types.ObjectId;
-    username?: string;
-    email?: string;
-  };
-
-  createdAt: Date;
-  updatedAt: Date;
-
-  isDeleted?: boolean;
-  deletedAt?: Date;
 }
 export type PermissionDocument = HydratedDocument<Permission>;
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission);
+
+PermissionSchema.index({ apiPath: 1, method: 1 }, { unique: true });

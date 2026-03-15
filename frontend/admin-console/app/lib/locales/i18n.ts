@@ -10,7 +10,7 @@ i18n
   .init({
     resources: i18nResources,
     fallbackLng: 'vi',
-    ns: ['app', 'login', 'register', 'logout', 'role', 'account', 'permission', 'user', 'cast'], // Các namespace
+    ns: ['app', 'login', 'register', 'logout', 'role', 'account', 'permission', 'user', 'cast', 'genre', 'movie', 'video'], // Các namespace
     defaultNS: 'app', // Namespace mặc định nếu không chỉ định
 
     interpolation: {

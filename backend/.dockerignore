@@ -1,0 +1,39 @@
+# IDE
+.idea
+.vscode
+*.sublime-project
+
+# Dependency directories
+node_modules
+
+# Build outputs
+dist
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Git
+.git
+.gitignore
+
+# Docker metadata
+Dockerfile
+docker-compose*
+.dockerignore
+
+# Misc
+README.md
+scripts
+
+# Format
+.prettierrc
+

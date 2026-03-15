@@ -1,73 +1,60 @@
-version: '3.8'
-
 services:
-  # # API Server
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: netflix-api
-  #   ports:
-  #     - '3001:3001'
-  #     - '9229:9229' # Debug port
-  #   environment:
-  #     - NODE_ENV=development
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-  #     - REDIS_DB=${REDIS_DB:-0}
-  #   env_file:
-  #     - .env.docker
-  #   volumes:
-  #     - ./src:/app/src
-  #     - /app/node_modules
-  #   depends_on:
-  #     - redis
-  #   networks:
-  #     - netflix-network
-  #   command: npm run start:dev
-  #   healthcheck:
-  #     test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-
-  # Redis
-  redis:
-    image: redis:7-alpine
-    container_name: cinechat-redis
+  # 1. Database: MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: cinechat-mongodb
+    restart: always
     ports:
-      - '6380:6379'
+      - "27017:27017"
     volumes:
-      - redis_data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ""
+      - mongodb_data:/data/db
     networks:
       - cinechat-network
     healthcheck:
-      test: ['CMD', 'redis-cli', '-p', '6379', 'ping']
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Redis Commander (GUI)
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: redis-commander
+  # 2. Caching: Redis
+  redis:
+    image: redis:alpine
+    container_name: cinechat-redis
+    restart: always
     ports:
-      - '8081:8081'
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-      - HTTP_USER=admin
-      - HTTP_PASSWORD=admin123
-    depends_on:
-      - redis
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
     networks:
       - cinechat-network
 
-volumes:
-  redis_data:
+  # 3. Application: NestJS Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cinechat-backend
+    restart: always
+    ports:
+      - "8088:8088"
+    env_file:
+      - .env.docker
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/cinechat
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - cinechat-network
 
 networks:
   cinechat-network:
     driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:

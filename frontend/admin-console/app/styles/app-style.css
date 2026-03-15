@@ -18,6 +18,31 @@ body {
 }
 
 @theme inline {
+  --animate-toast-in: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-toast-out: toast-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes toast-in {
+    from {
+      transform: translateY(-12px) scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes toast-out {
+    from {
+      transform: scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+  }
+  
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -166,4 +191,33 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Hiệu ứng Toast mượt mà hơn */
+[data-sonner-toast] {
+  --toast-transition-duration: 0.4s;
+}
+
+[data-sonner-toast] {
+  animation: toast-spring-in 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+[data-sonner-toast][data-removed="true"] {
+  animation: toast-spring-out 0.25s ease-in forwards !important;
+}
+
+@keyframes toast-spring-in {
+  0% {
+    transform: translateY(-20px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1); opacity: 1;
+  }
+}
+
+@keyframes toast-spring-out {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0; }
 }

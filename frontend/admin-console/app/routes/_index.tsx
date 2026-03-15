@@ -8,7 +8,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   let token = store.accessToken;
 
   // 1. Nếu không có token trong RAM (do F5), thử lấy lại từ Cookie
-  if (!token) {
+  if (!token && store.isAuthenticated) {
     const success = await silentRefreshToken();
     if (success) {
       // Nếu refresh thành công, lấy lại token mới từ store

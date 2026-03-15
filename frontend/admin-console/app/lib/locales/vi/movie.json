@@ -1,0 +1,21 @@
+{
+  "table": {
+    "title": "Tiêu đề",
+    "releaseDate": "Ngày phát hành",
+    "status": "Trạng thái",
+    "rating": "Đánh giá",
+    "actions": "Hành động"
+  },
+  "createDialog": {
+    "title": "Thêm phim mới",
+    "name": "Tiêu đề phim",
+    "namePlaceholder": "Nhập tiêu đề phim",
+    "releaseDate": "Ngày phát hành",
+    "status": "Trạng thái",
+    "genres": "Thể loại",
+    "overview": "Mô tả",
+    "overviewPlaceholder": "Mô tả phim...",
+    "submit": "Tạo phim",
+    "success": "Tạo phim thành công!"
+  }
+}

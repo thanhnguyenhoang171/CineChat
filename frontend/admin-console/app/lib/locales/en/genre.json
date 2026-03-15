@@ -1,0 +1,35 @@
+{
+  "table": {
+    "name": "Name",
+    "description": "Description",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "createDialog": {
+    "title": "Add New Genre",
+    "name": "Genre Name",
+    "namePlaceholder": "Enter genre name (e.g. Action, Comedy)",
+    "description": "Description",
+    "descriptionPlaceholder": "Briefly describe this genre...",
+    "status": "Status",
+    "submit": "Create Genre",
+    "success": "Genre created successfully!"
+  },
+  "updateDialog": {
+    "title": "Update Genre",
+    "submit": "Update Genre",
+    "success": "Genre updated successfully!"
+  },
+  "deleteDialog": {
+    "title": "Delete Genre",
+    "description": "Are you sure you want to delete genre \"{{name}}\"? This action cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "success": "Genre deleted successfully!"
+  },
+  "validation": {
+    "name": {
+      "required": "Genre name is required"
+    }
+  }
+}
