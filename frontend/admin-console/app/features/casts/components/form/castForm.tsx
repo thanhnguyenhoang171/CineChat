@@ -88,7 +88,7 @@ export function CastForm({
                 <FormItem className='w-full flex justify-center'>
                   <ImageUploader
                     initialImage={field.value}
-                    onImageUpload={(url) => field.onChange(url)}
+                    onImageUpload={(url: string) => field.onChange(url)}
                     className='w-48 h-64 rounded-xl border-4 border-muted object-cover'
                   />
                   <FormMessage />

@@ -17,6 +17,7 @@ export function SonnerToasterComponent() {
           gap: '12px',
         },
         classNames: {
+          toast: 'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-xl',
           content: 'flex items-center justify-center gap-3',
           title: 'text-center font-bold',
           description: 'text-center text-md text-gray-500',

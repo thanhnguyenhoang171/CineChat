@@ -1,4 +1,4 @@
-import { Trash2, Upload, ZoomIn, ZoomOut } from 'lucide-react';
+import { Trash2, Upload, ZoomIn, ZoomOut, Edit } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import {
@@ -24,7 +24,6 @@ import { cn } from '~/lib/utils';
 import Cropper from 'react-easy-crop';
 import { Slider } from '~/components/ui/slider';
 import { useTranslation } from 'react-i18next';
-import { LayoutSpinner } from '../spinner/layoutSpinner';
 import { Spinner } from '~/components/ui/spinner';
 
 interface Point {
@@ -46,8 +45,10 @@ interface ImageUploaderProps {
   onSave?: () => void;
   isUploading?: boolean;
   headerTitle?: string;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  initialImage?: string;
+  onImageUpload?: (url: string) => void;
   /**
    * The aspect ratio of the cropped image (width / height)
    * @default 1 (square)
@@ -82,11 +83,14 @@ interface ImageUploaderProps {
 
 /**
  * A reusable image uploader component with drag & drop, preview, and crop functionality
+ * Supports both Dialog mode (if open/setOpen provided) and Inline mode
  */
 export function ImageUploader({
   headerTitle = 'Image Uploader',
   open,
   setOpen,
+  initialImage,
+  onImageUpload,
   aspectRatio = 1,
   maxSize = 5 * 1024 * 1024, // 5MB
   acceptedFileTypes = ['image/jpeg', 'image/png', 'image/webp'],
@@ -105,19 +109,22 @@ export function ImageUploader({
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(initialImage || null);
   const [isCropDialogOpen, setIsCropDialogOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // We're not using a drop library like react-dropzone, so this is handled manually with DOM events
+  useEffect(() => {
+    if (initialImage) {
+      setPreviewImage(initialImage);
+    }
+  }, [initialImage]);
 
   const handleFileSelect = (file: File | null) => {
     if (!file) return;
 
     setError(null);
 
-    // Check file type
     if (!acceptedFileTypes.includes(file.type)) {
       setError(
         `File type not supported. Accepted types: ${acceptedFileTypes.join(', ')}`,
@@ -125,7 +132,6 @@ export function ImageUploader({
       return;
     }
 
-    // Check file size
     if (file.size > maxSize) {
       setError(`File is too large. Maximum size: ${maxSize / (1024 * 1024)}MB`);
       return;
@@ -188,35 +194,26 @@ export function ImageUploader({
               type: originalFile.type,
             });
           }
+
+          // If in inline mode and has onImageUpload, we should ideally upload it
+          // For now, we just pass the object URL if it's expected as string
+          if (onImageUpload) {
+            onImageUpload(previewUrl);
+          }
+
           setIsCropDialogOpen(false);
         }
       }, originalFile.type);
     }
-  }, [image, croppedAreaPixels, originalFile]);
-
-  // Basic usage
-  {
-    /* <ImageUploader onImageCropped={(blob) => console.log(blob)} /> */
-  }
-
-  // With options
-  {
-    /* <ImageUploader 
-  aspectRatio={16/9}
-  maxSize={10 * 1024 * 1024} // 10MB
-  acceptedFileTypes={['image/jpeg', 'image/png']}
-  onImageCropped={(blob) => {
-    // Do something with the blob
-    console.log(blob);
-  }} 
-/>` */
-  }
+  }, [image, croppedAreaPixels, originalFile, onImageCropped, onImageUpload]);
 
   useEffect(() => {
-    if (!open) {
-      clearImage();
+    if (open !== undefined && !open) {
+      if (!initialImage) {
+        clearImage();
+      }
     }
-  }, [open]);
+  }, [open, initialImage]);
 
   const clearImage = () => {
     setPreviewImage(null);
@@ -225,19 +222,12 @@ export function ImageUploader({
     setOriginalFile(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
+    if (onImageUpload) {
+      onImageUpload('');
+    }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
@@ -251,17 +241,129 @@ export function ImageUploader({
     }
   };
 
+  const renderContent = () => (
+    <div className={cn('w-full h-full group/uploader', className)}>
+      {!previewImage ? (
+        <div
+          className='border-2 border-dashed rounded-lg h-full flex flex-col items-center justify-center p-4 text-center cursor-pointer hover:bg-muted/20 transition-colors'
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={() => inputRef.current?.click()}>
+          <input
+            ref={inputRef}
+            type='file'
+            className='hidden'
+            accept={acceptedFileTypes.join(',')}
+            onChange={(e) =>
+              handleFileSelect(
+                e.target.files ? e.target.files[0] : null,
+              )
+            }
+          />
+          <Upload className='h-8 w-8 text-muted-foreground' />
+          <p className='mt-2 text-xs text-muted-foreground'>
+            {t('app:upload.field.dragAndDrop')}
+          </p>
+          {error && (
+            <p className='mt-2 text-[10px] text-destructive'>{error}</p>
+          )}
+        </div>
+      ) : (
+        <div className='relative h-full w-full rounded-lg overflow-hidden border border-border'>
+          <img
+            src={previewImage}
+            alt='Preview'
+            className='w-full h-full object-cover'
+          />
+          <div className='absolute inset-0 bg-black/40 opacity-0 group-hover/uploader:opacity-100 transition-opacity flex items-center justify-center gap-2'>
+            <Button
+              size='icon'
+              variant='secondary'
+              className='h-8 w-8 rounded-full'
+              onClick={() => inputRef.current?.click()}>
+              <Edit size={14} />
+            </Button>
+            <Button
+              size='icon'
+              variant='destructive'
+              className='h-8 w-8 rounded-full'
+              onClick={clearImage}>
+              <Trash2 size={14} />
+            </Button>
+          </div>
+          <input
+            ref={inputRef}
+            type='file'
+            className='hidden'
+            accept={acceptedFileTypes.join(',')}
+            onChange={(e) =>
+              handleFileSelect(
+                e.target.files ? e.target.files[0] : null,
+              )
+            }
+          />
+        </div>
+      )}
+
+      <Dialog open={isCropDialogOpen} onOpenChange={setIsCropDialogOpen}>
+        <DialogContent className='sm:max-w-lg'>
+          <DialogHeader>
+            <DialogTitle>Crop Image</DialogTitle>
+          </DialogHeader>
+          {image && (
+            <div className='space-y-4'>
+              <div className='relative w-full h-80 bg-muted rounded-md overflow-hidden'>
+                <Cropper
+                  image={image}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={aspectRatio}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                />
+              </div>
+              <div className='flex items-center gap-4'>
+                <ZoomOut className='h-4 w-4 text-muted-foreground' />
+                <Slider
+                  value={[zoom]}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onValueChange={(value) => setZoom(value[0])}
+                />
+                <ZoomIn className='h-4 w-4 text-muted-foreground' />
+              </div>
+              <div className='flex justify-end gap-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsCropDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={cropImage}>Apply</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+
+  if (open === undefined && setOpen === undefined) {
+    return renderContent();
+  }
+
   return (
     <Dialog
       open={open}
       onOpenChange={(val) => {
         if (isUploading) return;
-        setOpen(val);
+        setOpen?.(val);
       }}>
       <DialogContent
         onEscapeKeyDown={(e) => isUploading && e.preventDefault()}
         onPointerDownOutside={(e) => isUploading && e.preventDefault()}
-        className='p-0  rounded-[14px] border-none shadow-none'>
+        className='p-0 rounded-[14px] border-none shadow-none'>
         <div className={cn('w-full', className)}>
           <Card className='w-full'>
             <CardHeader>
@@ -270,78 +372,7 @@ export function ImageUploader({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {!previewImage ? (
-                <div
-                  className='border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-muted/20 transition-colors'
-                  onDragOver={handleDragOver}
-                  onDragEnter={handleDragEnter}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => inputRef.current?.click()}>
-                  <input
-                    ref={inputRef}
-                    type='file'
-                    className='hidden'
-                    accept={acceptedFileTypes.join(',')}
-                    onChange={(e) =>
-                      handleFileSelect(
-                        e.target.files ? e.target.files[0] : null,
-                      )
-                    }
-                  />
-                  <Upload className='mx-auto h-12 w-12 text-muted-foreground' />
-                  <p className='mt-2 text-sm text-muted-foreground'>
-                    {t('app:upload.field.dragAndDrop')}
-                  </p>
-                  <p className='mt-1 text-xs text-muted-foreground'>
-                    {t('app:upload.field.accepted', {
-                      var: acceptedFileTypes
-                        .map((type) => type.replace('image/', '.'))
-                        .join(', '),
-                    })}
-                  </p>
-                  <p className='mt-1 text-xs text-muted-foreground'>
-                    {t('app:upload.field.maxSize', {
-                      var: maxSize / (1024 * 1024),
-                    })}
-                  </p>
-                  {error && (
-                    <p className='mt-2 text-sm text-destructive'>{error}</p>
-                  )}
-                </div>
-              ) : (
-                <div className='relative rounded-lg overflow-hidden'>
-                  <img
-                    src={previewImage}
-                    alt='Cropped preview'
-                    className='w-full h-auto rounded-lg object-cover aspect-ratio-1/1'
-                    style={{ aspectRatio: aspectRatio }}
-                  />
-                  <Button
-                    disabled={isUploading}
-                    className='absolute bottom-4 right-4'
-                    onClick={() => setIsCropDialogOpen(true)}>
-                    {t('app:upload.editBtn')}
-                  </Button>
-
-                  <div className='absolute bottom-4 left-4'>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size='icon'
-                            variant='outline'
-                            onClick={clearImage}
-                            disabled={isUploading}>
-                            <Trash2 size={16} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('app:upload.clear')}</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </div>
-              )}
+              {renderContent()}
             </CardContent>
             <CardFooter className='flex justify-between'>
               <div className='flex justify-between w-full items-center'>
@@ -351,7 +382,7 @@ export function ImageUploader({
                 <div className='flex gap-2'>
                   <Button
                     variant='ghost'
-                    onClick={() => setOpen(false)}
+                    onClick={() => setOpen?.(false)}
                     disabled={isUploading}>
                     {t('app:upload.cancelBtn')}
                   </Button>
@@ -371,48 +402,6 @@ export function ImageUploader({
               </div>
             </CardFooter>
           </Card>
-
-          <Dialog open={isCropDialogOpen} onOpenChange={setIsCropDialogOpen}>
-            <DialogContent className='sm:max-w-lg'>
-              <DialogHeader>
-                <DialogTitle>Crop Image</DialogTitle>
-              </DialogHeader>
-              {image && (
-                <>
-                  <div className='relative w-full h-80'>
-                    <Cropper
-                      image={image}
-                      crop={crop}
-                      zoom={zoom}
-                      aspect={aspectRatio}
-                      onCropChange={setCrop}
-                      onCropComplete={onCropComplete}
-                      onZoomChange={setZoom}
-                    />
-                  </div>
-                  <div className='flex items-center gap-4'>
-                    <ZoomOut className='h-4 w-4' />
-                    <Slider
-                      value={[zoom]}
-                      min={1}
-                      max={3}
-                      step={0.1}
-                      onValueChange={(value) => setZoom(value[0])}
-                    />
-                    <ZoomIn className='h-4 w-4' />
-                  </div>
-                  <div className='flex justify-end gap-2'>
-                    <Button
-                      variant='outline'
-                      onClick={() => setIsCropDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={cropImage}>Apply</Button>
-                  </div>
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
         </div>
       </DialogContent>
     </Dialog>

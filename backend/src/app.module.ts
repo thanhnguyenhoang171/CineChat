@@ -16,6 +16,11 @@ import { RedisModule } from './redis/redis.module';
 import { HealthModule } from '@modules/health/health.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
+import { CastsModule } from './modules/casts/casts.module';
+import { GenresModule } from './modules/genres/genres.module';
+import { CastingsModule } from './modules/castings/castings.module';
+import { MoviesModule } from './modules/movies/movies.module';
+import { VideosModule } from './modules/videos/videos.module';
 
 
 @Module({
@@ -34,6 +39,11 @@ import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
     PermissionsModule,
     CommonModule,
     HealthModule,
+    CastsModule,
+    GenresModule,
+    CastingsModule,
+    MoviesModule,
+    VideosModule,
   ],
   providers: [
     {

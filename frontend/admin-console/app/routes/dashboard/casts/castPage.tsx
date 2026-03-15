@@ -57,7 +57,8 @@ export default function CastPage() {
               setSearch(val);
               setPage(1);
             }}
-            className='w-full md:w-[300px]'
+            isLoading={isLoading}
+            totalSearchResult={data?.meta?.total || 0}
           />
           <CastFilter
             isOpen={isFilterOpen}
@@ -68,7 +69,7 @@ export default function CastPage() {
           />
           <AppAddButton
             handleOnClick={() => setIsCreateModalOpen(true)}
-            title={t('cast:createDialog.title')}
+            text={t('cast:createDialog.title')}
           />
         </div>
       </div>

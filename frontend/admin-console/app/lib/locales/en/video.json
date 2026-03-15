@@ -1,0 +1,23 @@
+{
+  "table": {
+    "name": "Name",
+    "type": "Type",
+    "site": "Site",
+    "key": "Key",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "createDialog": {
+    "title": "Add New Video",
+    "name": "Video Name",
+    "namePlaceholder": "Enter video name",
+    "movieId": "Movie ID",
+    "key": "Video Key",
+    "keyPlaceholder": "YouTube/Vimeo key",
+    "type": "Type",
+    "site": "Site",
+    "official": "Official",
+    "submit": "Create Video",
+    "success": "Video created successfully!"
+  }
+}

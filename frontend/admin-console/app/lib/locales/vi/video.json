@@ -1,0 +1,23 @@
+{
+  "table": {
+    "name": "Tên",
+    "type": "Loại",
+    "site": "Trang",
+    "key": "Mã",
+    "status": "Trạng thái",
+    "actions": "Hành động"
+  },
+  "createDialog": {
+    "title": "Thêm video mới",
+    "name": "Tên video",
+    "namePlaceholder": "Nhập tên video",
+    "movieId": "Mã phim",
+    "key": "Mã video",
+    "keyPlaceholder": "Mã YouTube/Vimeo",
+    "type": "Loại",
+    "site": "Trang",
+    "official": "Chính thức",
+    "submit": "Tạo video",
+    "success": "Tạo video thành công!"
+  }
+}

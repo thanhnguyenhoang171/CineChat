@@ -13,7 +13,7 @@ export class CreateRoleDto {
 
   @ApiProperty({ description: 'Trạng thái hoạt động của vai trò', default: true })
   @IsBoolean({ message: 'isActive phải là một giá trị boolean' })
-  isActive: boolean;
+  isActive: number;
 
   @ApiProperty({
     description: 'Các quyền được gán cho vai trò (mảng các ObjectId)',

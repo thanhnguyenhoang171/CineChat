@@ -25,6 +25,15 @@ import userVi from '~/lib/locales/vi/user.json';
 import castEn from '~/lib/locales/en/cast.json';
 import castVi from '~/lib/locales/vi/cast.json';
 
+import genreEn from '~/lib/locales/en/genre.json';
+import genreVi from '~/lib/locales/vi/genre.json';
+
+import movieEn from '~/lib/locales/en/movie.json';
+import movieVi from '~/lib/locales/vi/movie.json';
+
+import videoEn from '~/lib/locales/en/video.json';
+import videoVi from '~/lib/locales/vi/video.json';
+
 export const i18nResources = {
   en: {
     app: appEn,
@@ -36,6 +45,9 @@ export const i18nResources = {
     permission: permissionEn,
     user: userEn,
     cast: castEn,
+    genre: genreEn,
+    movie: movieEn,
+    video: videoEn,
   },
   vi: {
     app: appVi,
@@ -47,5 +59,8 @@ export const i18nResources = {
     permission: permissionVi,
     user: userVi,
     cast: castVi,
+    genre: genreVi,
+    movie: movieVi,
+    video: videoVi,
   },
 } as const;

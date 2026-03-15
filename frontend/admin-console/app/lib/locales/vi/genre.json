@@ -1,0 +1,35 @@
+{
+  "table": {
+    "name": "Tên",
+    "description": "Mô tả",
+    "status": "Trạng thái",
+    "actions": "Hành động"
+  },
+  "createDialog": {
+    "title": "Thêm thể loại mới",
+    "name": "Tên thể loại",
+    "namePlaceholder": "Nhập tên thể loại (vídụ: Hành động, Hài hước)",
+    "description": "Mô tả",
+    "descriptionPlaceholder": "Mô tả ngắn gọn về thể loại này...",
+    "status": "Trạng thái",
+    "submit": "Tạo thể loại",
+    "success": "Tạo thể loại thành công!"
+  },
+  "updateDialog": {
+    "title": "Cập nhật thể loại",
+    "submit": "Cập nhật",
+    "success": "Cập nhật thể loại thành công!"
+  },
+  "deleteDialog": {
+    "title": "Xóa thể loại",
+    "description": "Bạn có chắc chắn muốn xóa thể loại \"{{name}}\"? Hành động này không thể hoàn tác.",
+    "confirm": "Xóa",
+    "cancel": "Hủy",
+    "success": "Xóa thể loại thành công!"
+  },
+  "validation": {
+    "name": {
+      "required": "Tên thể loại không được để trống"
+    }
+  }
+}

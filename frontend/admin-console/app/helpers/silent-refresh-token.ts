@@ -5,7 +5,7 @@ import { useBoundStore } from '~/store';
 export const silentRefreshToken = async (): Promise<boolean> => {
   try {
     const response = await authService.refreshToken();
-    const newAccessToken = response?.data?.access_token;
+    const newAccessToken = response?.data?.access_token || null;
 
     useBoundStore.getState().setAccessToken(newAccessToken);
 
@@ -13,10 +13,14 @@ export const silentRefreshToken = async (): Promise<boolean> => {
   } catch (error: any) {
     // if refresh token expired -> logout
     if (error.response?.status === 401) {
-      toast.error(
-        `${error.response?.message}` || 'Đã hết phiên làm việc, vui lòng đăng nhập lại!',
-      );
-      useBoundStore.getState().logout();
+      const { isAuthenticated, logout } = useBoundStore.getState();
+      if (isAuthenticated) {
+        toast.error(
+          error.response?.data?.message ||
+            'Đã hết phiên làm việc, vui lòng đăng nhập lại!',
+        );
+      }
+      logout();
     }
     return false;
   }

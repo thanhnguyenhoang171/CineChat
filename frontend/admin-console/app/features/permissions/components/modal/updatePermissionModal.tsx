@@ -60,7 +60,7 @@ export function UpdatePermissionModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[800px] p-0 overflow-hidden border-none shadow-2xl'>
-        <DialogHeader className='px-6 pt-6 pb-4 bg-gradient-to-r from-orange-500/5 to-transparent border-b'>
+        <DialogHeader className='px-6 pt-6 pb-4 bg-linear-to-r from-orange-500/5 to-transparent border-b'>
           <DialogTitle className='text-2xl font-bold tracking-tight text-foreground flex items-center gap-3'>
             <div className='bg-orange-500/10 p-2 rounded-xl'>
               <Edit3 className='w-5 h-5 text-orange-600' />

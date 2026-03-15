@@ -95,7 +95,7 @@ export function UserForm({
                 <FormItem className='w-full flex justify-center'>
                   <ImageUploader
                     initialImage={field.value}
-                    onImageUpload={(url) => field.onChange(url)}
+                    onImageUpload={(url: string) => field.onChange(url)}
                     className='w-40 h-40 rounded-full border-4 border-muted'
                   />
                   <FormMessage />
