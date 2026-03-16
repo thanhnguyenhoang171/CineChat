@@ -11,6 +11,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from '@modules/users/schemas/user.schema';
+import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
 import { response, Response } from 'express';
 import { BusinessCode } from '@common/constants/business-code';
 import { createRefreshToken } from '@common/utils/access-token.util';
@@ -26,6 +29,8 @@ export class AuthService {
     private userService: UsersService,
     private configService: ConfigService<ConfigEnv, true>,
     private jwtService: JwtService,
+    @InjectModel(User.name)
+    private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
   ) {}
   private readonly logger = new Logger('AuthService');
 
@@ -35,7 +40,7 @@ export class AuthService {
       provider: LoginProvider.USERNAME,
     };
     // return this.userService.registerAccount(registerAccountDto);
-    const registeredUser = await this.userService.registerAccount(userData);
+    const registeredUser = await this.userService.registerUserAccount(userData);
     return {
       code: BusinessCode.REGISTERED,
       data: {
@@ -47,9 +52,23 @@ export class AuthService {
 
   // validate user
   async validateUser(username: string, pass: string): Promise<any> {
-    const userData = await this.userService.findUserByUsername(username);
+    const userData = await this.userModel
+      .findOne({ username })
+      .select('+password isDeleted isActive role tokenVersion')
+      .populate({
+        path: 'role',
+        model: 'Role',
+        select: '_id level',
+      })
+      .lean()
+      .exec();
 
     if (!userData) {
+      return null;
+    }
+
+    if (!userData.password) {
+      // Account hasn't password (3rd login)
       return null;
     }
 
@@ -198,7 +217,7 @@ export class AuthService {
 
       const payload = {
         sub: _id,
-        r: role._id,
+        r: role, // is role id
         v: user.tokenVersion || 0,
       };
 
@@ -385,11 +404,21 @@ export class AuthService {
     try {
       await this.userService.changePasswordById(user, currentPassword, newPassword);
 
-      const updatedUser = await this.userService.findUserById(user._id);
+      const updatedUser = await this.userService.findUserByIdForValidate(user._id);
+
+      if (!updatedUser) {
+        throw new HttpException(
+          {
+            code: BusinessCode.USER_NOT_FOUND,
+            errors: ResponseMessage[BusinessCode.USER_NOT_FOUND],
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
 
       const payload = {
         sub: updatedUser._id,
-        r: updatedUser.role._id,
+        r: updatedUser.role,
         v: updatedUser.tokenVersion || 0,
       };
 

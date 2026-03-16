@@ -1,59 +1,103 @@
-import type { User, UserWithPagination, CreateUserDto, UploadAvatar, ApiResponse } from '~/types/module-types/user';
-
-const MOCK_USERS: User[] = [
-  { _id: 'u1', firstName: 'Nguyễn', lastName: 'An', email: 'an.nguyen@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u1' }, isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_1', name: 'Super Admin', level: 1 } },
-  { _id: 'u2', firstName: 'Trần', lastName: 'Bình', email: 'binh.tran@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u2' }, isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_2', name: 'Content Creator', level: 2 } },
-  { _id: 'u3', firstName: 'Lê', lastName: 'Chi', email: 'chi.le@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u3' }, isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_3', name: 'Moderator', level: 3 } },
-  { _id: 'u4', firstName: 'Phạm', lastName: 'Dũng', email: 'dung.pham@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u4' }, isActive: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_4', name: 'Accountant', level: 4 } },
-  { _id: 'u5', firstName: 'Hoàng', lastName: 'Yến', email: 'yen.hoang@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u5' }, isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_2', name: 'Content Creator', level: 2 } },
-  { _id: 'u6', firstName: 'Võ', lastName: 'Hùng', email: 'hung.vo@example.com', picture: { url: 'https://i.pravatar.cc/150?u=u6' }, isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), role: { _id: 'role_3', name: 'Moderator', level: 3 } },
-];
+import { axiosClient } from '~/lib/axios-client';
+import type { User, CreateUserDto, ApiResponse } from '~/types/module-types/user';
 
 export const userService = {
-  getAllUsersWithPagination: async ({ page, limit, search, isActive, roleId }: any) => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    let filtered = [...MOCK_USERS];
-    if (search) filtered = filtered.filter(u => `${u.firstName} ${u.lastName}`.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
-    if (isActive !== undefined && isActive !== 'all') filtered = filtered.filter(u => u.isActive === Number(isActive));
-    if (roleId && roleId !== 'all') filtered = filtered.filter(u => u.role._id === roleId);
-
-    const total = filtered.length;
-    const start = (page - 1) * limit;
-    const data = filtered.slice(start, start + limit);
-
-    return {
-      data,
-      meta: {
-        total,
+  getAllUsersWithPagination: async ({
+    page,
+    limit,
+    search,
+    isActive,
+    roleId,
+    sortBy = 'createdAt',
+    sortOrder = 'desc',
+  }: any) => {
+    const response = await axiosClient.get('/users', {
+      params: {
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
-      }
-    };
+        search,
+        isActive,
+        roleId,
+        sortBy,
+        sortOrder,
+      },
+    });
+    return response.data;
   },
 
   createUser: async (payload: CreateUserDto) => {
-    console.log('Fake Create User:', payload);
-    return { status: 201, message: 'Success', data: { ...payload, _id: Math.random().toString() } };
+    const response = await axiosClient.post('/users', payload);
+    return {
+      status: response.status,
+      message: response.data?.message || 'Success',
+      data: response.data?.data,
+    };
   },
 
   updateUser: async (id: string, payload: Partial<CreateUserDto>) => {
-    console.log('Fake Update User:', id, payload);
-    return { status: 200, message: 'Success', data: payload };
+    const response = await axiosClient.patch(`/users/${id}`, payload);
+    return {
+      status: response.status,
+      message: response.data?.message || 'Success',
+      data: response.data?.data,
+    };
   },
 
   deleteUser: async (id: string) => {
-    console.log('Fake Delete User:', id);
-    return { status: 200, message: 'Success', data: null };
+    const response = await axiosClient.delete(`/users/${id}`);
+    return {
+      status: response.status,
+      message: response.data?.message || 'Success',
+      data: response.data?.data,
+    };
   },
 
-  uploadAvatar: async (folder: string, imageBlob: Blob, originalFile: { name: string; type: string }) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return { status: 201, message: 'Success', data: { _id: 'new_img', picture: { url: 'https://i.pravatar.cc/150' } } };
+  uploadAvatar: async (
+    folder: string,
+    imageBlob: Blob,
+    originalFile: { name: string; type: string },
+  ) => {
+    const formData = new FormData();
+    // Chuyển Blob thành File để Cloudinary nhận diện đúng định dạng
+    const file = new File([imageBlob], originalFile.name, { type: originalFile.type });
+    formData.append('file', file);
+
+    const response = await axiosClient.post(`/users/upload-avatar`, formData, {
+      params: { folder },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return {
+      status: response.status,
+      message: response.data?.message || 'Upload Success',
+      data: response.data?.data, // Chứa { _id, picture: { url } }
+    };
   },
 
   updateFullName: async (firstName: string, lastName: string) => {
-    return { status: 200, message: 'Success', data: { firstName, lastName } };
+    const response = await axiosClient.patch('/users/update-full-name', {
+      firstName,
+      lastName,
+    });
+    return {
+      status: response.status,
+      message: response.data?.message || 'Success',
+      data: response.data?.data,
+    };
+  },
+
+  // API lấy danh sách user để gán quyền (đã có trong Backend)
+  fetchUserListToSignRole: async (params: any) => {
+    const response = await axiosClient.get('/users/list-to-sign-role', { params });
+    return response.data;
+  },
+
+  signRoleToUser: async (roleId: string, userIds: string[]) => {
+    const response = await axiosClient.patch(`/users/sign-role-to-users/${roleId}`, {
+      userIds,
+    });
+    return response.data;
   },
 };

@@ -29,61 +29,12 @@ export class UsersService {
     private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
   ) {}
 
-  async createNewUser(createUserDto: CreateUserDto) {
-    const duplicatedUsername = await this.userModel.findOne({
-      username: createUserDto.username,
-    });
-    if (duplicatedUsername) {
-      throw new HttpException(
-        {
-          code: BusinessCode.DUPLICATE_USERNAME,
-          errors: ResponseMessage[BusinessCode.DUPLICATE_USERNAME],
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    const duplicatedEmail = await this.userModel.findOne({
-      email: createUserDto.email,
-    });
-    if (duplicatedEmail) {
-      throw new HttpException(
-        {
-          code: BusinessCode.DUPLICATE_EMAIL,
-          errors: ResponseMessage[BusinessCode.DUPLICATE_EMAIL],
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    const createdUser = await this.userModel.create(createUserDto);
-
-    return {
-      code: BusinessCode.USER_CREATED_SUCCESS,
-      data: createdUser,
-    };
-  }
-
-  async findAllUsersWithPagination() {
-    return {
-      code: BusinessCode.USER_GET_SUCCESS,
-      data: await this.userModel.find(),
-    };
-  }
-
-  async findUserByUsername(username: string) {
+  // Use for logic Authentication
+  async findUserByUsernameForValidate(username: string) {
     try {
       const user = await this.userModel
         .findOne({ username })
-        .populate({
-          path: 'role',
-          model: 'Role',
-          populate: {
-            path: 'permissions',
-            model: 'Permission',
-            select: '_id name method apiPath module',
-          },
-        })
+        .select('password isDeleted isActive')
         .lean()
         .exec();
 
@@ -91,21 +42,7 @@ export class UsersService {
         return null;
       }
 
-      const { password, role, ...userInfo } = user;
-
-      // Handle safe casting
-      const roleObj = role as any;
-      const permissions = roleObj?.permissions ?? [];
-
-      return {
-        ...userInfo,
-        password: password, // Need return password to compare
-        role: {
-          _id: roleObj?._id,
-          level: roleObj?.level,
-        },
-        permissions: permissions,
-      };
+      return user;
     } catch (error) {
       console.error('Error in findUserByUsername:', error);
       throw new HttpException(
@@ -117,6 +54,82 @@ export class UsersService {
       );
     }
   }
+
+  // Use for logic Authentication
+  async findUserByIdForValidate(id: string) {
+    try {
+      const user = await this.userModel
+        .findOne({ _id: id })
+        .select('password isDeleted isActive tokenVersion')
+        .lean()
+        .exec();
+
+      if (!user) {
+        return null;
+      }
+
+      return user;
+    } catch (error) {
+      console.error('Error in findUserByUsernameForValidate:', error);
+      throw new HttpException(
+        {
+          code: BusinessCode.INTERNAL_SERVER_ERROR,
+          errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Remove later
+  // async findUserByUsername(username: string) {
+  //   try {
+  //     const user = await this.userModel
+  //       .findOne({ username })
+  //       .populate({
+  //         path: 'role',
+  //         model: 'Role',
+  //         populate: {
+  //           path: 'permissions',
+  //           model: 'Permission',
+  //           select: '_id name method apiPath module',
+  //         },
+  //       })
+  //       .lean()
+  //       .exec();
+
+  //     if (!user) {
+  //       return null;
+  //     }
+
+  //     const { password, role, ...userInfo } = user;
+
+  //     // Handle safe casting
+  //     const roleObj = role as any;
+  //     const permissions = roleObj?.permissions ?? [];
+
+  //     return {
+  //       ...userInfo,
+  //       password: password, // Need return password to compare
+  //       role: {
+  //         _id: roleObj?._id,
+  //         level: roleObj?.level,
+  //       },
+  //       permissions: permissions,
+  //     };
+  //   } catch (error) {
+  //     console.error('Error in findUserByUsername:', error);
+  //     throw new HttpException(
+  //       {
+  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
+  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
+  //       },
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
+
+  // Use for logic 3rd Authentication
   async findUserByEmailAndGoogleId(email: string, googleId: string) {
     try {
       const user = await this.userModel
@@ -127,11 +140,7 @@ export class UsersService {
         .populate({
           path: 'role',
           model: 'Role',
-          populate: {
-            path: 'permissions',
-            model: 'Permission',
-            select: '_id name method apiPath module',
-          },
+          select: '_id level',
         })
         .lean()
         .exec();
@@ -140,20 +149,7 @@ export class UsersService {
         return null;
       }
 
-      const { role, ...userInfo } = user; // reject googleId
-
-      // Handle safe casting
-      const roleObj = role as any;
-      const permissions = roleObj?.permissions ?? [];
-
-      return {
-        ...userInfo,
-        role: {
-          _id: roleObj?._id,
-          level: roleObj?.level,
-        },
-        permissions: permissions,
-      };
+      return user;
     } catch (error) {
       throw new HttpException(
         {
@@ -164,6 +160,8 @@ export class UsersService {
       );
     }
   }
+
+  // use for Account
   async updateUserById(id: string, updateUserDto: UpdateUserDto) {
     validateMongoId(id);
     const user = await findModuleOrThrow(
@@ -232,13 +230,20 @@ export class UsersService {
     }
   }
 
-  removeUserById(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
-  async registerAccount(registerAccountDto: RegisterAccountDto) {
+  // use for Authentication
+  async registerUserAccount(registerAccountDto: RegisterAccountDto) {
     try {
-      const { firstName, lastName, picture, username, password, provider } = registerAccountDto;
+      const {
+        firstName,
+        lastName,
+        username,
+        password,
+        provider,
+        gender,
+        dateOfBirth,
+        phoneNumber,
+      } = registerAccountDto;
+
       const duplicatedUsername = await isModuleExist(this.userModel, 'username', username);
 
       if (duplicatedUsername) {
@@ -252,7 +257,11 @@ export class UsersService {
       }
 
       // Get user's role
-      const userRole = await this.roleModel.findOne({ level: RoleLevel.USER });
+      const userRole = await this.roleModel
+        .findOne({ level: RoleLevel.USER })
+        .select('_id')
+        .lean()
+        .exec();
 
       if (!userRole) {
         throw new HttpException(
@@ -270,7 +279,9 @@ export class UsersService {
       return await this.userModel.create({
         firstName,
         lastName,
-        picture,
+        gender,
+        dateOfBirth,
+        phoneNumber,
         username,
         provider,
         password: passwordHashed,
@@ -303,12 +314,18 @@ export class UsersService {
     }
   }
 
+  // use for 3rd Authentication
   async registerGoogleAccount(registerGGAccountDto: RegisterGGAccountDto) {
     try {
       const { firstName, lastName, picture, googleId, emailVerified, email, provider } =
         registerGGAccountDto;
+
       // Get user's role
-      const userRole = await this.roleModel.findOne({ level: RoleLevel.USER });
+      const userRole = await this.roleModel
+        .findOne({ level: RoleLevel.USER })
+        .select('_id')
+        .lean()
+        .exec();
 
       return await this.userModel.create({
         firstName,
@@ -331,6 +348,7 @@ export class UsersService {
     }
   }
 
+  // use for Authentication
   async updateUserRefreshTokenById(refreshToken: string | null, id: string) {
     validateMongoId(id);
 
@@ -351,19 +369,12 @@ export class UsersService {
     return result;
   }
 
+  // use for Authentication
   async findUserByRefreshToken(refreshToken: string | null) {
     try {
       const user = await this.userModel
-        .findOne({ refreshToken }, { password: 0 })
-        .populate({
-          path: 'role',
-          model: 'Role',
-          populate: {
-            path: 'permissions',
-            model: 'Permission',
-            select: '_id name method apiPath module',
-          },
-        })
+        .findOne({ refreshToken })
+        .select('isDeleted isActive role tokenVersion')
         .lean()
         .exec();
 
@@ -371,21 +382,7 @@ export class UsersService {
         return null;
       }
 
-      const { role, ...userInfo } = user;
-
-      // Handle safe casting
-      const roleObj = role as any;
-      const permissions = roleObj?.permissions ?? [];
-
-      return {
-        ...userInfo,
-
-        role: {
-          _id: roleObj?._id,
-          level: roleObj?.level,
-        },
-        permissions: permissions,
-      };
+      return user;
     } catch (error) {
       throw new HttpException(
         {
@@ -397,6 +394,7 @@ export class UsersService {
     }
   }
 
+  // use for Account
   async findUserById(id: string) {
     try {
       const user = await this.userModel
@@ -455,6 +453,7 @@ export class UsersService {
     }
   }
 
+  // use for Account
   async uploadUserAvatarById(user: IUser, folder: string, file: Express.Multer.File) {
     if (!file) {
       throw new HttpException(
@@ -467,7 +466,7 @@ export class UsersService {
     }
 
     const account = await this.userModel.findById(user._id);
-    const oldPublicId = account?.picture?.public_id;
+    const oldPublicId = account?.picture?.publicId;
 
     let newUserAvatar;
     try {
@@ -478,7 +477,7 @@ export class UsersService {
             $set: {
               picture: {
                 url: file.path,
-                public_id: file.filename,
+                publicId: file.filename,
                 folder,
               },
             },
@@ -530,6 +529,7 @@ export class UsersService {
     };
   }
 
+  // use for Account
   async deleteUser(id: string): Promise<boolean> {
     validateMongoId(id);
     const user = (await this.userModel.findById(id).populate('role').lean()) as IUser;
@@ -578,18 +578,7 @@ export class UsersService {
     return true;
   }
 
-  async getAccountActiveStatus(id: string) {
-    const result = await this.userModel.findById(id).select('deleted isActive').lean();
-    if (!result) {
-      throw new NotFoundException(`User với ID ${id} không tồn tại`);
-    }
-
-    return {
-      isDeleted: result.isDeleted,
-      isActive: result.isActive,
-    };
-  }
-
+  // use for Account
   async updateFullNameById(user: IUser, firstName: string, lastName: string) {
     const id = user._id;
     console.log('Checking user id in service = ', id);
@@ -627,14 +616,29 @@ export class UsersService {
     };
   }
 
+  // use for Account
   async changePasswordById(user: IUser, currentPassword: string, newPassword: string) {
-    // 1. Tìm user (Lưu ý: Nếu Schema của bạn đang set trường password là { select: false } thì phải thêm .select('+password') vào đây)
-    const foundUser = await this.userModel.findById(user._id);
+    // 1. ÉP LẤY PASSWORD VÀ TOKEN_VERSION (nếu bạn có cấu hình select: false trong Schema)
+    const foundUser = await this.userModel
+      .findById(user._id)
+      .select('+password tokenVersion')
+      .exec();
 
     if (!foundUser) {
       throw new HttpException(
         { code: BusinessCode.UNAUTHORIZED, errors: 'Không tìm thấy tài khoản!' },
         HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    // 2. CHẶN TÀI KHOẢN KHÔNG CÓ MẬT KHẨU (Tài khoản Google/Facebook)
+    if (!foundUser.password) {
+      throw new HttpException(
+        {
+          code: 400,
+          errors: 'Tài khoản này đăng nhập bằng mạng xã hội, không thể đổi mật khẩu theo cách này!',
+        },
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -676,6 +680,7 @@ export class UsersService {
     return result.matchedCount === 1;
   }
 
+  // use for Account
   async fetchUserListToSignRole(getUserListToSignRoleDto: GetUserListToSignRoleDto) {
     try {
       const { page = 1, limit = 10, search } = getUserListToSignRoleDto;
@@ -747,7 +752,6 @@ export class UsersService {
     }
   }
 
-  // TODO: implement sign role to users
   async signRoleToUser(id: string, dto: any) {
     try {
       const { userIds } = dto;

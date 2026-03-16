@@ -50,6 +50,11 @@ services:
         condition: service_started
     networks:
       - cinechat-network
+    # Hot-reload
+    command: npm run start:dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
 
 networks:
   cinechat-network:

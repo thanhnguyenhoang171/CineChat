@@ -1,6 +1,6 @@
 export interface IPicture {
   url?: string;
-  public_id?: string;
+  publicId?: string;
   folder?: string;
 }
 

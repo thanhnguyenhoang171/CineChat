@@ -19,15 +19,12 @@ export class Movie extends BaseSchema {
   @Prop({ type: Object })
   poster: {
     url: string;
-    public_id: string;
+    publicId: string;
     folder?: string;
   };
 
   @Prop()
   trailerUrl: string;
-
-  @Prop()
-  videoUrl: string;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Genre' }] })
   genres: Genre[];

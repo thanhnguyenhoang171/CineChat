@@ -25,6 +25,7 @@ import Cropper from 'react-easy-crop';
 import { Slider } from '~/components/ui/slider';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '~/components/ui/spinner';
+import { userService } from '~/services/user.service';
 
 interface Point {
   x: number;
@@ -112,6 +113,7 @@ export function ImageUploader({
   const [previewImage, setPreviewImage] = useState<string | null>(initialImage || null);
   const [isCropDialogOpen, setIsCropDialogOpen] = useState(false);
 
+  const [isInternalUploading, setIsInternalUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -183,25 +185,36 @@ export function ImageUploader({
         croppedAreaPixels.height,
       );
 
-      canvas.toBlob((blob) => {
+      canvas.toBlob(async (blob) => {
         if (blob) {
-          const previewUrl = URL.createObjectURL(blob);
-          setPreviewImage(previewUrl);
+          try {
+            setIsInternalUploading(true);
+            setIsCropDialogOpen(false); // Đóng dialog crop để hiện loading ở preview
 
-          if (onImageCropped) {
-            onImageCropped(blob, {
+            // Gọi API upload thật
+            const response = await userService.uploadAvatar('avatars', blob, {
               name: originalFile.name,
               type: originalFile.type,
             });
-          }
 
-          // If in inline mode and has onImageUpload, we should ideally upload it
-          // For now, we just pass the object URL if it's expected as string
-          if (onImageUpload) {
-            onImageUpload(previewUrl);
-          }
+            const realUrl = response.data?.picture?.url;
 
-          setIsCropDialogOpen(false);
+            if (realUrl) {
+              setPreviewImage(realUrl);
+              if (onImageUpload) {
+                onImageUpload(realUrl);
+              }
+              if (onImageCropped) {
+                onImageCropped(blob, originalFile);
+              }
+            } else {
+              setError('Upload failed: No URL returned');
+            }
+          } catch (err: any) {
+            setError(err?.response?.data?.message || 'Upload to Cloudinary failed');
+          } finally {
+            setIsInternalUploading(false);
+          }
         }
       }, originalFile.type);
     }
@@ -270,6 +283,11 @@ export function ImageUploader({
         </div>
       ) : (
         <div className='relative h-full w-full rounded-lg overflow-hidden border border-border'>
+          {isInternalUploading && (
+            <div className='absolute inset-0 z-10 bg-black/20 flex items-center justify-center backdrop-blur-[1px]'>
+              <Spinner className='size-8 text-primary animate-spin' />
+            </div>
+          )}
           <img
             src={previewImage}
             alt='Preview'
