@@ -38,9 +38,14 @@ import {
 import { useBoundStore } from '~/store';
 import { useLogout } from '~/hooks/auth/useLogout';
 import { formatFullName } from '~/utils/common-utils';
-import { useNavigate } from 'react-router';
-import { modules, workspaces, type Item } from '~/types/app-types/sidebar';
-import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import {
+  mainNav,
+  workspaces,
+  type Category,
+  type Item,
+} from '~/types/app-types/sidebar';
+import { useEffect, useMemo, useState } from 'react';
 import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
 import { useTranslation } from 'react-i18next';
 import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
@@ -54,10 +59,23 @@ interface AppMobileMenuProps {
 export function AppMobileMenu({ className }: AppMobileMenuProps) {
   const { t, i18n } = useTranslation('app');
   const currentLang = i18n.language;
+  const location = useLocation();
   const user = useBoundStore((state) => state.account);
   const navigation = useNavigate();
   const { mutate: logout, isPending } = useLogout();
   const [activeModuleId, setActiveModuleId] = useState<string>('dashboard');
+
+  const allModules = useMemo(() => {
+    const items: Item[] = [];
+    mainNav.forEach((navItem) => {
+      if ('items' in navItem) {
+        items.push(...(navItem as Category).items);
+      } else {
+        items.push(navItem as Item);
+      }
+    });
+    return items;
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -68,7 +86,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
   };
 
   const handleModuleChange = (moduleId: string) => {
-    const targetModule = modules.find((m) => m.id === moduleId);
+    const targetModule = allModules.find((m) => m.id === moduleId);
     if (targetModule) {
       setActiveModuleId(moduleId);
       navigation(targetModule.url);
@@ -85,14 +103,14 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
 
   useEffect(() => {
     const currentPath = location.pathname;
-    const foundModule = modules.find((m) =>
+    const foundModule = allModules.find((m) =>
       currentPath.startsWith(`/${m.url}`),
     );
 
     if (foundModule) {
       setActiveModuleId(foundModule.id);
     }
-  }, [location.pathname]);
+  }, [location.pathname, allModules]);
 
   return (
     <ButtonGroup className={className}>
@@ -113,31 +131,15 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-55' align='start'>
-            <DropdownMenuLabel className='justify-center flex '>
-              <Badge
-                className={cn(
-                  'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300s w-full flex justify-center items-center',
-                  user?.role?.level === 0 &&
-                    'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
-                )}>
-                {t('sidebar.management.title', {
-                  var:
-                    currentLang === 'vi'
-                      ? user?.role.level === 0
-                        ? 'QUẢN TRỊ'
-                        : 'QUẢN LÝ'
-                      : user?.role.level === 0
-                        ? 'ADMIN'
-                        : 'MANAGER',
-                })}
-              </Badge>
+            <DropdownMenuLabel className='justify-center flex'>
+              Modules
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup
               value={activeModuleId}
               onValueChange={handleModuleChange}>
-              {modules.map((mod) => (
-                <DropdownMenuRadioItem value={mod.id}>
+              {allModules.map((mod) => (
+                <DropdownMenuRadioItem key={mod.id} value={mod.id}>
                   <mod.icon />
                   <span>{t(mod.title)}</span>
                 </DropdownMenuRadioItem>
@@ -172,7 +174,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
       </ButtonGroup>
       <ButtonGroup>
         <Button variant='outline'>
-          <span className='w-[62px]'>{t('sidebar.management.setting')}</span>
+          <span className='w-[62px]'>{t('sidebar.setting')}</span>
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -190,7 +192,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
                 onClick={() => navigation(`/account/${user?._id}`)}>
                 <UserAvatar
                   user={user}
-                  className='border border-solid border-slate-200 !rounded-full max-w-6 max-h-6 min-w-4 min-h-4'
+                  className='border border-solid border-slate-200 rounded-full! max-w-6 max-h-6 min-w-4 min-h-4'
                 />
                 {formatFullName(user?.firstName, user?.lastName) || 'UNKNOWN'}
               </DropdownMenuItem>

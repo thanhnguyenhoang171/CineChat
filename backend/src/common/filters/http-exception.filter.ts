@@ -47,7 +47,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // handle remove file in cloudinary
     try {
-      await cleanupFiles(request);
+      await cleanupFiles(request, this.cloudinaryService);
     } catch (err) {
       this.logger.warn('Cleanup file failed:', err);
     }

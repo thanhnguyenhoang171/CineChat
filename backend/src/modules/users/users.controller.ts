@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, SignRoleToUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateFullNameDto, UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
@@ -31,24 +31,11 @@ import { GetUserListToSignRoleDto } from './dto/get-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  @ResponseStatus(HttpStatus.CREATED)
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createNewUser(createUserDto);
-  }
-
   @Patch('update-full-name')
   @PublicPermission()
   @ResponseStatus(HttpStatus.OK)
-  updateFullName(@User() user: IUser, @Body() dto: UpdateUserDto) {
+  updateFullName(@User() user: IUser, @Body() dto: UpdateFullNameDto) {
     return this.usersService.updateFullNameById(user, dto.firstName, dto.lastName);
-  }
-
-  // TODO: Handle get all users with pagination
-  @Get()
-  @ResponseStatus(HttpStatus.OK)
-  findAll() {
-    return this.usersService.findAllUsersWithPagination();
   }
 
   @Get('list-to-sign-role')
@@ -58,23 +45,16 @@ export class UsersController {
     return this.usersService.fetchUserListToSignRole(getUserListToSignRoleDto);
   }
 
-  @Get(':username')
-  @ResponseStatus(HttpStatus.OK)
-  getUserByUsername(@Param('username') username: string) {
-    return this.usersService.findUserByUsername(username);
-  }
+  // @Get(':username')
+  // @ResponseStatus(HttpStatus.OK)
+  // getUserByUsername(@Param('username') username: string) {
+  //   return this.usersService.findUserByUsername(username);
+  // }
 
   @Patch(':id')
   @ResponseStatus(HttpStatus.OK)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUserById(id, updateUserDto);
-  }
-
-  // TODO: Handle remove an user
-  @Delete(':id')
-  @ResponseStatus(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    return this.usersService.removeUserById(+id);
   }
 
   @Post('upload-avatar')
@@ -97,7 +77,7 @@ export class UsersController {
     console.log(files);
     const response = files.map((file) => ({
       url: file.path,
-      public_id: file.filename,
+      publicId: file.filename,
       folder: folder,
     }));
 

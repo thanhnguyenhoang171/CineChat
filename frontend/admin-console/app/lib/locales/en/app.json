@@ -4,34 +4,57 @@
   },
   "sidebar": {
     "selectWorkspace": {
-      "title": "Select Workspace",
-      "apiDocs": "API Documentations",
+      "title": "Select workspace",
+      "apiDocs": "API Docs",
       "bullMQ": "BullMQ Dashboard",
       "redis": "Redis Dashboard"
     },
-    "management": {
-      "title": "{{var}} CONSOLE",
-      "dashboard": "Dashboard",
+    "dashboard": "Dashboard",
+    "auth": {
+      "title": "Authentication & Authorization",
       "user": "User Management",
       "role": "Role Management",
-      "permission": "Permission Management",
+      "permission": "Permission Management"
+    },
+    "system": {
+      "title": "System",
       "cast": "Cast Management",
       "genre": "Genre Management",
       "movie": "Movie Management",
-      "video": "Video Management",
-      "account": "Account",
-      "setting": "Settings"
+      "video": "Video Management"
     },
-    "logout": "Log out",
+    "planAndBilling": {
+      "title": "Plan & Billing",
+      "coupon": "Coupon Management",
+      "subscription": "Subscription Management",
+      "userSubscription": "User Subscriptions"
+    },
+    "cms": {
+      "title": "Content Management System",
+      "banner": "Banner Management",
+      "homeSection": "Home Section Management"
+    },
+    "movieReview": {
+      "title": "Movie Review",
+      "reviews": "Review Management"
+    },
+    "ai": {
+      "title": "AI",
+      "usage": "AI Usage",
+      "chat": "Chat"
+    },
+    "account": "Account",
+    "setting": "Settings",
+    "logout": "Logout",
     "loggingout": "Logging out...",
     "language": "Language"
   },
   "text": {
     "searchResult": "{{var}} results",
     "searchPlaceHolder": "Search by keyword...",
-    "userTable": "Manage the list of users",
-    "permissionTable": "Manage the list of permissions",
-    "pageRowNum": "Line per pages:",
+    "userTable": "User List Management",
+    "permissionTable": "Access Permission List Management",
+    "pageRowNum": "Rows per page:",
     "page": "Page {{var}}"
   },
   "tableHeader": {
@@ -50,7 +73,7 @@
   "status": {
     "inactive": "Inactive",
     "active": "Active",
-    "pending": "Processing",
+    "pending": "Pending",
     "all": "All"
   },
   "button": {
@@ -59,8 +82,10 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "update": "Update",
+    "updating": "Updating...",
     "reset": "Reset",
-    "apply": "Apply"
+    "apply": "Apply",
+    "more": "More..."
   },
   "sort": {
     "asc": "Ascending",
@@ -71,15 +96,15 @@
   },
   "noData": "No data",
   "notFoundPage": {
-    "title": "Oops! This page doesn't exist.",
-    "description": "It seems the URL you're trying to access is broken or the page has been deleted. Please check the URL again or return to the homepage.",
+    "title": "Oops! This page does not exist.",
+    "description": "It seems the path you are accessing is faulty or the page has been deleted. Please check the URL or go back to the homepage.",
     "backBtn": "Back to Dashboard"
   },
   "upload": {
     "text": "Upload an image to preview and crop",
     "ready": "Ready to upload!",
     "editBtn": "Edit",
-    "saveBtn": "Save Changes",
+    "saveBtn": "Save changes",
     "cancelBtn": "Cancel",
     "clear": "Clear image",
     "processing": "Uploading...",

@@ -1,19 +1,19 @@
 {
   "form": {
-    "description": "Enter your information to register an account now!",
-    "fullname": "Full name",
+    "description": "Enter your information to register for an account now!",
+    "fullname": "Full Name",
     "username": "Username",
     "password": "Password",
-    "confirmPassword": "Confirm password",
+    "confirmPassword": "Confirm Password",
     "register": "REGISTER"
   },
   "button": {
-    "register": "Sign up",
-    "registering": "Registration is in progress..."
+    "register": "Register",
+    "registering": "Registering..."
   },
   "text": {
     "or": "OR",
-    "login": "Log in",
-    "haveAccount": "Do you already have an account?"
+    "login": "Login",
+    "haveAccount": "Already have an account?"
   }
 }

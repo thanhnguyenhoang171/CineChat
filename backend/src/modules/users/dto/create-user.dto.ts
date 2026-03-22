@@ -1,150 +1,195 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { LoginProvider } from '@common/constants/common-constant';
+import {
+  IsArray,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsBoolean,
+  IsDateString,
+  IsObject,
+} from 'class-validator';
+import { Gender, LoginProvider } from '@common/constants/common-constant';
 
 export class CreateUserDto {
   @ApiProperty({
     example: LoginProvider.USERNAME,
-    description: 'Provider đăng nhập',
+    description: 'Phương thức đăng nhập',
     enum: LoginProvider,
   })
-  @IsEnum(LoginProvider, {
-    message: 'Provider phải là một trong các giá trị: USERNAME(0), GOOGLE(1)',
-  })
-  @IsNotEmpty({ message: 'Provider không được để trống' })
+  @IsEnum(LoginProvider)
+  @IsNotEmpty()
   provider: LoginProvider;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Tên phải là một chuỗi' })
+  @ApiProperty({ example: 'Nguyễn', description: 'Họ' })
+  @IsString()
   @IsOptional()
-  firstName: string;
+  firstName?: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Họ phải là một chuỗi' })
+  @ApiProperty({ example: 'Thanh', description: 'Tên' })
+  @IsString()
   @IsOptional()
-  lastName: string;
+  lastName?: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @ApiProperty({ example: '1995-10-17', description: 'Ngày sinh' })
+  @IsDateString()
   @IsOptional()
-  picture: string;
+  dateOfBirth?: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Tên đăng nhập phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
+  @ApiProperty({ example: '0987654321', description: 'Số điện thoại' })
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+
+  @ApiProperty({ example: 'Yêu phim ảnh', description: 'Tiểu sử' })
+  @IsString()
+  @IsOptional()
+  bio?: string;
+
+  @ApiProperty({
+    example: Gender.MALE,
+    description: 'Giới tính',
+    enum: Gender,
+  })
+  @IsEnum(Gender)
+  @IsOptional()
+  gender?: Gender;
+
+  @ApiProperty({ example: 'thanh171', description: 'Tên đăng nhập' })
+  @IsString()
+  @IsNotEmpty()
   username: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Mật khẩu phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
-  password: string;
+  @ApiProperty({ example: 'Password123!', description: 'Mật khẩu' })
+  @IsString()
+  @IsOptional() // Password may be optional if provider is Google
+  password?: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @ApiProperty({ example: 'thanh@example.com', description: 'Email' })
   @IsEmail()
-  @IsOptional()
+  @IsNotEmpty()
   email: string;
+
+  @ApiProperty({ example: '652e456bf12a3c2b8c71e9f1', description: 'ID của Role' })
+  @IsString()
+  @IsNotEmpty()
+  role: string;
 }
 
 export class RegisterAccountDto {
-  @ApiProperty({
-    example: LoginProvider.USERNAME,
-    description: 'Provider đăng nhập',
-    enum: LoginProvider,
-  })
-  @IsEnum(LoginProvider, {
-    message: 'Provider phải là một trong các giá trị: USERNAME(0), GOOGLE(1)',
-  })
-  @IsNotEmpty({ message: 'Provider không được để trống' })
-  @IsOptional()
-  provider: LoginProvider = LoginProvider.USERNAME;
-
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Tên phải là một chuỗi' })
-  @IsOptional()
-  firstName: string;
-
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Họ phải là một chuỗi' })
-  @IsOptional()
-  lastName: string;
-
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsOptional()
-  picture: string;
-
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Tên đăng nhập phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
+  @ApiProperty({ example: 'thanh171', description: 'Tên đăng nhập' })
+  @IsString()
+  @IsNotEmpty()
   username: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Mật khẩu phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
+  @ApiProperty({
+    example: Gender.MALE,
+    description: 'Giới tính',
+    enum: Gender,
+  })
+  @IsEnum(Gender)
+  @IsOptional()
+  gender?: Gender;
+
+  @ApiProperty({ example: '1995-10-17', description: 'Ngày sinh' })
+  @IsDateString()
+  @IsOptional()
+  dateOfBirth?: string;
+
+  @ApiProperty({ example: '0987654321', description: 'Số điện thoại' })
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+
+  @ApiProperty({
+    example: LoginProvider.USERNAME,
+    description: 'Phương thức đăng nhập',
+    enum: LoginProvider,
+  })
+  @IsEnum(LoginProvider)
+  @IsNotEmpty()
+  provider: LoginProvider;
+
+  @ApiProperty({ example: 'Password123!', description: 'Mật khẩu' })
+  @IsString()
+  @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ example: 'Thanh', description: 'Tên' })
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @ApiProperty({ example: 'Nguyễn', description: 'Họ' })
+  @IsString()
+  @IsOptional()
+  lastName?: string;
 }
 
 export class RegisterGGAccountDto {
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Tên phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Tên không được để trống' })
+  @ApiProperty({ example: 'Thanh', description: 'Tên' })
+  @IsString()
+  @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
-  @IsString({ message: 'Họ phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Họ không được để trống' })
+  @ApiProperty({ example: 'Nguyễn', description: 'Họ' })
+  @IsString()
+  @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty({ example: 'thanhnguyen', description: 'Tên' })
+  @ApiProperty({ description: 'Ảnh đại diện từ Google' })
   @IsOptional()
-  picture: {
+  picture?: {
     url: string;
-    public_id: string;
+    publicId: string;
     folder: string;
   };
 
-  @ApiProperty({ example: 'thanhnguyen@gmail.com', description: 'Email' })
-  @IsOptional()
+  @ApiProperty({ example: 'thanh@gmail.com', description: 'Email từ Google' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty({
     example: LoginProvider.USERNAME,
-    description: 'Provider đăng nhập',
+    description: 'Phương thức đăng nhập',
     enum: LoginProvider,
   })
-  @IsEnum(LoginProvider, {
-    message: 'Provider phải là một trong các giá trị: USERNAME(0), GOOGLE(1)',
-  })
-  @IsNotEmpty({ message: 'Provider không được để trống' })
-  @IsOptional()
-  provider: LoginProvider = LoginProvider.GOOGLE;
-
-  @ApiProperty({ example: 'am2n34nsfjdkdm', description: 'Google Id khi đăng ký thành công' })
-  @IsOptional()
+  @IsEnum(LoginProvider)
+  @IsNotEmpty()
+  provider: LoginProvider;
+  
+  @ApiProperty({ example: '105794109591295563703', description: 'Google ID' })
+  @IsString()
+  @IsNotEmpty()
   googleId: string;
 
-  @ApiProperty({ example: 'true/false', description: 'Email đã xác thực hay chưa' })
+  @ApiProperty({ example: true, description: 'Email đã xác thực' })
+  @IsBoolean()
   @IsOptional()
-  emailVerified: boolean;
+  emailVerified?: boolean;
 }
 
 export class LoginAccountDto {
   @ApiProperty({ example: 'thanh171', description: 'Tên đăng nhập' })
-  @IsString({ message: 'Tên đăng nhập phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống' })
+  @IsString()
+  @IsNotEmpty()
   username: string;
 
   @ApiProperty({ example: 'ABC123', description: 'Mật khẩu' })
-  @IsString({ message: 'Mật khẩu phải là một chuỗi' })
-  @IsNotEmpty({ message: 'Mật khẩu không được để trống' })
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
 export class SignRoleToUserDto {
   @ApiProperty({
-    example: ['652e456bf12a3c2b8c71e9f1', '652e456bf12a3c2b8c71e9f2'],
+    example: ['652e456bf12a3c2b8c71e9f1'],
     description: 'Danh sách ID user cần gán quyền',
   })
-  @IsArray({ message: 'userIds phải là mảng' })
-  @IsString({ each: true, message: 'Mỗi ID user phải là chuỗi' })
-  @IsNotEmpty({ each: true, message: 'ID user không được để trống' })
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   userIds: string[];
 }

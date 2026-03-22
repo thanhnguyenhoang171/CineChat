@@ -1,11 +1,13 @@
 import { Outlet } from 'react-router';
-import type { Route } from './+types/authLayout';
-
+import { LanguageToggle } from '~/components/shared/language-toggle';
 
 export default function AuthLayout() {
   return (
-    <div className='min-h-screen w-full flex items-center justify-center bg-background'>
+    <>
+      <div className='absolute right-4 top-4 md:right-8 md:top-8 z-50'>
+        <LanguageToggle />
+      </div>
       <Outlet />
-    </div>
+    </>
   );
 }

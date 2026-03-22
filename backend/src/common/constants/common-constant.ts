@@ -10,6 +10,12 @@ export enum ActiveStatus {
   PENDING = 2,
 }
 
+export enum Gender {
+  MALE = 0,
+  FEMALE = 1,
+  OTHER = 2,
+}
+
 export enum LoginProvider {
   GOOGLE = 0,
   USERNAME = 1,

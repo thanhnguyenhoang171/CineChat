@@ -9,20 +9,42 @@
       "bullMQ": "Bảng điều khiển BullMQ",
       "redis": "Bảng điều khiển Redis"
     },
-    "management": {
-      "title": "BẢNG ĐIỀU KHIỂN {{var}}",
-      "dashboard": "Bảng điều khiển",
+    "dashboard": "Bảng điều khiển",
+    "auth": {
+      "title": "Xác thực & Phân quyền",
       "user": "Quản lý người dùng",
       "role": "Quản lý vai trò",
-      "permission": "Quản lý quyền",
+      "permission": "Quản lý quyền"
+    },
+    "system": {
+      "title": "Hệ thống",
       "cast": "Quản lý diễn viên",
       "genre": "Quản lý thể loại",
       "movie": "Quản lý phim",
-      "video": "Quản lý video",
-      "account": "Tài khoản",
-      "setting": "Cài đặt"
+      "video": "Quản lý video"
     },
-
+    "planAndBilling": {
+      "title": "Gói cước & Thanh toán",
+      "coupon": "Quản lý mã giảm giá",
+      "subscription": "Quản lý gói cước",
+      "userSubscription": "Gói cước người dùng"
+    },
+    "cms": {
+      "title": "Quản lý nội dung (CMS)",
+      "banner": "Quản lý banner",
+      "homeSection": "Quản lý mục trang chủ"
+    },
+    "movieReview": {
+      "title": "Đánh giá phim",
+      "reviews": "Quản lý đánh giá"
+    },
+    "ai": {
+      "title": "Trí tuệ nhân tạo (AI)",
+      "usage": "Lịch sử sử dụng AI",
+      "chat": "Trò chuyện"
+    },
+    "account": "Tài khoản",
+    "setting": "Cài đặt",
     "logout": "Đăng xuất",
     "loggingout": "Đang đăng xuất...",
     "language": "Ngôn ngữ"
@@ -60,8 +82,10 @@
     "submit": "Gửi đi",
     "cancel": "Hủy",
     "update": "Cập nhật",
+    "updating": "Đang cập nhật...",
     "reset": "Đặt lại",
-    "apply": "Áp dụng"
+    "apply": "Áp dụng",
+    "more": "Thêm..."
   },
   "sort": {
     "asc": "Tăng dần",

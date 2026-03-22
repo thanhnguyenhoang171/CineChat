@@ -1,23 +1,30 @@
 {
+  "createDialog": {
+    "title": "Add new video"
+  },
+  "updateDialog": {
+    "title": "Update Video",
+    "description": "Update the video information below.",
+    "success": "Video updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Video",
+    "description": "Are you sure you want to delete the video '{{name}}'? This action cannot be undone.",
+    "success": "Video deleted successfully",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
   "table": {
     "name": "Name",
+    "movie": "Movie",
     "type": "Type",
-    "site": "Site",
-    "key": "Key",
+    "quality": "Quality",
     "status": "Status",
     "actions": "Actions"
   },
-  "createDialog": {
-    "title": "Add New Video",
+  "form": {
     "name": "Video Name",
-    "namePlaceholder": "Enter video name",
-    "movieId": "Movie ID",
-    "key": "Video Key",
-    "keyPlaceholder": "YouTube/Vimeo key",
-    "type": "Type",
-    "site": "Site",
-    "official": "Official",
-    "submit": "Create Video",
-    "success": "Video created successfully!"
+    "namePlaceholder": "e.g., Official Trailer #2",
+    "official": "Official Video"
   }
 }
