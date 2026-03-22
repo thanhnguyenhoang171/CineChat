@@ -4,6 +4,7 @@ import {
   LogOut,
   ContactRound,
   Globe,
+  MoreHorizontal,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -35,9 +36,14 @@ import { useBoundStore } from '~/store';
 
 import { useLogout } from '~/hooks/auth/useLogout';
 import { formatFullName } from '~/utils/common-utils';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { modules, workspaces, type Item } from '~/types/app-types/sidebar';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import {
+  mainNav,
+  workspaces,
+  type Category,
+  type Item,
+} from '~/types/app-types/sidebar';
 import { useTranslation } from 'react-i18next';
 import { AppThemeModeButton } from '../shared/button/appThemeModeButton';
 import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
@@ -48,12 +54,25 @@ export function AppSidebar({ id }: { id?: string }) {
   const { t, i18n } = useTranslation('app');
   const currentLang = i18n.language;
   const { isDesktop, isTablet } = useBreakpoint();
+  const location = useLocation();
   const navigation = useNavigate();
   const user = useBoundStore((state) => state.account);
   const { mutate: logout, isPending } = useLogout();
   const { open, setOpen } = useSidebar();
 
   const [selectedModule, setSelectedModule] = useState<Item | null>(null);
+
+  const allModules = useMemo(() => {
+    const items: Item[] = [];
+    mainNav.forEach((navItem) => {
+      if ('items' in navItem) {
+        items.push(...(navItem as Category).items);
+      } else {
+        items.push(navItem as Item);
+      }
+    });
+    return items;
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -71,15 +90,27 @@ export function AppSidebar({ id }: { id?: string }) {
 
   useEffect(() => {
     const currentPath = location.pathname;
-    const matchedModule = modules.find((module) => {
-      return (
-        currentPath === module.url || currentPath.startsWith('/' + module.url)
-      );
-    });
+    let activeItem: Item | null = null;
 
-    if (matchedModule) {
-      setSelectedModule(matchedModule);
+    for (const navItem of mainNav) {
+      if ('url' in navItem) {
+        // It's a standalone Item
+        if (currentPath.startsWith(`/${navItem.url}`)) {
+          activeItem = navItem;
+          break;
+        }
+      } else if ('items' in navItem) {
+        // It's a Category
+        const foundItem = navItem.items.find((item) =>
+          currentPath.startsWith(`/${item.url}`),
+        );
+        if (foundItem) {
+          activeItem = foundItem;
+          break;
+        }
+      }
     }
+    setSelectedModule(activeItem);
   }, [location.pathname]);
 
   return (
@@ -113,45 +144,91 @@ export function AppSidebar({ id }: { id?: string }) {
       </SidebarHeader>
 
       <SidebarContent className={cn(!open && 'justify-center')}>
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            <Badge
-              className={cn(
-                'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300s w-full flex justify-center items-center',
-                user?.role?.level === 0 &&
-                  'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
-              )}>
-              {t('sidebar.management.title', {
-                var:
-                  currentLang === 'vi'
-                    ? user?.role.level === 0
-                      ? 'QUẢN TRỊ'
-                      : 'QUẢN LÝ'
-                    : user?.role.level === 0
-                      ? 'ADMIN'
-                      : 'MANAGER',
-              })}
-            </Badge>
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className={cn(!open && 'items-center')}>
-              {modules.map((modules) => (
+        <SidebarMenu className={cn(!open && 'items-center')}>
+          {open ? (
+            mainNav.map((navItem) => {
+              // Type guard to check if it's a Category
+              if ('items' in navItem) {
+                const category = navItem as Category;
+                return (
+                  <SidebarGroup key={category.id}>
+                    <SidebarGroupLabel>{t(category.title)}</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      {category.items.map((item) => (
+                        <SidebarMenuItem
+                          key={item.id}
+                          onClick={() => handSelectModule(item)}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={!!(item.id === selectedModule?.id)}>
+                            <div>
+                              <item.icon />
+                              <span>{t(item.title)}</span>
+                            </div>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                );
+              }
+              // It's a standalone Item
+              const item = navItem as Item;
+              return (
                 <SidebarMenuItem
-                  key={modules.id}
-                  onClick={() => handSelectModule(modules)}>
+                  key={item.id}
+                  onClick={() => handSelectModule(item)}>
                   <SidebarMenuButton
                     asChild
-                    isActive={!!(modules === selectedModule)}>
+                    isActive={!!(item.id === selectedModule?.id)}>
                     <div>
-                      <modules.icon />
-                      <span>{t(modules.title)}</span>
+                      <item.icon />
+                      <span>{t(item.title)}</span>
                     </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+              );
+            })
+          ) : (
+            <>
+              {allModules.slice(0, 5).map((item) => (
+                <SidebarMenuItem
+                  key={item.id}
+                  onClick={() => handSelectModule(item)}>
+                  <SidebarMenuButton
+                    tooltip={t(item.title)}
+                    isActive={!!(item.id === selectedModule?.id)}>
+                    <item.icon />
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              {allModules.length > 5 && (
+                <SidebarMenuItem>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuButton tooltip={t('app:button.more')}>
+                        <MoreHorizontal />
+                      </SidebarMenuButton>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side='right' align='center'>
+                      {allModules.slice(5).map((item) => (
+                        <DropdownMenuItem
+                          key={item.id}
+                          onClick={() => handSelectModule(item)}
+                          className={cn(
+                            item.id === selectedModule?.id && 'bg-accent',
+                          )}>
+                          <item.icon className='mr-2 h-4 w-4' />
+                          <span>{t(item.title)}</span>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </SidebarMenuItem>
+              )}
+            </>
+          )}
+        </SidebarMenu>
       </SidebarContent>
 
       <SidebarFooter className={cn(!open && 'items-center justify-center')}>
@@ -170,7 +247,7 @@ export function AppSidebar({ id }: { id?: string }) {
               <DropdownMenuItem
                 onClick={() => navigation(`/account/${user?._id}`)}>
                 <ContactRound />
-                <span>{t('sidebar.management.account')}</span>
+                <span>{t('sidebar.account')}</span>
               </DropdownMenuItem>
 
               <ChangeLanguageSubMenu sideOffset={5} />
@@ -216,7 +293,7 @@ export function AppSidebar({ id }: { id?: string }) {
                   <DropdownMenuItem
                     onClick={() => navigation(`/account/${user?._id}`)}>
                     <ContactRound />
-                    <span>{t('sidebar.management.account')}</span>
+                    <span>{t('sidebar.account')}</span>
                   </DropdownMenuItem>
 
                   <ChangeLanguageSubMenu sideOffset={5} />

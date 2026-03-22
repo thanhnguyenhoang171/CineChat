@@ -26,6 +26,7 @@ export default [
       route('casts', 'routes/dashboard/casts/castPage.tsx'),
       route('genres', 'routes/dashboard/genres/genrePage.tsx'),
       route('movies', 'routes/dashboard/movies/movieList.tsx'),
+      route('videos', 'routes/dashboard/videos/videoPage.tsx'),
     ]),
     route('account/:id', 'routes/account/accountInfo.tsx'),
   ]),

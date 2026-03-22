@@ -1,23 +1,30 @@
 {
+  "createDialog": {
+    "title": "Thêm video mới"
+  },
+  "updateDialog": {
+    "title": "Cập Nhật Video",
+    "description": "Cập nhật thông tin video dưới đây.",
+    "success": "Cập nhật video thành công"
+  },
+  "deleteDialog": {
+    "title": "Xóa Video",
+    "description": "Bạn có chắc chắn muốn xóa video '{{name}}'? Hành động này không thể hoàn tác.",
+    "success": "Xóa video thành công",
+    "confirm": "Xóa",
+    "cancel": "Hủy"
+  },
   "table": {
     "name": "Tên",
+    "movie": "Phim",
     "type": "Loại",
-    "site": "Trang",
-    "key": "Mã",
+    "quality": "Chất lượng",
     "status": "Trạng thái",
     "actions": "Hành động"
   },
-  "createDialog": {
-    "title": "Thêm video mới",
-    "name": "Tên video",
-    "namePlaceholder": "Nhập tên video",
-    "movieId": "Mã phim",
-    "key": "Mã video",
-    "keyPlaceholder": "Mã YouTube/Vimeo",
-    "type": "Loại",
-    "site": "Trang",
-    "official": "Chính thức",
-    "submit": "Tạo video",
-    "success": "Tạo video thành công!"
+  "form": {
+    "name": "Tên Video",
+    "namePlaceholder": "Ví dụ: Trailer chính thức #2",
+    "official": "Video chính thức"
   }
 }

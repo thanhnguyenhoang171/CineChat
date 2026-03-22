@@ -1,53 +1,53 @@
 {
   "form": {
-    "description": "Enter your information to access the system now!",
+    "description": "Enter your details to access the system now!",
     "username": "Username",
     "password": "Password",
     "login": "LOGIN"
   },
   "button": {
-    "login": "Sign in",
+    "login": "Login",
     "logging": "Logging in...",
-    "ggLogin": "Sign in with Google"
+    "ggLogin": "Login with Google"
   },
   "text": {
     "or": "OR",
     "register": "Register",
-    "notAccount": "Don't have an account yet?",
-    "forgetPassword": "Have you forgotten your password?",
+    "notAccount": "Don't have an account?",
+    "forgetPassword": "Forgot your password?",
     "GGProcessing": "Processing Google login..."
   },
   "carousel": {
-    "title": "Film Project with Artificial Intelligence - Admin Dashboard",
-    "description": "Managing your film library and interacting with AI has never been easier.",
-    "version": "Dashboard v1.0"
+    "title": "AI-Powered Movie Project - Admin Dashboard",
+    "description": "Managing your movie library and AI interactions has never been easier.",
+    "version": "Admin Dashboard v1.0"
   },
   "toast": {
-    "success": "Login successfully! Welcome back.",
-    "unauthorized": "The account does not have permission to access the system administration page!",
-    "warning": "Logout API failed, but continued...",
-    "errorInternal": "Internal server error!",
-    "noLogin": "Please log in to continue.",
-    "error": "An authentication error has occurred. Please log in again.",
+    "success": "Login successful! Welcome back.",
+    "unauthorized": "Account does not have permission to access the admin page.",
+    "warning": "Logout API failed, but proceeding...",
+    "errorInternal": "Internal Server Error!",
+    "noLogin": "Please login to continue.",
+    "error": "An authentication error occurred. Please log in again.",
     "errorGG": "Google login failed!"
   },
   "googleLogin": {
     "errors": {
       "google_unknown": "An unknown error occurred during authentication.",
-      "google_default": "Login request denied.",
+      "google_default": "Login request was denied.",
       "SYS_201": "This Google account does not have permission to access the system.",
-      "SYS_500": "The system is experiencing a technical issue, please try again later.",
-      "USR_320": "Your account has been removed from the system.",
-      "USR_330": "Your account is currently temporarily suspended.",
+      "SYS_500": "The system is experiencing technical difficulties, please try again later.",
+      "USR_320": "Your account has been canceled from the system.",
+      "USR_330": "Your account is currently temporarily locked.",
       "ACCOUNT_DELETED": "Your account has been deleted from the system.",
-      "ACCOUNT_DISABLED": "Your account is currently temporarily suspended."
+      "ACCOUNT_DISABLED": "Your account is currently temporarily locked."
     },
     "text": {
-      "google_failed_title": "Sorry!",
+      "google_failed_title": "Oops!",
       "contact_admin_hint": "If you believe this is an error, please contact the admin."
     },
     "button": {
-      "back_to_login": "Return to the Login page"
+      "back_to_login": "Back to Login page"
     }
   }
 }
