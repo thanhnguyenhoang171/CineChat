@@ -1,34 +1,75 @@
-# CineChat
+# CineChat Monorepo 🎬💬
 
-CineChat is a personal project designed as a comprehensive platform for movie enthusiasts. It consists of a robust backend API and a modern admin console for management.
+A professional full-stack monorepo for CineChat, managed by **Turborepo**, **pnpm**, and **TypeScript**.
 
-## Project Overview
+## 🏗️ Project Structure
 
-The repository is monorepo-style, organized into two main distinct applications:
+```text
+.
+├── apps/
+│   ├── backend/          # NestJS API Service
+│   ├── admin-console/    # React Router Admin Dashboard
+│   └── user-console/     # Next.js User Application
+├── packages/
+│   └── shared-types/     # Shared TypeScript Interfaces & Enums
+├── .husky/               # Git Hooks (Linting before commit)
+├── turbo.json            # Turborepo Configuration
+└── pnpm-workspace.yaml   # pnpm Workspace Configuration
+```
 
-### 1. Backend API
-Located in [`/backend`](./backend), this is a scalable RESTful API built with **NestJS**.
+## 🚀 Getting Started
 
-*   **Tech Stack:** NestJS, TypeScript, MongoDB (Mongoose), Passport.js.
-*   **Key Features:**
-    *   JWT Authentication (Access & Refresh Tokens).
-    *   Role-Based Access Control (RBAC) for granular permission management.
-    *   Global validation and error handling.
-    *   Automated Swagger API documentation.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- [pnpm](https://pnpm.io/) (v9+)
 
-### 2. Admin Console
-Located in [`/frontend/admin-console`](./frontend/admin-console), this is a modern administration dashboard built with **React Router 7**.
+### Installation
+```bash
+# Install dependencies for all apps/packages
+pnpm install
 
-*   **Tech Stack:** React Router 7, TypeScript, Tailwind CSS v4, Shadcn UI, Zustand, TanStack Query.
-*   **Key Features:**
-    *   Secure Authentication flows with silent refresh.
-    *   Dashboard analytics and data visualization.
-    *   Comprehensive management interfaces for Users and other resources.
-    *   Responsive and animated UI.
+# Initialize Git Hooks
+npx husky init
+```
 
-## Getting Started
+### Development
+```bash
+# Run all applications simultaneously
+pnpm dev
 
-To set up and run the applications, please refer to the detailed `README.md` files in each directory:
+# Run a specific application
+pnpm dev --filter backend
+pnpm dev --filter admin-console
+pnpm dev --filter user-console
+```
 
-*   [Backend Setup Guide](./backend/README.md)
-*   [Admin Console Setup Guide](./frontend/admin-console/README.md)
+### Build & Type-check
+```bash
+# Build all applications
+pnpm build
+
+# Run type-checking for the entire project
+pnpm type-check
+
+# Lint all files
+pnpm lint
+```
+
+## 🛠️ Monorepo Workflow
+
+### 1. Sharing Types
+All shared data structures (Users, Movies, API Responses) should be defined in `packages/shared-types`. 
+To use them in an app, import from `@cinechat/types`.
+
+### 2. Adding Dependencies
+Always specify the package you want to add the dependency to:
+```bash
+pnpm add <package-name> --filter <app-name>
+```
+
+### 3. Commit Convention
+This repo uses **Commitlint**. Every commit must follow the format:
+`type(scope): description` (e.g., `feat(backend): add auth api`)
+
+---
+Built with ❤️ by CineChat Team.
