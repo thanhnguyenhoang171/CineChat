@@ -1,0 +1,28 @@
+{
+  "form": {
+    "description": "Nhập thông tin của bạn để đăng ký tài khoản ngay!",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "username": "Tên người dùng",
+    "gender": {
+      "title": "Giới tính",
+      "placeholder": "Chọn giới tính của bạn",
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác"
+    },
+    "phone_label": "Số điện thoại",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "register": "ĐĂNG KÝ"
+  },
+  "button": {
+    "register": "Đăng ký",
+    "registering": "Đang đăng ký..."
+  },
+  "text": {
+    "or": "HOẶC",
+    "login": "Đăng nhập",
+    "haveAccount": "Đã có tài khoản?"
+  }
+}

@@ -1,0 +1,97 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+  Query,
+  UploadedFiles,
+} from '@nestjs/common';
+// import { ApiResponse, IUser } from '@cinechat/types'; // Tính năng mới
+import { UsersService } from './users.service';
+import { CreateUserDto, SignRoleToUserDto } from './dto/create-user.dto';
+import { UpdateFullNameDto, UpdateUserDto } from './dto/update-user.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ResponseStatus } from '@common/decorators/response_message.decorator';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { AvatarValidator } from '@common/validators/file.validator';
+import { BusinessCode } from '@common/constants/business-code';
+import { User } from '@common/decorators/user.decorator';
+import type { IUser } from '@interfaces/user.interface';
+import { PublicPermission } from '@common/decorators/auth.decorator';
+import { GetUserListToSignRoleDto } from './dto/get-user.dto';
+
+@ApiBearerAuth('jwt')
+@ApiTags('Users')
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Patch('update-full-name')
+  @PublicPermission()
+  @ResponseStatus(HttpStatus.OK)
+  updateFullName(@User() user: IUser, @Body() dto: UpdateFullNameDto) {
+    return this.usersService.updateFullNameById(user, dto.firstName, dto.lastName);
+  }
+
+  @Get('list-to-sign-role')
+  @ApiOperation({ summary: 'Get user list to sign role with pagination' })
+  @ResponseStatus(HttpStatus.OK)
+  getAllUserToSignRole(@Query() getUserListToSignRoleDto: GetUserListToSignRoleDto) {
+    return this.usersService.fetchUserListToSignRole(getUserListToSignRoleDto);
+  }
+
+  // @Get(':username')
+  // @ResponseStatus(HttpStatus.OK)
+  // getUserByUsername(@Param('username') username: string) {
+  //   return this.usersService.findUserByUsername(username);
+  // }
+
+  @Patch(':id')
+  @ResponseStatus(HttpStatus.OK)
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUserById(id, updateUserDto);
+  }
+
+  @Post('upload-avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  @ResponseStatus(HttpStatus.OK)
+  uploadAvatar(
+    @UploadedFile(AvatarValidator) file: Express.Multer.File,
+    @Query('folder') folder: string,
+    @User() user: IUser,
+  ) {
+    return this.usersService.uploadUserAvatarById(user, folder, file);
+  }
+
+  @Post('avatars')
+  @UseInterceptors(FilesInterceptor('files', 20))
+  uploadAvatars(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Query('folder') folder: string,
+  ) {
+    console.log(files);
+    const response = files.map((file) => ({
+      url: file.path,
+      publicId: file.filename,
+      folder: folder,
+    }));
+
+    return {
+      code: BusinessCode.UPLOAD_FILE_SUCCESS,
+      data: response,
+    };
+  }
+
+  @Patch('sign-role-to-users/:id')
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign role to users' })
+  signRoleToUserController(@Param('id') id: string, @Body() signRoleToUserDto: SignRoleToUserDto) {
+    return this.usersService.signRoleToUser(id, signRoleToUserDto);
+  }
+}
