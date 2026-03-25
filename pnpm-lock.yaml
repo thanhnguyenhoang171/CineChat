@@ -17,6 +17,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      remix:
+        specifier: 3.0.0-alpha.3
+        version: 3.0.0-alpha.3
       rimraf:
         specifier: ^6.1.3
         version: 6.1.3
@@ -179,13 +182,13 @@ importers:
     devDependencies:
       '@react-router/dev':
         specifier: ^7.13.0
-        version: 7.13.2(@react-router/serve@7.13.2(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(terser@5.46.1)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
+        version: 7.13.2(@react-router/serve@7.13.2(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(terser@5.46.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.2.2)
       '@tailwindcss/vite':
         specifier: ^4.1.13
-        version: 4.2.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
+        version: 4.2.2(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
       '@types/cookie':
         specifier: ^0.6.0
         version: 0.6.0
@@ -212,10 +215,10 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.1.7
-        version: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+        version: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
+        version: 5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))
 
   apps/backend:
     dependencies:
@@ -239,7 +242,7 @@ importers:
         version: 2.1.0(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)
       '@nestjs/mongoose':
         specifier: ^11.0.3
-        version: 11.0.4(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(mongoose@7.8.9)(rxjs@7.8.2)
+        version: 11.0.4(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(mongoose@7.8.9)(rxjs@7.8.2)
       '@nestjs/passport':
         specifier: ^11.0.5
         version: 11.0.5(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(passport@0.7.0)
@@ -248,7 +251,7 @@ importers:
         version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)
       '@nestjs/swagger':
         specifier: ^11.2.0
-        version: 11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)
+        version: 11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)
       '@types/ms':
         specifier: ^2.1.0
         version: 2.1.0
@@ -333,7 +336,7 @@ importers:
         version: 11.0.9(chokidar@4.0.3)(typescript@5.9.3)
       '@nestjs/testing':
         specifier: ^11.0.1
-        version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17))
+        version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(@nestjs/platform-express@11.1.17)
       '@types/cookie-parser':
         specifier: ^1.4.10
         version: 1.4.10(@types/express@5.0.6)
@@ -2527,8 +2530,124 @@ packages:
       react-redux:
         optional: true
 
+  '@remix-run/async-context-middleware@0.1.3':
+    resolution: {integrity: sha512-z2hTnQspCWsKka1QxAu5qf+IRbMYwTBmwL28zCk8nIPcYxG19rDbBeRmfQZ9hxHes72XVDu3Fd3ArLTy8bivdw==}
+
+  '@remix-run/component@0.5.0':
+    resolution: {integrity: sha512-xRLOcgwWKZxFdj63bWi3/snC2uxkm978B49EGEv1/G43iBFksYjS4ADanfYxREvQjMlaCqSUH0ZTZsJbGsz3PQ==}
+
+  '@remix-run/compression-middleware@0.1.3':
+    resolution: {integrity: sha512-pKsKtIzW/yjCbftSQRYfvnKKdq65Nu+YEhbQooiXtmd1Ub4inHSrzeA/vca3sQkBnBr/eRA9uujxIszRe+6LAg==}
+
+  '@remix-run/cookie@0.5.1':
+    resolution: {integrity: sha512-gbeZfVd1AKRlFj3IJWcIcR6zqVGz2XGJhR+mcqYiWnYt6KM8oUGtc82dsc4qZnWWA1f0nM4/He9wrU4GjB0pag==}
+
+  '@remix-run/data-schema@0.1.0':
+    resolution: {integrity: sha512-PzpYP9P19cb8bS7Y9+MSxyAWGy0n13sx1lYOMoKI+iEx7pdB2ZLaiidwcn1l6AeR6gjVIpuzyM6/UONG3bzboA==}
+
+  '@remix-run/data-table-mysql@0.1.0':
+    resolution: {integrity: sha512-lzghxTYZDHODNisIJWkq4IkcGsb1pUrp9WGtlNEVWrXWC6aArOiojR3PW4arFwNG5ddKJPRfwot+ySc2YZy5RQ==}
+    peerDependencies:
+      mysql2: ^3.15.3
+    peerDependenciesMeta:
+      mysql2:
+        optional: true
+
+  '@remix-run/data-table-postgres@0.1.0':
+    resolution: {integrity: sha512-mqzARY5tOFVLjFAArryuLQ93M8IdjVnLKnD1VQyJHFbHQF7Zbr8+exv7Hp2hZ1TIGAhZiepGjjC8Re631yJ1Jw==}
+    peerDependencies:
+      pg: ^8.16.3
+    peerDependenciesMeta:
+      pg:
+        optional: true
+
+  '@remix-run/data-table-sqlite@0.1.0':
+    resolution: {integrity: sha512-hFtmz9haMr3p/aFWL5D1zpJsgAnNdLVCF6HvXBmtK4m3NdLmM1eNhblpB/SfPGNEODsmx4Jvcaof57dfaLuKgA==}
+    peerDependencies:
+      better-sqlite3: ^12.4.1
+    peerDependenciesMeta:
+      better-sqlite3:
+        optional: true
+
+  '@remix-run/data-table@0.1.0':
+    resolution: {integrity: sha512-u70INxiF9pThV2LcP7y37G7eq16OXWrA+HXS8qNplQgJJd1zhwZrODOtfF9U+PKLiWQkBj+bEeh7QhOlvGsVDg==}
+
+  '@remix-run/fetch-proxy@0.7.1':
+    resolution: {integrity: sha512-rPLfOpAaCXtm1dLI45uIPKERNbXbrh0P9AJc1sliz8pWd/McaFYjdr5KzB4QrFSfPvEt/Wmy6F2521qB1kK0ug==}
+
+  '@remix-run/fetch-router@0.17.0':
+    resolution: {integrity: sha512-3FeJGrTqrKKCvZdQWijbCXTEHKcdttkLFbI2ogfpZ+iDYSNZ9036wgDXuuoZqg6d+D0E8Unhk5ZwrLKDCd/hOw==}
+
+  '@remix-run/file-storage-s3@0.1.0':
+    resolution: {integrity: sha512-r80An7nSFidK/0xn9O9/HxfUcgxVpM4kprnTGr6pGhKdgbaTCEtA+U5ETYGfeedFxhDcT+7ue+4Fv/VxeIvFwQ==}
+
+  '@remix-run/file-storage@0.13.3':
+    resolution: {integrity: sha512-HBDz9RRsFRvI6EoeasklxH/NleGy0QZBXBcA4gQBW8ueucop21TQI4wvGlhZmXcnJ3nP4RkhdF2Gff2/HD5eiA==}
+
+  '@remix-run/form-data-middleware@0.1.4':
+    resolution: {integrity: sha512-WZfP1U6lDoipkfjcd0V39HJeTPMTX2WyaPcOBTbBHS0kapIZiHYm6RpGLhE8U58652i3TBh/zzvAczJIbFV2AA==}
+
+  '@remix-run/form-data-parser@0.15.0':
+    resolution: {integrity: sha512-sQP4r9218TWmow6Nt252VjKE674dRi4Z8WTnWUxJJG8I/qNfnGZubZ8LgyE0dR9z1gfaEpkd19MfYMLiOTOkJQ==}
+
+  '@remix-run/fs@0.4.2':
+    resolution: {integrity: sha512-z3W2L+iUwgZ7i0S379SYQ8veOe2Weqs+JajmyTCqSVzbmMUniH3qQ6SAYr3FjbrKtLLWHN3SpK4XtFv57VzbLA==}
+
+  '@remix-run/headers@0.19.0':
+    resolution: {integrity: sha512-+62NbkXuXm9r/NdG6KfH9OCKofCWm8VjkrVPICiHKtRl8Gf2Vi6eFTN4mGgBlZRhd5mmEVRV4hTIn/JUSHDAOw==}
+
+  '@remix-run/html-template@0.3.0':
+    resolution: {integrity: sha512-aAMx68udtIk0fmCpCXHYscVeCDsRVEmEgh4XvtusPr3vkHu3jn4gx5oAxgsPXPdDmmD/d75SYyI0m/F+aLz5iQ==}
+
+  '@remix-run/interaction@0.5.0':
+    resolution: {integrity: sha512-Z2ja9/7TfMHt/wzWq425GI2xj6QxW4E3OHZ8In81uytZKIuWaI6Pn3v8qyMrInwnBEaLcfcbeQVCiExgHU8D4A==}
+
+  '@remix-run/lazy-file@5.0.2':
+    resolution: {integrity: sha512-52Bo5dTV+EDwrUMS3mjeR+Sly85aHeN3fnNTeaflqzlCMWJwr2pX+y6/3mTDtRdxmTWF1MGQAoeayzfPb4zZJg==}
+
+  '@remix-run/logger-middleware@0.1.3':
+    resolution: {integrity: sha512-6gxz1XC2lJYQS3Oz1pZzxpuoLowwd2PSpimMaQnkk0fZ7hHYxx7uV+FSs2Z3fue6kYvZ+IxSUe8Wy52V2r4LxA==}
+
+  '@remix-run/method-override-middleware@0.1.4':
+    resolution: {integrity: sha512-gYFsdY0eIStTpsqGnF/22YracUmS8cZlef6KsBKOVf1nOI9wwwbRrj/DWLMQsWt22YSBMuPYZW5NLKEmXvJRZw==}
+
+  '@remix-run/mime@0.4.0':
+    resolution: {integrity: sha512-O6TcTL6CtuX82Q8BHqAere5O+0hYcrzSgY9whsDOBuqbW753Rczprs2jYw3qCDSo0kLxykW4ys3qgZcdgZ+chw==}
+
+  '@remix-run/multipart-parser@0.14.2':
+    resolution: {integrity: sha512-yDq9ql4Xz92bRG/Sgl4cg2dRlxxC6A40XBy/oyDhy76hJtTQvgyzx9sfPXYPxcfL1BtqljC+sYHE0PvjmQhSfw==}
+
   '@remix-run/node-fetch-server@0.13.0':
     resolution: {integrity: sha512-1EsNo0ZpgXu/90AWoRZf/oE3RVTUS80tiTUpt+hv5pjtAkw7icN4WskDwz/KdAw5ARbJLMhZBrO1NqThmy/McA==}
+
+  '@remix-run/response@0.3.2':
+    resolution: {integrity: sha512-GkFqVq5E7Do6rMKTBjgoNyJlrsLrqYg+TDlCDrXoZ3v8O2RlSI14+bCF8lGQHy15DWX2pizVj6R0e6NmjcuLuA==}
+
+  '@remix-run/route-pattern@0.19.0':
+    resolution: {integrity: sha512-RXKaIJ2Lx01uyZc0iw+yLzowFCa1/NuB8jN7QTo4QUe2CaUGtvPGdhgrTUp75lyNNCSJIrM9SaAJ6c1pjZdmoA==}
+
+  '@remix-run/session-middleware@0.1.4':
+    resolution: {integrity: sha512-qqLmf7mG88h+Ge8pWiJMO8+t9nfQMuO/Zx2W68IwB7Cpt+b6PDpB++i3dd/KLlsjJ43XPMoT2ydmo+eQMgBX3g==}
+
+  '@remix-run/session-storage-memcache@0.1.0':
+    resolution: {integrity: sha512-k853rpHncdTJUwdk0hqd+gZ2OONZLNdOUJBKdJB+MehxrVv1TtacDnA+Xs3kh+IVwUrsTmBhED+GHSUocMATUg==}
+
+  '@remix-run/session-storage-redis@0.1.0':
+    resolution: {integrity: sha512-MovUS1E98wDHP8zsESJGm3ySB7iiOhd+3usxyXXM2sbF9gIe6r1bdAXXirGIoC8AEq1v8IiFE5u5ipo7PX0UHQ==}
+    peerDependencies:
+      redis: ^5.10.0
+    peerDependenciesMeta:
+      redis:
+        optional: true
+
+  '@remix-run/session@0.4.1':
+    resolution: {integrity: sha512-Bm6aKYgutb/raHZ3laloz8g/Qu7f3CeK3o4gUVDMxtEiAdWCzJamwHoTpGOc5+g1Kuy7z85v4M6nGrF06MFDSg==}
+
+  '@remix-run/static-middleware@0.4.4':
+    resolution: {integrity: sha512-aL5ngFG57uPXTEDaH0uP/cKDpYkLMTtmPjK+SR1ugS654ORk8WTD4Ajf56QekMykCvCnO6PkgFAruUyKkwDNMg==}
+
+  '@remix-run/tar-parser@0.7.0':
+    resolution: {integrity: sha512-PW8JxEUzaGcnqxC5hBI8L9lK/Qz3oad6IGKZ+NExI3L7urVJUux+yCBrsme79DMBgS6hL+lgd/5LPFA5fSwF9A==}
 
   '@rollup/rollup-android-arm-eabi@4.60.0':
     resolution: {integrity: sha512-WOhNW9K8bR3kf4zLxbfg6Pxu2ybOUbB2AjMDHSQx86LIF4rH4Ft7vmMwNt0loO0eonglSNy4cpD3MKXXKQu0/A==}
@@ -3390,6 +3509,9 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  aws4fetch@1.0.20:
+    resolution: {integrity: sha512-/djoAN709iY65ETD6LKCtyyEI04XIBP5xVvfmNxsEP0uJB5tyaGBztSryRr4HqMStr9R06PisQE7m9zDTXKu6g==}
 
   axios@1.13.6:
     resolution: {integrity: sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ==}
@@ -5678,6 +5800,9 @@ packages:
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
+  remix@3.0.0-alpha.3:
+    resolution: {integrity: sha512-RIctAYR7OW3oYzAGclLhgltrRtKviIdnCVwoLcPDicOjV4I2mJ9AEi8YXl2+hGPupzNNEUcrDtoICd7xNuMptg==}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -7649,7 +7774,7 @@ snapshots:
       class-transformer: 0.5.1
       class-validator: 0.14.4
 
-  '@nestjs/mongoose@11.0.4(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(mongoose@7.8.9)(rxjs@7.8.2)':
+  '@nestjs/mongoose@11.0.4(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(mongoose@7.8.9)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -7684,7 +7809,7 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)':
+  '@nestjs/swagger@11.2.6(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
       '@nestjs/common': 11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -7699,7 +7824,7 @@ snapshots:
       class-transformer: 0.5.1
       class-validator: 0.14.4
 
-  '@nestjs/testing@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17))':
+  '@nestjs/testing@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17)(@nestjs/platform-express@11.1.17)':
     dependencies:
       '@nestjs/common': 11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -8548,7 +8673,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@react-router/dev@7.13.2(@react-router/serve@7.13.2(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(terser@5.46.1)(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))':
+  '@react-router/dev@7.13.2(@react-router/serve@7.13.2(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(terser@5.46.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/generator': 7.29.1
@@ -8578,8 +8703,8 @@ snapshots:
       semver: 7.7.4
       tinyglobby: 0.2.15
       valibot: 1.3.1(typescript@5.9.3)
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
-      vite-node: 3.2.4(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vite-node: 3.2.4(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
     optionalDependencies:
       '@react-router/serve': 7.13.2(react-router@7.13.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3)
       typescript: 5.9.3
@@ -8640,7 +8765,136 @@ snapshots:
       react: 19.2.3
       react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.3)(redux@5.0.1)
 
+  '@remix-run/async-context-middleware@0.1.3':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+
+  '@remix-run/component@0.5.0':
+    dependencies:
+      '@remix-run/interaction': 0.5.0
+
+  '@remix-run/compression-middleware@0.1.3':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+      '@remix-run/mime': 0.4.0
+      '@remix-run/response': 0.3.2
+
+  '@remix-run/cookie@0.5.1':
+    dependencies:
+      '@remix-run/headers': 0.19.0
+
+  '@remix-run/data-schema@0.1.0':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+
+  '@remix-run/data-table-mysql@0.1.0':
+    dependencies:
+      '@remix-run/data-table': 0.1.0
+
+  '@remix-run/data-table-postgres@0.1.0':
+    dependencies:
+      '@remix-run/data-table': 0.1.0
+
+  '@remix-run/data-table-sqlite@0.1.0':
+    dependencies:
+      '@remix-run/data-table': 0.1.0
+
+  '@remix-run/data-table@0.1.0':
+    dependencies:
+      '@remix-run/data-schema': 0.1.0
+
+  '@remix-run/fetch-proxy@0.7.1':
+    dependencies:
+      '@remix-run/headers': 0.19.0
+
+  '@remix-run/fetch-router@0.17.0':
+    dependencies:
+      '@remix-run/route-pattern': 0.19.0
+      '@remix-run/session': 0.4.1
+
+  '@remix-run/file-storage-s3@0.1.0':
+    dependencies:
+      '@remix-run/file-storage': 0.13.3
+      aws4fetch: 1.0.20
+
+  '@remix-run/file-storage@0.13.3':
+    dependencies:
+      '@remix-run/fs': 0.4.2
+      '@remix-run/lazy-file': 5.0.2
+
+  '@remix-run/form-data-middleware@0.1.4':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+      '@remix-run/form-data-parser': 0.15.0
+
+  '@remix-run/form-data-parser@0.15.0':
+    dependencies:
+      '@remix-run/multipart-parser': 0.14.2
+
+  '@remix-run/fs@0.4.2':
+    dependencies:
+      '@remix-run/lazy-file': 5.0.2
+      '@remix-run/mime': 0.4.0
+
+  '@remix-run/headers@0.19.0': {}
+
+  '@remix-run/html-template@0.3.0': {}
+
+  '@remix-run/interaction@0.5.0': {}
+
+  '@remix-run/lazy-file@5.0.2':
+    dependencies:
+      '@remix-run/mime': 0.4.0
+
+  '@remix-run/logger-middleware@0.1.3':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+
+  '@remix-run/method-override-middleware@0.1.4':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+
+  '@remix-run/mime@0.4.0': {}
+
+  '@remix-run/multipart-parser@0.14.2':
+    dependencies:
+      '@remix-run/headers': 0.19.0
+
   '@remix-run/node-fetch-server@0.13.0': {}
+
+  '@remix-run/response@0.3.2':
+    dependencies:
+      '@remix-run/headers': 0.19.0
+      '@remix-run/html-template': 0.3.0
+      '@remix-run/mime': 0.4.0
+
+  '@remix-run/route-pattern@0.19.0': {}
+
+  '@remix-run/session-middleware@0.1.4':
+    dependencies:
+      '@remix-run/cookie': 0.5.1
+      '@remix-run/fetch-router': 0.17.0
+      '@remix-run/session': 0.4.1
+
+  '@remix-run/session-storage-memcache@0.1.0':
+    dependencies:
+      '@remix-run/session': 0.4.1
+
+  '@remix-run/session-storage-redis@0.1.0':
+    dependencies:
+      '@remix-run/session': 0.4.1
+
+  '@remix-run/session@0.4.1': {}
+
+  '@remix-run/static-middleware@0.4.4':
+    dependencies:
+      '@remix-run/fetch-router': 0.17.0
+      '@remix-run/fs': 0.4.2
+      '@remix-run/html-template': 0.3.0
+      '@remix-run/mime': 0.4.0
+      '@remix-run/response': 0.3.2
+
+  '@remix-run/tar-parser@0.7.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.60.0':
     optional: true
@@ -8818,12 +9072,12 @@ snapshots:
       tailwindcss: 4.2.2
       vite: 7.3.1(@types/node@20.19.37)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
 
-  '@tailwindcss/vite@4.2.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))':
+  '@tailwindcss/vite@4.2.2(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1))':
     dependencies:
       '@tailwindcss/node': 4.2.2
       '@tailwindcss/oxide': 4.2.2
       tailwindcss: 4.2.2
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
 
   '@tanstack/query-core@5.95.2': {}
 
@@ -9471,6 +9725,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.8
       postcss-value-parser: 4.2.0
+
+  aws4fetch@1.0.20: {}
 
   axios@1.13.6:
     dependencies:
@@ -11934,6 +12190,47 @@ snapshots:
 
   reflect-metadata@0.2.2: {}
 
+  remix@3.0.0-alpha.3:
+    dependencies:
+      '@remix-run/async-context-middleware': 0.1.3
+      '@remix-run/component': 0.5.0
+      '@remix-run/compression-middleware': 0.1.3
+      '@remix-run/cookie': 0.5.1
+      '@remix-run/data-schema': 0.1.0
+      '@remix-run/data-table': 0.1.0
+      '@remix-run/data-table-mysql': 0.1.0
+      '@remix-run/data-table-postgres': 0.1.0
+      '@remix-run/data-table-sqlite': 0.1.0
+      '@remix-run/fetch-proxy': 0.7.1
+      '@remix-run/fetch-router': 0.17.0
+      '@remix-run/file-storage': 0.13.3
+      '@remix-run/file-storage-s3': 0.1.0
+      '@remix-run/form-data-middleware': 0.1.4
+      '@remix-run/form-data-parser': 0.15.0
+      '@remix-run/fs': 0.4.2
+      '@remix-run/headers': 0.19.0
+      '@remix-run/html-template': 0.3.0
+      '@remix-run/interaction': 0.5.0
+      '@remix-run/lazy-file': 5.0.2
+      '@remix-run/logger-middleware': 0.1.3
+      '@remix-run/method-override-middleware': 0.1.4
+      '@remix-run/mime': 0.4.0
+      '@remix-run/multipart-parser': 0.14.2
+      '@remix-run/node-fetch-server': 0.13.0
+      '@remix-run/response': 0.3.2
+      '@remix-run/route-pattern': 0.19.0
+      '@remix-run/session': 0.4.1
+      '@remix-run/session-middleware': 0.1.4
+      '@remix-run/session-storage-memcache': 0.1.0
+      '@remix-run/session-storage-redis': 0.1.0
+      '@remix-run/static-middleware': 0.4.4
+      '@remix-run/tar-parser': 0.7.0
+    transitivePeerDependencies:
+      - better-sqlite3
+      - mysql2
+      - pg
+      - redis
+
   require-directory@2.1.1: {}
 
   require-from-string@2.0.2: {}
@@ -12597,13 +12894,13 @@ snapshots:
       d3-time: 3.1.0
       d3-timer: 3.0.1
 
-  vite-node@3.2.4(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1):
+  vite-node@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -12618,13 +12915,13 @@ snapshots:
       - tsx
       - yaml
 
-  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)):
+  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)):
     dependencies:
       debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.9.3)
     optionalDependencies:
-      vite: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
+      vite: 7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -12644,7 +12941,7 @@ snapshots:
       lightningcss: 1.32.0
       terser: 5.46.1
 
-  vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1):
+  vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1):
     dependencies:
       esbuild: 0.27.4
       fdir: 6.5.0(picomatch@4.0.4)
@@ -12653,7 +12950,7 @@ snapshots:
       rollup: 4.60.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 22.19.15
+      '@types/node': 25.5.0
       fsevents: 2.3.3
       jiti: 2.6.1
       lightningcss: 1.32.0
