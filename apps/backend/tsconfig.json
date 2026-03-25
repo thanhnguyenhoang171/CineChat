@@ -28,7 +28,8 @@
       "@interfaces/*": ["src/interfaces/*"],
       "@config/*": ["src/config/*"],
       "@database/*": ["src/database/*"],
-      "@middlewares/*": ["src/middlewares/*"]
+      "@middlewares/*": ["src/middlewares/*"],
+      "@cinechat/types": ["../../packages/types/src/index.ts"]
     }
   },
   "include": ["src/**/*"]
