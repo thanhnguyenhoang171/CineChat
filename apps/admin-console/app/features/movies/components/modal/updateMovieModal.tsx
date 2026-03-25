@@ -11,7 +11,7 @@ import { movieService } from '~/services/movie.service';
 import { movieKeys } from '~/queries/movie.queries';
 import { MovieForm } from '../form/movieForm';
 import { type MovieFormValues } from '../../schemas';
-import type { Movie } from '~/types/module-types/movie';
+import type { Movie } from '@cinechat/types';
 import { Edit } from 'lucide-react';
 
 interface UpdateMovieModalProps {
@@ -87,3 +87,4 @@ export function UpdateMovieModal({
     </Dialog>
   );
 }
+

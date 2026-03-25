@@ -1,3 +1,5 @@
+import { PaginationMeta } from './common.js';
+
 export interface Genre {
   _id: string;
   name: string;
@@ -5,13 +7,6 @@ export interface Genre {
   isActive: number;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
 }
 
 export interface GenreWithPagination {

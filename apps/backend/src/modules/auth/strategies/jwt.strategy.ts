@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IUser } from '@interfaces/user.interface';
+import { IUser } from '@cinechat/types';
 import { ConfigEnv } from '@config/env.config';
 import RolesService from '@modules/roles/roles.service';
 import { UsersService } from '@modules/users/users.service';

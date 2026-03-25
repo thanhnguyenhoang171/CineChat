@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UserAvatar } from '~/components/shared/image/userAvatar';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 import { use, useState } from 'react';
 import { ImageUploader } from '~/components/shared/image/imageUploader';
 import { AccountAvatar } from '~/components/shared/image/accountAvatar';
@@ -123,3 +123,4 @@ export function AccountInfoLeftHero({ account }: AccountInfoLeftHeroProps) {
     </>
   );
 }
+

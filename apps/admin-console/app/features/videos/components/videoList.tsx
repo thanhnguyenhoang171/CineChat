@@ -32,7 +32,7 @@ import { cn } from '~/lib/utils';
 import type {
   PaginationMeta,
   Video as VideoType,
-} from '~/types/module-types/video';
+} from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -383,3 +383,4 @@ export function VideoList({
     </div>
   );
 }
+

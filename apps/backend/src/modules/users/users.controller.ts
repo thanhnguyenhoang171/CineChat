@@ -22,7 +22,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AvatarValidator } from '@common/validators/file.validator';
 import { BusinessCode } from '@common/constants/business-code';
 import { User } from '@common/decorators/user.decorator';
-import type { IUser } from '@interfaces/user.interface';
+import type { IUser } from '@cinechat/types';
 import { PublicPermission } from '@common/decorators/auth.decorator';
 import { GetUserListToSignRoleDto } from './dto/get-user.dto';
 

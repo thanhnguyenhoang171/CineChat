@@ -13,7 +13,7 @@ import { permissionQueries } from '~/queries/permisson.queries';
 import type {
   PaginationMeta,
   Permission,
-} from '~/types/module-types/permission';
+} from '@cinechat/types';
 import { defaultMeta } from '~/constants/app/app-pagination-constant';
 import { getItemTotal } from '~/utils/common-utils';
 import { lazy, useState } from 'react';
@@ -230,3 +230,4 @@ export default function PermissionPage() {
     </div>
   );
 }
+

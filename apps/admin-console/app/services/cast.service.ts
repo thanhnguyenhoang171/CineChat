@@ -1,4 +1,4 @@
-import type { Cast, CastWithPagination, CreateCastDto } from '~/types/module-types/cast';
+import type { Cast, CastWithPagination, CreateCastDto } from '@cinechat/types';
 
 const MOCK_CASTS: Cast[] = [
   { _id: 'c1', name: 'Tom Holland', biography: 'Thomas Stanley Holland is an English actor.', birthday: '1996-06-01', gender: 2, placeOfBirth: 'London, England', popularity: 85.5, profilePath: 'https://image.tmdb.org/t/p/w500/bppwsIl97Y99uSww79uXOf7y7sJ.jpg', role: 'ACTOR', isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
@@ -47,3 +47,4 @@ export const castService = {
     return { status: 200, message: 'Success', data: null };
   },
 };
+

@@ -5,8 +5,8 @@ import type {
   LoginResponse,
   RegisterAccountResponse,
   RegisterRequest,
-} from '~/types/module-types/auth';
-import type { ApiResponse, User } from '~/types/module-types/user';
+} from '@cinechat/types';
+import type { ApiResponse, User } from '@cinechat/types';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -71,3 +71,4 @@ export const authService = {
     return response.data;
   },
 };
+

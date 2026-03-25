@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
 import { authService } from '~/services/auth.service';
-import type { ApiError } from '~/types/api-types/api-error';
+import type { ApiError } from '@cinechat/types';
 
 export function useRegister() {
   const navigate = useNavigate();
@@ -24,3 +24,4 @@ export function useRegister() {
     },
   });
 }
+

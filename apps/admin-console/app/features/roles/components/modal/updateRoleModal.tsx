@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { roleKeys } from '~/queries/role.queries';
 import { useTranslation } from 'react-i18next';
 import type { CreateRoleValues } from '../../schemas';
-import type { Role } from '~/types/module-types/role';
+import type { Role } from '@cinechat/types';
 import { Edit3 } from 'lucide-react';
 
 interface UpdateRoleModalProps {
@@ -79,3 +79,4 @@ export function UpdateRoleModal({
     </Dialog>
   );
 }
+

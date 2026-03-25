@@ -1,4 +1,4 @@
-import type { CarouselImage } from '~/types/image';
+import type { CarouselImage } from '@cinechat/types';
 
 export const LOGIN_CAROUSEL_IMAGES: CarouselImage[] = [
   {
@@ -29,3 +29,4 @@ export const REGISTER_CAROUSEL_IMAGES: CarouselImage[] = [
     alt: 'Filmmaking',
   },
 ];
+

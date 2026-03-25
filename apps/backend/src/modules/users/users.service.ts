@@ -13,7 +13,7 @@ import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 import { RoleLevel } from '@common/constants/common-constant';
 import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
-import { IUser } from '@interfaces/user.interface';
+import { IUser } from '@cinechat/types';
 import { GetUserListToSignRoleDto } from './dto/get-user.dto';
 import { PaginationService } from '@common/modules/pagination/pagination.service';
 

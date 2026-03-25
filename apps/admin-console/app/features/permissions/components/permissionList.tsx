@@ -22,7 +22,7 @@ import { cn } from '~/lib/utils';
 import type {
   PaginationMeta,
   Permission,
-} from '~/types/module-types/permission';
+} from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { UpdatePermissionModal } from './modal/updatePermissionModal';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
@@ -366,3 +366,4 @@ export function PermissionList({
     </div>
   );
 }
+

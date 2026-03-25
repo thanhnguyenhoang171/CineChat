@@ -1,4 +1,4 @@
-import type { Permission } from '~/types/module-types/permission';
+import type { Permission } from '@cinechat/types';
 
 export const PermissionTableHeader = [
   {
@@ -57,3 +57,4 @@ export const PermissionTableHeader = [
     alwaysShow: true,
   },
 ];
+

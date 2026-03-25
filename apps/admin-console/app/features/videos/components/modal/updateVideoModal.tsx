@@ -33,7 +33,7 @@ import {
 import { Switch } from '~/components/ui/switch';
 import { videoService } from '~/services/video.service';
 import { videoKeys } from '~/queries/video.queries';
-import type { Video } from '~/types/module-types/video';
+import type { Video } from '@cinechat/types';
 import { videoSchema, type VideoFormValues } from '../schemas';
 import { movieQueries } from '~/queries/movie.queries';
 

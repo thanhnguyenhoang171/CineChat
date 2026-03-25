@@ -11,7 +11,7 @@ import { genreService } from '~/services/genre.service';
 import { genreKeys } from '~/queries/genre.queries';
 import { GenreForm } from '../form/genreForm';
 import { type GenreFormValues } from '../../schemas';
-import type { Genre } from '~/types/module-types/genre';
+import type { Genre } from '@cinechat/types';
 import { Edit } from 'lucide-react';
 
 interface UpdateGenreModalProps {
@@ -79,3 +79,4 @@ export function UpdateGenreModal({
     </Dialog>
   );
 }
+

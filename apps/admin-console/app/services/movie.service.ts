@@ -1,4 +1,4 @@
-import type { Movie, MovieWithPagination, CreateMovieDto, UpdateMovieDto } from '~/types/module-types/movie';
+import type { Movie, MovieWithPagination, CreateMovieDto, UpdateMovieDto } from '@cinechat/types';
 
 const MOCK_MOVIES: Movie[] = [
   {
@@ -83,3 +83,4 @@ export const movieService = {
     return { status: 200, message: 'Success', data: null };
   },
 };
+

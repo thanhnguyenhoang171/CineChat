@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { castKeys } from '~/queries/cast.queries';
 import { useTranslation } from 'react-i18next';
 import type { CreateCastValues } from '../../schemas';
-import type { Cast } from '~/types/module-types/cast';
+import type { Cast } from '@cinechat/types';
 import { Edit3 } from 'lucide-react';
 
 interface UpdateCastModalProps {
@@ -83,3 +83,4 @@ export function UpdateCastModal({
     </Dialog>
   );
 }
+

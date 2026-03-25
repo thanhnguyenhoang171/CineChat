@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { permissionKeys } from '~/queries/permisson.queries';
 import { useTranslation } from 'react-i18next';
 import type { CreatePermissionValues } from '../../schemas';
-import type { Permission } from '~/types/module-types/permission';
+import type { Permission } from '@cinechat/types';
 import { Edit3 } from 'lucide-react';
 
 interface UpdatePermissionModalProps {
@@ -82,3 +82,4 @@ export function UpdatePermissionModal({
     </Dialog>
   );
 }
+

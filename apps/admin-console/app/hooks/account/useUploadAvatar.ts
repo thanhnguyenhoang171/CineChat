@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
 import { useBoundStore } from '~/store';
-import type { ApiError } from '~/types/api-types/api-error';
+import type { ApiError } from '@cinechat/types';
 import { userService } from '~/services/user.service';
 import { useTranslation } from 'react-i18next';
 
@@ -46,3 +46,4 @@ export function useUploadAvatar() {
     },
   });
 }
+

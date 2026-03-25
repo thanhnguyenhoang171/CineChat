@@ -1,15 +1,40 @@
 {
-  "devDependencies": {
-    "@commitlint/config-conventional": "^20.5.0",
-    "commitlint": "^20.5.0",
-    "husky": "^9.1.7",
-    "turbo": "^2.8.20"
-  },
+  "name": "cinechat-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CineChat Monorepo managed by Turborepo and pnpm",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "dev:be": "turbo run dev --filter=backend",
-    "dev:fe-user": "turbo run dev --filter=user-console"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean && rimraf **/node_modules **/dist **/.next **/.turbo **/build pnpm-lock.yaml",
+    "dev:be": "turbo dev --filter=backend",
+    "dev:fe-user": "turbo dev --filter=user-console",
+    "dev:fe-admin": "turbo dev --filter=admin-console",
+    "build:be": "turbo build --filter=backend",
+    "build:fe-user": "turbo build --filter=user-console",
+    "build:fe-admin": "turbo build --filter=admin-console",
+    "lint:be": "turbo lint --filter=backend",
+    "lint:fe-user": "turbo lint --filter=user-console",
+    "lint:fe-admin": "turbo lint --filter=admin-console",
+    "test:be": "turbo test --filter=backend",
+    "test:fe-user": "turbo test --filter=user-console",
+    "test:fe-admin": "turbo test --filter=admin-console",
+    "type-check:be": "turbo type-check --filter=backend",
+    "type-check:fe-user": "turbo type-check --filter=user-console",
+    "type-check:fe-admin": "turbo type-check --filter=admin-console",
+    "clean:be": "turbo clean --filter=backend",
+    "clean:fe-user": "turbo clean --filter=user-console",
+    "clean:fe-admin": "turbo clean --filter=admin-console"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.1.7",
+    "rimraf": "^6.1.3",
+    "turbo": "^2.8.20"
   }
 }

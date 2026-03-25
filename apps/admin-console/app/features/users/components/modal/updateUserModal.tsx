@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { userKeys } from '~/queries/user.queries';
 import { useTranslation } from 'react-i18next';
 import type { CreateUserValues } from '../../schemas';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 import { Edit3 } from 'lucide-react';
 
 interface UpdateUserModalProps {
@@ -88,3 +88,4 @@ export function UpdateUserModal({
     </Dialog>
   );
 }
+

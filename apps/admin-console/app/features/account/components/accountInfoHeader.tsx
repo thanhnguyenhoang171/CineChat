@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { TypographyH2 } from '~/components/shared/text/typographyH2';
 import { Button } from '~/components/ui/button';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 interface AccountInfoHeaderProps {
   account: User;
 }
@@ -54,3 +54,4 @@ export function AccountInfoHeader({ account }: AccountInfoHeaderProps) {
     </div>
   );
 }
+

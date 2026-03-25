@@ -22,7 +22,7 @@ import {
 } from '~/components/ui/table';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
-import type { PaginationMeta, Genre } from '~/types/module-types/genre';
+import type { PaginationMeta, Genre } from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { UpdateGenreModal } from './modal/updateGenreModal';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
@@ -270,3 +270,4 @@ export function GenreList({
     </div>
   );
 }
+

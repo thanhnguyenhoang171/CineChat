@@ -3,8 +3,8 @@ import type {
   User,
   CreateUserDto,
   ApiResponse,
-} from '~/types/module-types/user';
-import type { Role } from '~/types/module-types/role';
+} from '@cinechat/types';
+import type { Role } from '@cinechat/types';
 
 const now = new Date().toISOString();
 
@@ -315,3 +315,4 @@ export const userService = {
     return response.data;
   },
 };
+

@@ -22,7 +22,7 @@ import {
 } from '~/components/ui/table';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
-import type { PaginationMeta, Cast } from '~/types/module-types/cast';
+import type { PaginationMeta, Cast } from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { UpdateCastModal } from './modal/updateCastModal';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
@@ -299,3 +299,4 @@ export function CastList({
     </div>
   );
 }
+

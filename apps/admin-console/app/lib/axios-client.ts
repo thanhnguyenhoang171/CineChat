@@ -3,7 +3,7 @@ import { useBoundStore } from '~/store';
 import { Mutex } from 'async-mutex';
 import i18n from '~/lib/locales/i18n';
 import { authService } from '~/services/auth.service';
-import { BusinessCode } from '~/types/bussiness-code';
+import { BusinessCode } from '@cinechat/types';
 import { toast } from 'sonner';
 
 const mutex = new Mutex();
@@ -118,3 +118,4 @@ axiosClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
