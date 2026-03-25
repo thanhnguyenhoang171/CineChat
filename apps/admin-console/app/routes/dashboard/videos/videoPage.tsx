@@ -8,7 +8,7 @@ import { videoQueries } from '~/queries/video.queries';
 import { VideoList } from '~/features/videos/components/videoList';
 import { VideoFilter } from '~/features/videos/components/videoFilter';
 import { CreateVideoModal } from '~/features/videos/components/modal/createVideoModal';
-import { AppAddButton } from '~/components/shared/button/appAddButton';
+import { AppAddButton } from '~/components/shared/button/AppAddButton';
 
 export default function VideoListPage() {
   const { t } = useTranslation(['app', 'video']);
