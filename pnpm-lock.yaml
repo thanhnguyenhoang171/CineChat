@@ -128,9 +128,6 @@ importers:
       immer:
         specifier: ^11.0.1
         version: 11.1.4
-      isbot:
-        specifier: ^5
-        version: 5.1.0
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
