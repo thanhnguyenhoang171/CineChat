@@ -3,7 +3,6 @@ import {
   ChevronUp,
   LogOut,
   ContactRound,
-  Globe,
   MoreHorizontal,
 } from 'lucide-react';
 import {
@@ -39,11 +38,11 @@ import { formatFullName } from '~/utils/common-utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {
-  mainNav,
-  workspaces,
   type Category,
   type Item,
-} from '~/types/app-types/sidebar';
+  type Workspace,
+} from '@cinechat/types';
+import { mainNav, workspaces } from '~/constants/common-constant';
 import { useTranslation } from 'react-i18next';
 import { AppThemeModeButton } from '../shared/button/AppThemeModeButton';
 import { ChangeLanguageSubMenu } from '../shared/menu/changeLanguageSubMenu';
@@ -65,8 +64,8 @@ export function AppSidebar({ id }: { id?: string }) {
   const allModules = useMemo(() => {
     const items: Item[] = [];
     mainNav.forEach((navItem) => {
-      if ('items' in navItem) {
-        items.push(...(navItem as Category).items);
+      if ('items' in navItem && navItem.items) {
+        items.push(...(navItem.items as Item[]));
       } else {
         items.push(navItem as Item);
       }
@@ -78,7 +77,7 @@ export function AppSidebar({ id }: { id?: string }) {
     logout();
   };
 
-  const handSelectWorkspace = (workspace: Item) => {
+  const handSelectWorkspace = (workspace: any) => {
     window.open(workspace.url, '_blank', 'noopener,noreferrer');
   };
 
@@ -93,16 +92,17 @@ export function AppSidebar({ id }: { id?: string }) {
     let activeItem: Item | null = null;
 
     for (const navItem of mainNav) {
-      if ('url' in navItem) {
+      const item = navItem as any;
+      if (item.url && item.url !== '#') {
         // It's a standalone Item
-        if (currentPath.startsWith(`/${navItem.url}`)) {
-          activeItem = navItem;
+        if (currentPath.startsWith(`/${item.url}`)) {
+          activeItem = item;
           break;
         }
-      } else if ('items' in navItem) {
+      } else if (item.items) {
         // It's a Category
-        const foundItem = navItem.items.find((item) =>
-          currentPath.startsWith(`/${item.url}`),
+        const foundItem = item.items.find((subItem: any) =>
+          currentPath.startsWith(`/${subItem.url}`),
         );
         if (foundItem) {
           activeItem = foundItem;
@@ -154,7 +154,7 @@ export function AppSidebar({ id }: { id?: string }) {
                   <SidebarGroup key={category.id}>
                     <SidebarGroupLabel>{t(category.title)}</SidebarGroupLabel>
                     <SidebarGroupContent>
-                      {category.items.map((item) => (
+                      {category.items?.map((item) => (
                         <SidebarMenuItem
                           key={item.id}
                           onClick={() => handSelectModule(item)}>
@@ -320,3 +320,4 @@ export function AppSidebar({ id }: { id?: string }) {
     </Sidebar>
   );
 }
+

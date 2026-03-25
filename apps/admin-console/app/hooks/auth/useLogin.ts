@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
 import { useBoundStore } from '~/store';
 import { authService } from '~/services/auth.service';
-import type { ApiError } from '~/types/api-types/api-error';
+import type { ApiError } from '@cinechat/types';
 import { useTranslation } from 'react-i18next';
 
 export function useLogin() {
@@ -50,3 +50,4 @@ export function useLogin() {
     },
   });
 }
+

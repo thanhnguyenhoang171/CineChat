@@ -1,3 +1,5 @@
+import { PaginationMeta } from './common.js';
+
 export interface Cast {
   _id: string;
   name: string;
@@ -12,13 +14,6 @@ export interface Cast {
   isActive: number;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
 }
 
 export interface CastWithPagination {

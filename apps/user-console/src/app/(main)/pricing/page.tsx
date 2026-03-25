@@ -169,11 +169,11 @@ export default function PricingPage() {
                      <div key={idx} className='flex items-start gap-3'>
                         <div className={cn(
                           'h-5 w-5 rounded-full flex items-center justify-center shrink-0 mt-0.5',
-                          feature.isNegative ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary'
+                          feature.text ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary'
                         )}>
-                           {feature.isNegative ? <Minus size={12} /> : <Check size={12} />}
+                           {feature.text ? <Minus size={12} /> : <Check size={12} />}
                         </div>
-                        <span className={cn('text-sm font-medium leading-tight', feature.isNegative && 'text-muted-foreground')}>
+                        <span className={cn('text-sm font-medium leading-tight', feature.text && 'text-muted-foreground')}>
                            {feature.text}
                         </span>
                      </div>

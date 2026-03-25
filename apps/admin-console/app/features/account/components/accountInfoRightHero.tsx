@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { CustomLabel } from '~/components/shared/text/customLabel';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 import { formatDateTime, formatFullName } from '~/utils/common-utils';
 import { UpdateFullNameForm } from './form/updateFullNameForm';
 import { useState } from 'react';
@@ -164,3 +164,4 @@ export function AccountInfoRightHero({ account }: AccountInfoRightHeroProps) {
     </>
   );
 }
+

@@ -1,7 +1,7 @@
 import { PaginationQueryDto } from '@common/modules/pagination/dto/pagination-query.dto';
 import aqp from 'api-query-params';
 import { Logger } from '@nestjs/common';
-import { PaginatedMeta, PaginatedResponse } from '@interfaces/pagination.interface';
+import { PaginatedMeta, PaginatedResponse } from '@cinechat/types';
 import { Model } from 'mongoose';
 
 const logger = new Logger('HTTP');

@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 import { authService } from '~/services/auth.service';
 
 // 1. Định nghĩa State
@@ -94,3 +94,4 @@ export const createAuthSlice: StateCreator<
   //   }
   // },
 });
+

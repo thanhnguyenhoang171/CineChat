@@ -1,4 +1,4 @@
-import type { Video, VideoWithPagination } from '~/types/module-types/video';
+import type { Video, VideoWithPagination } from '@cinechat/types';
 
 const now = new Date().toISOString();
 
@@ -171,3 +171,4 @@ export const videoService = {
     return { status: 404, message: 'Video not found', data: null };
   },
 };
+

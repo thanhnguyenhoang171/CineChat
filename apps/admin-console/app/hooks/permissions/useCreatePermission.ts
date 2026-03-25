@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
-import type { ApiError } from '~/types/api-types/api-error';
+import type { ApiError } from '@cinechat/types';
 import {
   permissionService,
   type CreatePermissionDto,
@@ -28,3 +28,4 @@ export function useCreatePermission() {
     },
   });
 }
+

@@ -2,7 +2,7 @@ import { SquarePen } from 'lucide-react';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { cn } from '~/lib/utils';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 
 interface AccountAvatarProps {
   setOpenUploadAvatar?: (openUploadAvatar: boolean) => void;
@@ -57,3 +57,4 @@ export function AccountAvatar({
     </div>
   );
 }
+

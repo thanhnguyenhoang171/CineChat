@@ -15,7 +15,7 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { User } from '@common/decorators/user.decorator';
-import type { IUser } from '@interfaces/user.interface';
+import type { IUser } from '@cinechat/types';
 import { GetPermissionDto } from './dto/get-permission.dto';
 import { JwtPublic } from '@common/decorators/auth.decorator';
 

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IUser } from '@interfaces/user.interface';
+import { IUser } from '@cinechat/types';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role, RoleDocument } from './schemas/role.schema';
 import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';

@@ -20,7 +20,7 @@ import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { LocalAuthGuard } from '@common/guards/local-auth-guard';
 import type { Request, Response } from 'express';
 import { User } from '@common/decorators/user.decorator';
-import type { IGGUser, IUser } from '@interfaces/user.interface';
+import type { IGGUser, IUser } from '@cinechat/types';
 import { AuthGuard } from '@nestjs/passport';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';

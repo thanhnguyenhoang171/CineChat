@@ -4,7 +4,7 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
 import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
-import type { IUser } from '@interfaces/user.interface';
+import type { IUser } from '@cinechat/types';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 import { GetPermissionDto } from './dto/get-permission.dto';

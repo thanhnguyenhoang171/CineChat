@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 
 type AccountState = {
   account: User | null;
@@ -33,3 +33,4 @@ export const createAccountSlice: StateCreator<
       state.isLoadingAccount = false;
     }),
 });
+

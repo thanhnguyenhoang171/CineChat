@@ -1,4 +1,4 @@
-import type { PaginationMeta } from '~/types/module-types/permission';
+import type { PaginationMeta } from '@cinechat/types';
 
 export const defaultMeta: PaginationMeta = {
   page: 1,
@@ -8,3 +8,4 @@ export const defaultMeta: PaginationMeta = {
 };
 
 export const pageSizeOptions = [10, 20, 50, 100];
+

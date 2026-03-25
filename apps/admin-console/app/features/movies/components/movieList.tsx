@@ -24,7 +24,7 @@ import {
 } from '~/components/ui/table';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
-import type { PaginationMeta, Movie } from '~/types/module-types/movie';
+import type { PaginationMeta, Movie } from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
 import { UpdateMovieModal } from './modal/updateMovieModal';
@@ -317,3 +317,4 @@ export function MovieList({
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import type { Role, RoleWithPagination } from '~/types/module-types/role';
+import type { Role, RoleWithPagination } from '@cinechat/types';
 
 const MOCK_ROLES: Role[] = [
   { _id: 'role_1', name: 'Super Admin', description: 'Toàn quyền quản trị hệ thống', isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), permissionIds: ['1', '2', '3', '4', '5', '6', '7', '8'] },
@@ -53,3 +53,4 @@ export const roleService = {
     return { status: 200, message: 'Success', data: null };
   },
 };
+

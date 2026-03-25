@@ -13,7 +13,7 @@ import RolesService from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { User } from '@common/decorators/user.decorator';
-import type { IUser } from '@interfaces/user.interface';
+import type { IUser } from '@cinechat/types';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseStatus } from '@common/decorators/response_message.decorator';
 import { GetRoleDto } from '@modules/roles/dto/get-role.dto';

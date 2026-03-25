@@ -1,9 +1,9 @@
 import { axiosClient } from '~/lib/axios-client';
-import type { ApiResponse } from '~/types/api-types/api-response';
+import type { ApiResponse } from '@cinechat/types';
 import type {
   Permission,
   PermissionWithPagination,
-} from '~/types/module-types/permission';
+} from '@cinechat/types';
 
 interface GetPermissionsParams {
   page: number;
@@ -97,3 +97,4 @@ export const permissionService = {
     return response.data;
   },
 };
+

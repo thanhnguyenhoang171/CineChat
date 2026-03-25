@@ -18,7 +18,7 @@ import {
 import { RoleTableHeader } from '~/constants/app/role-constant';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
-import type { PaginationMeta, Role } from '~/types/module-types/role';
+import type { PaginationMeta, Role } from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { UpdateRoleModal } from './modal/updateRoleModal';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
@@ -308,3 +308,4 @@ export function RoleList({
     </div>
   );
 }
+

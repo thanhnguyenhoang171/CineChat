@@ -1,26 +1,9 @@
-'use client';
-
 import {
-  ArchiveIcon,
   ArrowLeftIcon,
-  BookUser,
   BriefcaseBusiness,
-  CalendarPlusIcon,
-  ChartBarStacked,
-  ClockIcon,
-  EarthLock,
-  FilePlay,
-  Film,
-  LayoutDashboard,
-  ListFilterIcon,
   LogOut,
-  MailCheckIcon,
   MoreHorizontalIcon,
-  ShieldUser,
   SquareChartGantt,
-  SquareUserRound,
-  TagIcon,
-  Trash2Icon,
 } from 'lucide-react';
 import { ButtonGroup } from '../ui/button-group';
 import { Button } from '../ui/button';
@@ -40,11 +23,11 @@ import { useLogout } from '~/hooks/auth/useLogout';
 import { formatFullName } from '~/utils/common-utils';
 import { useLocation, useNavigate } from 'react-router';
 import {
-  mainNav,
-  workspaces,
   type Category,
   type Item,
-} from '~/types/app-types/sidebar';
+  type Workspace,
+} from '@cinechat/types';
+import { mainNav, workspaces } from '~/constants/common-constant';
 import { useEffect, useMemo, useState } from 'react';
 import { AppThemeModeButton } from '../shared/button/AppThemeModeButton';
 import { useTranslation } from 'react-i18next';
@@ -68,8 +51,8 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
   const allModules = useMemo(() => {
     const items: Item[] = [];
     mainNav.forEach((navItem) => {
-      if ('items' in navItem) {
-        items.push(...(navItem as Category).items);
+      if ('items' in navItem && navItem.items) {
+        items.push(...(navItem.items as any));
       } else {
         items.push(navItem as Item);
       }
@@ -81,7 +64,7 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
     logout();
   };
 
-  const handSelectWorkspace = (workspace: Item) => {
+  const handSelectWorkspace = (workspace: any) => {
     window.open(workspace.url, '_blank', 'noopener,noreferrer');
   };
 
@@ -215,3 +198,4 @@ export function AppMobileMenu({ className }: AppMobileMenuProps) {
     </ButtonGroup>
   );
 }
+

@@ -1,5 +1,5 @@
 import { passwordCompare } from '@common/utils/password-bcrypt.util';
-import { IGGUser, IUser } from '@interfaces/user.interface';
+import { IGGUser, IUser } from '@cinechat/types';
 import { RegisterAccountDto, RegisterGGAccountDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
 import {

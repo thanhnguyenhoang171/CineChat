@@ -1,5 +1,6 @@
-import type { Genre } from './genre';
-import type { Cast } from './cast';
+import { PaginationMeta } from './common.js';
+import { Genre } from './genre.js';
+import { Cast } from './cast.js';
 
 export interface Movie {
   _id: string;
@@ -8,7 +9,7 @@ export interface Movie {
   overview?: string;
   tagline?: string;
   releaseDate?: string;
-  runtime?: number; // minutes
+  runtime?: number;
   status: 'Rumored' | 'Planned' | 'In Production' | 'Post Production' | 'Released' | 'Canceled';
   posterPath?: string;
   backdropPath?: string;
@@ -24,13 +25,6 @@ export interface Movie {
   isActive: number;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
 }
 
 export interface MovieWithPagination {

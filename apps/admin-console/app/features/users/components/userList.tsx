@@ -23,7 +23,7 @@ import {
 } from '~/components/ui/table';
 import { useBreakpoint } from '~/hooks/layout/useBreakpoint';
 import { cn } from '~/lib/utils';
-import type { PaginationMeta, User } from '~/types/module-types/user';
+import type { PaginationMeta, User } from '@cinechat/types';
 import { get4LastDigitsFromId } from '~/utils/common-utils';
 import { UpdateUserModal } from './modal/updateUserModal';
 import { AppAlertDialog } from '~/components/shared/alert-dialog/appAlertDialog';
@@ -297,3 +297,4 @@ export function UserList({
     </div>
   );
 }
+

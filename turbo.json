@@ -3,12 +3,24 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**"]
+      "env": ["NODE_ENV", "VITE_*", "NEXT_PUBLIC_*", "MONGODB_URI", "JWT_SECRET"],
+      "outputs": ["dist/**", ".next/**", "build/**", ".react-router/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"]
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    },
+    "clean": {
+      "cache": false
+    }
   }
 }

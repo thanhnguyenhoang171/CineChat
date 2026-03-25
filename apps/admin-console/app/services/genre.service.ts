@@ -1,4 +1,4 @@
-import type { Genre, GenreWithPagination, CreateGenreDto, UpdateGenreDto } from '~/types/module-types/genre';
+import type { Genre, GenreWithPagination, CreateGenreDto, UpdateGenreDto } from '@cinechat/types';
 
 const MOCK_GENRES: Genre[] = [
   { _id: 'g1', name: 'Action', description: 'Action movies often involve high-energy, physical stunts and chases.', isActive: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
@@ -49,3 +49,4 @@ export const genreService = {
     return { status: 200, message: 'Success', data: null };
   },
 };
+

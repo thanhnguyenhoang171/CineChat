@@ -8,14 +8,7 @@ export interface Role {
   permissionIds?: string[];
 }
 
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
 export interface RoleWithPagination {
   data: Role[];
-  meta: PaginationMeta;
+  meta: import('./common.js').PaginatedMeta;
 }

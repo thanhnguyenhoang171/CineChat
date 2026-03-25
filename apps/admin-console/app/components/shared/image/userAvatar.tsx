@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { cn } from '~/lib/utils';
-import type { User } from '~/types/module-types/user';
+import type { User } from '@cinechat/types';
 
 interface UserAvatarProps {
   className?: string;
@@ -21,3 +21,4 @@ export function UserAvatar({ className, user }: UserAvatarProps) {
     </Avatar>
   );
 }
+

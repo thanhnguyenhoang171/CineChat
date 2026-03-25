@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
@@ -20,15 +20,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "typeRoots": ["./node_modules/@types", "./@types"],
-    "baseUrl": "./src",
+    "typeRoots": ["./node_modules/@types"],
+    "baseUrl": ".",
     "paths": {
-      "@modules/*": ["modules/*"],
-      "@common/*": ["common/*"],
-      "@interfaces/*": ["interfaces/*"],
-      "@config/*": ["config/*"],
-      "@database/*": ["database/*"],
-      "@middlewares/*": ["middlewares/*"],
+      "@modules/*": ["src/modules/*"],
+      "@common/*": ["src/common/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@config/*": ["src/config/*"],
+      "@database/*": ["src/database/*"],
+      "@middlewares/*": ["src/middlewares/*"]
     }
-  }
+  },
+  "include": ["src/**/*"]
 }
