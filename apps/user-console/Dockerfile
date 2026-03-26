@@ -10,7 +10,7 @@ FROM base AS builder
 WORKDIR /app
 RUN pnpm install -g turbo
 COPY . .
-RUN turbo prune admin-console --docker
+RUN turbo prune user-console --docker
 
 # Stage 3: Install and Build
 FROM base AS installer
@@ -23,25 +23,27 @@ RUN pnpm install
 
 # Copy the actual code and build
 COPY --from=builder /app/out/full/ .
-# Inject Vite env var if provided during build
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-
-RUN pnpm turbo run build --filter=admin-console
+RUN pnpm turbo run build --filter=user-console
 
 # Stage 4: Production Runner
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+# Disable Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 reactrouter
-USER reactrouter
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
-COPY --from=installer --chown=reactrouter:nodejs /app .
+COPY --from=installer --chown=nextjs:nodejs /app/apps/user-console/public ./apps/user-console/public
+# The standalone build outputs monorepo structure
+COPY --from=installer --chown=nextjs:nodejs /app/apps/user-console/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/user-console/.next/static ./apps/user-console/.next/static
 
 EXPOSE 3000
 ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-CMD ["pnpm", "--filter", "admin-console", "run", "start"]
+CMD ["node", "apps/user-console/server.js"]

@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # Backend Service (NestJS)
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: cinechat_backend
+    ports:
+      - "3001:3001" # Expose to host for direct access/debugging
+    env_file:
+      - apps/backend/.env
+    environment:
+      # Ghi đè cấu hình trong .env để kết nối đúng mạng nội bộ của Docker
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NODE_ENV=production
+    depends_on:
+      - redis
+    networks:
+      - cinechat-network
+
+  # Admin Console Service (React Router SSR)
+  admin-console:
+    build:
+      context: .
+      dockerfile: apps/admin-console/Dockerfile
+      args:
+        # Build-time argument cho Vite client
+        - VITE_API_URL=http://localhost:3001/api
+    container_name: cinechat_admin_console
+    ports:
+      # Map host 3002 to container 3000 (React Router mặc định là 3000)
+      - "3002:3000"
+    env_file:
+      - apps/admin-console/.env
+    environment:
+      - PORT=3000
+    depends_on:
+      - backend
+    networks:
+      - cinechat-network
+
+  # User Console Service (Next.js)
+  user-console:
+    build:
+      context: .
+      dockerfile: apps/user-console/Dockerfile
+    container_name: cinechat_user_console
+    ports:
+      - "3000:3000"
+    env_file:
+      - apps/user-console/.env
+    environment:
+      # URL backend cho Next.js
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
+      - PORT=3000
+    depends_on:
+      - backend
+    networks:
+      - cinechat-network
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: cinechat_redis
+    ports:
+      - "6380:6379" # Ánh xạ cổng 6379 trong container ra 6380 bên ngoài giống môi trường local
+    networks:
+      - cinechat-network
+
+networks:
+  cinechat-network:
+    driver: bridge

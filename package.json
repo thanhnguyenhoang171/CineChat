@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "CineChat Monorepo managed by Turborepo and pnpm",
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@10.33.0",
   "engines": {
-     "node": "20.x"
+     "node": "22.x"
   },
   "scripts": {
     "dev": "turbo dev",
