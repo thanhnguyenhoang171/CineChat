@@ -1,38 +1,40 @@
-### Stage 1: Build
-FROM node:22-alpine AS builder
+# Stage 1: Base image
+FROM node:22-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN npm install -g pnpm@10.33.0
+RUN apk update && apk add --no-cache libc6-compat
 
-# Update system package and Patch security vulnerabilities
-RUN apk update && apk upgrade && apk add --no-cache libc6-compat
-
+# Stage 2: Prune workspace
+FROM base AS builder
 WORKDIR /app
-
-# Copy package.json and lock file
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
-
-# Copy all source code (Docker will ignore files in .dockerignore)
+RUN pnpm install -g turbo
 COPY . .
+RUN turbo prune backend --docker
 
-# Build project
-RUN npm run build
-
-### Stage 2: Production
-FROM node:22-alpine
-
-# Update system package and Patch security vulnerabilities
-RUN apk update && apk upgrade && apk add --no-cache libc6-compat
-
+# Stage 3: Install and Build
+FROM base AS installer
 WORKDIR /app
 
-# Copy builded files and package.json from stage builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
+# Install dependencies based on the pruned lockfile
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install
 
-# Only install necessary libraries for Production (not install devDependencies)
-RUN npm install --legacy-peer-deps --only=production
+# Copy the actual code and build
+COPY --from=builder /app/out/full/ .
+RUN pnpm turbo run build --filter=backend
 
-# Open port 8088
-EXPOSE 8088
+# Stage 4: Production Runner
+FROM base AS runner
+WORKDIR /app
 
-# Command run application
-CMD [ "node", "dist/main" ]
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
+
+# Copy all files from installer
+COPY --from=installer --chown=nestjs:nodejs /app .
+
+EXPOSE 3001
+CMD ["node", "apps/backend/dist/main.js"]

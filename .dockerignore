@@ -1,0 +1,12 @@
+node_modules
+.next
+.turbo
+dist
+build
+.git
+.vscode
+.idea
+*.log
+.env*
+!.env.docker
+pnpm-debug.log
