@@ -22,7 +22,7 @@ import { RedisModule } from './modules/redis/redis.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env', 'apps/backend/.env', '.env.local'],
       load: [envConfig],
       validationSchema: envValidationSchema, // validate biến môi trường
     }),

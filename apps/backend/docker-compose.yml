@@ -5,13 +5,13 @@ services:
     container_name: cinechat-mongodb
     restart: always
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongodb_data:/data/db
     networks:
       - cinechat-network
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
     container_name: cinechat-redis
     restart: always
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     networks:
@@ -36,11 +36,12 @@ services:
     container_name: cinechat-backend
     restart: always
     ports:
-      - "8088:8088"
+      - '8088:8088'
     env_file:
       - .env.docker
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/cinechat
+      # - MONGODB_URI=mongodb://mongodb:27017/cinechat
+      - MONGODB_URI=mongodb+srv://thanhnguyen:Thanh123258789@mcadb.o8hebz8.mongodb.net/mcadb
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
