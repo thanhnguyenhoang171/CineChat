@@ -7,11 +7,11 @@ services:
       context: .
       dockerfile: apps/backend/Dockerfile
     container_name: cinechat_backend
-    user: root # Xử lý lỗi quyền hạn pnpm/mkdir
+    user: root
     ports:
-      - "4002:3001"
+      - '4002:3001'
     env_file:
-      - apps/backend/.env # Bắt buộc load từ file này
+      - apps/backend/.env
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -21,17 +21,19 @@ services:
     networks:
       - cinechat-network
 
-  # Admin Console Service (React Router SSR)
+  # Admin Console Service (Vite + React)
   admin-console:
     build:
       context: .
       dockerfile: apps/admin-console/Dockerfile
+      args:
+        - VITE_API_URL=https://api-cinechat.thanhnguyenserver.io.vn/api
     container_name: cinechat_admin_console
-    user: root # Cực kỳ quan trọng để sửa lỗi EACCES
+    user: root
     ports:
-      - "4001:3000"
+      - '4001:3000'
     env_file:
-      - apps/admin-console/.env # Bắt buộc load từ file này
+      - apps/admin-console/.env
     environment:
       - PORT=3000
     depends_on:
@@ -45,11 +47,11 @@ services:
       context: .
       dockerfile: apps/user-console/Dockerfile
     container_name: cinechat_user_console
-    user: root # Xử lý lỗi pnpm
+    user: root
     ports:
-      - "4000:3000"
+      - '4000:3000'
     env_file:
-      - apps/user-console/.env # Bắt buộc load từ file này
+      - apps/user-console/.env
     environment:
       - PORT=3000
     depends_on:
@@ -57,12 +59,12 @@ services:
     networks:
       - cinechat-network
 
-  # Redis Service
+  # Redis
   redis:
     image: redis:7-alpine
     container_name: cinechat_redis
     ports:
-      - "6380:6379"
+      - '6380:6379'
     networks:
       - cinechat-network
 
