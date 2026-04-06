@@ -8,6 +8,7 @@ services:
       dockerfile: apps/backend/Dockerfile
     container_name: cinechat_backend
     user: root
+    restart: always
     ports:
       - '4002:3001'
     env_file:
@@ -30,6 +31,7 @@ services:
         - VITE_API_URL=https://api-cinechat.thannguyenserver.io.vn/api
     container_name: cinechat_admin_console
     user: root
+    restart: always
     ports:
       - '4001:3000'
     env_file:
@@ -48,6 +50,7 @@ services:
       dockerfile: apps/user-console/Dockerfile
     container_name: cinechat_user_console
     user: root
+    restart: always
     ports:
       - '4000:3000'
     env_file:
@@ -63,6 +66,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: cinechat_redis
+    restart: always
     ports:
       - '6380:6379'
     networks:
