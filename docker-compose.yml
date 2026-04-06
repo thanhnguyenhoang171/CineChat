@@ -8,7 +8,7 @@ services:
       dockerfile: apps/backend/Dockerfile
     container_name: cinechat_backend
     ports:
-      - "3001:3001" # Expose to host for direct access/debugging
+      - "4002:3001" # Expose to host for direct access/debugging
     env_file:
       - apps/backend/.env
     environment:
@@ -32,7 +32,7 @@ services:
     container_name: cinechat_admin_console
     ports:
       # Map host 3002 to container 3000 (React Router mặc định là 3000)
-      - "3002:3000"
+      - "4001:3000"
     env_file:
       - apps/admin-console/.env
     environment:
