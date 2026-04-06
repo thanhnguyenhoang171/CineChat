@@ -57,7 +57,7 @@ export default (): ConfigEnv => ({
 export const envValidationSchema = Joi.object({
   HOST: Joi.string().default('0.0.0.0'),
   PORT: Joi.number().default(3000),
-  MONGODB_URI: Joi.string().uri().required().messages({
+  MONGODB_URI: Joi.string().required().messages({
     'any.required': 'MONGODB_URI is required in your .env file',
   }),
   JWT_PUBLIC_KEY: Joi.string().required().messages({
