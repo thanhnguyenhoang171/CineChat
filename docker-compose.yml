@@ -7,12 +7,12 @@ services:
       context: .
       dockerfile: apps/backend/Dockerfile
     container_name: cinechat_backend
+    user: root # Xử lý lỗi quyền hạn pnpm/mkdir
     ports:
-      - "4002:3001" # Expose to host for direct access/debugging
+      - "4002:3001"
     env_file:
-      - apps/backend/.env
+      - apps/backend/.env # Bắt buộc load từ file này
     environment:
-      # Ghi đè cấu hình trong .env để kết nối đúng mạng nội bộ của Docker
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - NODE_ENV=production
@@ -26,15 +26,12 @@ services:
     build:
       context: .
       dockerfile: apps/admin-console/Dockerfile
-      args:
-        # Build-time argument cho Vite client
-        - VITE_API_URL=http://localhost:3001/api
     container_name: cinechat_admin_console
+    user: root # Cực kỳ quan trọng để sửa lỗi EACCES
     ports:
-      # Map host 3002 to container 3000 (React Router mặc định là 3000)
       - "4001:3000"
     env_file:
-      - apps/admin-console/.env
+      - apps/admin-console/.env # Bắt buộc load từ file này
     environment:
       - PORT=3000
     depends_on:
@@ -48,13 +45,12 @@ services:
       context: .
       dockerfile: apps/user-console/Dockerfile
     container_name: cinechat_user_console
+    user: root # Xử lý lỗi pnpm
     ports:
       - "4000:3000"
     env_file:
-      - apps/user-console/.env
+      - apps/user-console/.env # Bắt buộc load từ file này
     environment:
-      # URL backend cho Next.js
-      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
       - PORT=3000
     depends_on:
       - backend
@@ -66,7 +62,7 @@ services:
     image: redis:7-alpine
     container_name: cinechat_redis
     ports:
-      - "6380:6379" # Ánh xạ cổng 6379 trong container ra 6380 bên ngoài giống môi trường local
+      - "6380:6379"
     networks:
       - cinechat-network
 
