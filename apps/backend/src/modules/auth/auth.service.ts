@@ -3,7 +3,6 @@ import { IGGUser, IUser } from '@cinechat/types';
 import { RegisterAccountDto, RegisterGGAccountDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -13,8 +12,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '@modules/users/schemas/user.schema';
-import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
-import { response, Response } from 'express';
+import type { SoftDeleteModel } from 'mongoose-delete';
+import { Response } from 'express';
 import { BusinessCode } from '@common/constants/business-code';
 import { createRefreshToken } from '@common/utils/access-token.util';
 import { ConfigService } from '@nestjs/config';
@@ -30,7 +29,7 @@ export class AuthService {
     private configService: ConfigService<ConfigEnv, true>,
     private jwtService: JwtService,
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
+    private readonly userModel: SoftDeleteModel<UserDocument>,
   ) {}
   private readonly logger = new Logger('AuthService');
 
@@ -39,7 +38,6 @@ export class AuthService {
       ...registerAccountDto,
       provider: LoginProvider.USERNAME,
     };
-    // return this.userService.registerAccount(registerAccountDto);
     const registeredUser = await this.userService.registerUserAccount(userData);
     return {
       code: BusinessCode.REGISTERED,
@@ -54,7 +52,7 @@ export class AuthService {
   async validateUser(username: string, pass: string): Promise<any> {
     const userData = await this.userModel
       .findOne({ username })
-      .select('+password isDeleted isActive role tokenVersion')
+      .select('+password deleted isActive role tokenVersion')
       .populate({
         path: 'role',
         model: 'Role',
@@ -72,8 +70,10 @@ export class AuthService {
       return null;
     }
 
-    if (userData.isDeleted || userData.isActive === 0) {
-      const errorStatus = userData.isDeleted
+    // Fix enum comparison lint error by explicit casting
+    const isActive = Number(userData.isActive);
+    if (userData.deleted || isActive === 0) {
+      const errorStatus = userData.deleted
         ? BusinessCode.ACCOUNT_DELETED
         : BusinessCode.ACCOUNT_DISABLED;
 
@@ -86,7 +86,8 @@ export class AuthService {
     const isMatch = await passwordCompare(pass, userData.password);
 
     if (isMatch) {
-      const { password, __v, refreshToken, ...result } = userData;
+      // Remove unused variables from destructuring
+      const { password: _p, __v: _v, refreshToken: _rt, ...result } = userData;
       return result;
     }
 
@@ -96,45 +97,23 @@ export class AuthService {
   // handle login account
   async login(userRequest: IUser, response: Response) {
     try {
-      // if (userRequest.isDeleted || userRequest.isActive === 0) {
-      //   // clear old cookie if has
-      //   response.clearCookie('refresh_token', {
-      //     httpOnly: true,
-      //     secure: true,
-      //     sameSite: 'none',
-      //   });
-
-      //   const errorStatus = userRequest.isDeleted
-      //     ? BusinessCode.ACCOUNT_DELETED
-      //     : BusinessCode.ACCOUNT_DISABLED;
-
-      //   throw new HttpException(
-      //     { code: errorStatus, errors: ResponseMessage[errorStatus] },
-      //     HttpStatus.UNAUTHORIZED,
-      //   );
-      // }
-
       const { _id, role } = userRequest;
       const payload = {
         sub: _id,
         r: role._id,
-        v: userRequest.tokenVersion || 0, // Thêm tokenVersion vào payload để kiểm soát token cũ
+        v: userRequest.tokenVersion || 0,
       };
 
       this.logger.log(' Checking role info = ', role);
-      this.logger.log('payload sign:', payload);
-
       const refreshToken = createRefreshToken(payload, this.jwtService, this.configService);
 
-      // update refresh token to database
       await this.userService.updateUserRefreshTokenById(refreshToken, _id);
 
-      // token in cookie
       response.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
-        secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
-        sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
+        secure: true,
+        sameSite: 'none',
       });
 
       return {
@@ -145,7 +124,9 @@ export class AuthService {
         },
       };
     } catch (error) {
-      this.logger.error(`Login failed: ${error.message}`);
+      this.logger.error(
+        `Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       if (!(error instanceof HttpException)) {
         response.clearCookie('refresh_token');
       }
@@ -172,10 +153,8 @@ export class AuthService {
   }
 
   async logout(response: Response, user: IUser) {
-    // Remove token in DB
     await this.userService.updateUserRefreshTokenById(null, user._id);
 
-    // Clear cookie in Client
     response.clearCookie('refresh_token', {
       httpOnly: true,
       maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
@@ -190,7 +169,6 @@ export class AuthService {
 
   async refresh(refreshToken: string, response: Response) {
     try {
-      // 1. Get configs
       const publicKey = this.configService.get<string>('jwt.publicKey', { infer: true });
       const privateKey = this.configService.get<string>('jwt.privateKey', { infer: true });
       const refreshExpiresIn = this.configService.get<string>('jwt.refreshExpiresIn', {
@@ -198,55 +176,45 @@ export class AuthService {
       });
       const accessExpiresIn = this.configService.get<string>('jwt.expiresIn', { infer: true });
 
-      // 2. Verify sign of refresh token first
       await this.jwtService.verifyAsync(refreshToken, {
         publicKey: publicKey,
         algorithms: ['RS256'],
-        // ignoreIssuer: true, // Bật lên nếu token cũ trong DB đang bị lệch issuer
       });
 
-      // 3. Check DB
       const user = await this.userService.findUserByRefreshToken(refreshToken);
-      // console.log("Checking refresh token", user);
-      if (!user || user.isDeleted || user.isActive === 0) {
+      if (!user || user.deleted || Number(user.isActive) === 0) {
         throw new UnauthorizedException('Refresh token is not valid or has been revoked');
       }
 
-      // Prepare Payload
       const { _id, role } = user;
 
       const payload = {
         sub: _id,
-        r: role, // is role id
+        r: role,
         v: user.tokenVersion || 0,
       };
 
-      // 5. Sign new refresh token
       const newRefreshToken = this.jwtService.sign(payload, {
         privateKey: privateKey,
         algorithm: 'RS256',
         expiresIn: refreshExpiresIn as any,
       });
 
-      // 6. Sign new access token
       const newAccessToken = this.jwtService.sign(payload, {
         privateKey: privateKey,
         algorithm: 'RS256',
         expiresIn: accessExpiresIn as any,
       });
 
-      // 7. Update DB
       await this.userService.updateUserRefreshTokenById(newRefreshToken, _id.toString());
 
-      // 8. Set Cookie again
       response.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
-        secure: true, // KHUYÊN DÙNG: Bật lên khi deploy Production (HTTPS)
-        sameSite: 'none', // KHUYÊN DÙNG: Bật lên nếu FE và BE khác domain
+        secure: true,
+        sameSite: 'none',
         maxAge: +ms(refreshExpiresIn as any),
       });
 
-      // 9. Return result
       return {
         code: BusinessCode.REFRESH_TOKEN_SUCCESS,
         data: {
@@ -254,9 +222,10 @@ export class AuthService {
         },
       };
     } catch (error) {
-      this.logger.error(`Refresh token failed: ${error.message}`);
+      this.logger.error(
+        `Refresh token failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
 
-      // Quan trọng: Phải clear cookie với options giống hệt lúc set
       response.clearCookie('refresh_token', {
         httpOnly: true,
         secure: true,
@@ -264,7 +233,7 @@ export class AuthService {
       });
 
       throw new UnauthorizedException({
-        code: BusinessCode.UNAUTHORIZED, // Sửa lại mã lỗi cho đúng chuẩn
+        code: BusinessCode.UNAUTHORIZED,
         message: 'Invalid or expired refresh token',
       });
     }
@@ -304,21 +273,6 @@ export class AuthService {
         currentUser = await this.userService.registerGoogleAccount(registerData);
       }
 
-      // if (currentUser?.isDeleted || currentUser?.isActive === 0) {
-      //   response.clearCookie('refresh_token', {
-      //     httpOnly: true,
-      //     secure: true,
-      //     sameSite: 'none',
-      //   });
-
-      //   const errorStatus = currentUser.isDeleted
-      //     ? BusinessCode.ACCOUNT_DELETED
-      //     : BusinessCode.ACCOUNT_DISABLED;
-
-      //   const feUri = this.configService.get<string>('clientUri', { infer: true });
-      //   return response.redirect(`${feUri}/auth/google-failure?error_code=${errorStatus}`);
-      // }
-
       const level = currentUser?.role?.level;
       if (level !== 0 && level !== 1) {
         this.logger.warn(
@@ -331,7 +285,6 @@ export class AuthService {
         });
 
         const feUri = this.configService.get<string>('clientUri', { infer: true });
-        // Redirect kèm mã lỗi Forbidden
         return response.redirect(
           `${feUri}/auth/google-failure?error_code=${BusinessCode.FORBIDDEN}`,
         );
@@ -358,9 +311,10 @@ export class AuthService {
 
       return response.redirect(`${feUri}/auth/google-success?act=${accessToken}&lv=${level}`);
     } catch (error) {
-      this.logger.error(`Google Login Error: ${error.message}`);
+      this.logger.error(
+        `Google Login Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       const feUri = this.configService.get<string>('clientUri', { infer: true });
-      // Redirect về login khi có lỗi hệ thống bất ngờ
       return response.redirect(
         `${feUri}/auth/google-failure?error_code=${BusinessCode.INTERNAL_SERVER_ERROR}`,
       );
@@ -433,7 +387,7 @@ export class AuthService {
       response.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
         maxAge: +ms(this.configService.get('jwt.refreshExpiresIn', { infer: true })),
-        secure: true, // Nên để true vì đang set sameSite: 'none'
+        secure: true,
         sameSite: 'none',
       });
 

@@ -4,7 +4,7 @@ import { ActiveStatus } from '@common/constants/common-constant';
 import { BaseSchema } from '@common/schemas/base.schema';
 
 @Schema({ timestamps: true })
-export class Cast extends BaseSchema{
+export class Cast extends BaseSchema {
   @Prop()
   fullName: string;
 

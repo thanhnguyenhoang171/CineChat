@@ -11,7 +11,6 @@ import { Permission } from '@modules/permissions/schemas/permission.schema';
 import { passwordHashing } from '@common/utils/password-bcrypt.util';
 import { RoleLevel } from '@common/constants/common-constant';
 
-
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
@@ -32,19 +31,19 @@ async function bootstrap() {
     console.log(`   - Created ${createdPermissions.length} permissions`);
 
     // Create map to get Permission Id
-    const allPermissionIds = createdPermissions.map(p => p._id);
+    const allPermissionIds = createdPermissions.map((p) => p._id);
 
     // Step 2: Seed Roles and assign Permissions
     console.log('Seeding Roles');
 
     // Create ADMIN Role (full permissions)
-    const adminRoleData = ROLES_DATA.find(r => r.level === RoleLevel.ADMIN);
+    const adminRoleData = ROLES_DATA.find((r) => r.level === RoleLevel.ADMIN);
     const adminRole = await roleModel.create({
       ...adminRoleData,
-      permissions: allPermissionIds
+      permissions: allPermissionIds,
     });
 
-    const userRoleData = ROLES_DATA.find(r => r.level === RoleLevel.USER);
+    const userRoleData = ROLES_DATA.find((r) => r.level === RoleLevel.USER);
     const userRole = await roleModel.create({
       ...userRoleData,
       // permissions: userPermissions
@@ -52,23 +51,32 @@ async function bootstrap() {
 
     // Create MANAGER Role
     const managerPermissions = createdPermissions
-      .filter(p => ['Tạo mới một người dùng', 'Lấy tất cả người dùng có phân trang', 'Cập nhật một người dùng bằng id', 'Xóa một người dùng bằng id'].includes(p.name))
-      .map(p => p._id);
+      .filter((p) =>
+        [
+          'Tạo mới một người dùng',
+          'Lấy tất cả người dùng có phân trang',
+          'Cập nhật một người dùng bằng id',
+          'Xóa một người dùng bằng id',
+        ].includes(p.name),
+      )
+      .map((p) => p._id);
 
-    const managerRoleData = ROLES_DATA.find(r => r.level === RoleLevel.MANAGER);
+    const managerRoleData = ROLES_DATA.find((r) => r.level === RoleLevel.MANAGER);
     const managerRole = await roleModel.create({
       ...managerRoleData,
-      permissions: managerPermissions
+      permissions: managerPermissions,
     });
 
-    console.log(`- Created Roles: ADMIN (${adminRole._id}), MANAGER (${managerRole._id}), USER (${userRole._id})`);
+    console.log(
+      `- Created Roles: ADMIN (${adminRole._id}), MANAGER (${managerRole._id}), USER (${userRole._id})`,
+    );
 
     // Step 3: Seeding USER
     console.log('Seeding Users');
 
     const hashedPassword = await passwordHashing('@Thanh171');
 
-    const usersToInsert = USERS_DATA.map(user => {
+    const usersToInsert = USERS_DATA.map((user) => {
       const assignedRole =
         user.username === 'admincinechat'
           ? adminRole._id
@@ -79,7 +87,7 @@ async function bootstrap() {
       return {
         ...user,
         password: hashedPassword,
-        role: assignedRole
+        role: assignedRole,
       };
     });
 
@@ -87,7 +95,6 @@ async function bootstrap() {
     console.log(`   - Created ${usersToInsert.length} users`);
 
     console.log('Seeding completed successfully!');
-
   } catch (error) {
     console.error('Seeding failed:', error);
   } finally {

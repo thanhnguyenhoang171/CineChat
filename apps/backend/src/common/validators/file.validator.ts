@@ -1,6 +1,6 @@
 import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 
-export function CreateImageValidator(options: { maxSizeMb: number;  }) {
+export function CreateImageValidator(options: { maxSizeMb: number }) {
   const { maxSizeMb } = options;
 
   return new ParseFilePipeBuilder()

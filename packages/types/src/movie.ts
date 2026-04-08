@@ -1,6 +1,6 @@
-import { PaginationMeta } from './common.js';
-import { Genre } from './genre.js';
-import { Cast } from './cast.js';
+import type { PaginationMeta } from './common.js';
+import type { Genre } from './genre.js';
+import type { Cast } from './cast.js';
 
 export interface Movie {
   _id: string;

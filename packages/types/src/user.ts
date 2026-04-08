@@ -38,6 +38,8 @@ export interface IUser {
   updatedAt?: string;
 }
 
+export type User = IUser;
+
 export interface IGGUser {
   firstName?: string;
   lastName?: string;

@@ -3,7 +3,7 @@ import { CreatePermissionDto, SignPermissionToUserDto } from './dto/create-permi
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Permission, PermissionDocument } from '@modules/permissions/schemas/permission.schema';
-import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
+import type { SoftDeleteModel } from 'mongoose-delete';
 import type { IUser } from '@cinechat/types';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
@@ -21,11 +21,11 @@ export class PermissionsService {
   constructor(
     private readonly paginationService: PaginationService,
     @InjectModel(Permission.name)
-    private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
+    private readonly permissionModel: SoftDeleteModel<PermissionDocument>,
     @InjectModel(Role.name)
-    private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
+    private readonly roleModel: SoftDeleteModel<RoleDocument>,
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
+    private readonly userModel: SoftDeleteModel<UserDocument>,
   ) {}
 
   async createPermission(createPermissionDto: CreatePermissionDto, user: IUser) {
@@ -73,7 +73,7 @@ export class PermissionsService {
     const searchFields = ['apiPath', 'method', 'module', 'name'];
     try {
       const { data, meta } = await this.paginationService.paginate(
-        this.permissionModel,
+        this.permissionModel as any,
         getPermissionDto,
         searchFields,
       );
@@ -215,9 +215,9 @@ export class PermissionsService {
     validateMongoId(id);
     await ensurePermissionExists(this.permissionModel, id);
 
-    const result = await this.permissionModel.softDelete({ _id: id });
+    const result = await this.permissionModel.delete({ _id: id });
 
-    if (!result || result.deleted !== 1) {
+    if (!result) {
       throw new HttpException(
         {
           code: BusinessCode.PERMISSION_NOT_FOUND,

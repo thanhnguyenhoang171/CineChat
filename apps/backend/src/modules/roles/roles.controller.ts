@@ -64,6 +64,4 @@ export class RolesController {
   removeRoleByIdController(@Param('id') id: string, @User() user: IUser) {
     return this.rolesService.removeRoleById(id, user);
   }
-
-
 }

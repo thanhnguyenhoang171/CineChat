@@ -21,3 +21,19 @@ export interface ApiResponse<T> {
   timestamp?: string;
   errors?: any;
 }
+
+export interface ApiError {
+  status: number;
+  code: string;
+  message: string;
+  path?: string;
+  timestamp?: string;
+  errors?: any;
+}
+
+export interface CarouselImage {
+  src: string;
+  alt?: string;
+  title?: string;
+  description?: string;
+}

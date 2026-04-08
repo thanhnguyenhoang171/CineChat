@@ -4,7 +4,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { IUser } from '@cinechat/types';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role, RoleDocument } from './schemas/role.schema';
-import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
+import type { SoftDeleteModel } from 'mongoose-delete';
 import {
   ensureAllModulesExist,
   findModuleOrThrow,
@@ -23,9 +23,9 @@ import { INVALID_INPUT } from '@common/constants/Error-code-specific';
 class RolesService {
   constructor(
     @InjectModel(Role.name)
-    private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
+    private readonly roleModel: SoftDeleteModel<RoleDocument>,
     @InjectModel(Permission.name)
-    private readonly permissionModel: SoftDeleteMongoosePlugin.SoftDeleteModel<PermissionDocument>,
+    private readonly permissionModel: SoftDeleteModel<PermissionDocument>,
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -95,7 +95,7 @@ class RolesService {
     try {
       //   3. Call common service
       const { data, meta } = await this.paginationService.paginate(
-        this.roleModel,
+        this.roleModel as any,
         getRoleDto,
         searchFields,
         customPopulateOptions,
@@ -242,9 +242,9 @@ class RolesService {
     validateMongoId(id);
     await isModuleExist(this.roleModel, '_id', id);
 
-    const result = await this.roleModel.softDelete({ _id: id });
+    const result = await this.roleModel.delete({ _id: id });
 
-    if (!result || result.deleted !== 1) {
+    if (!result) {
       throw new HttpException(
         {
           code: BusinessCode.ROLE_NOT_FOUND,
@@ -279,7 +279,7 @@ class RolesService {
     return await this.roleModel
       .findOne({
         _id: roleId,
-        isDeleted: false,
+        deleted: false,
       })
       .populate({
         path: 'permissions',

@@ -4,7 +4,6 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserDto extends PickType(CreateUserDto, ['firstName', 'lastName'] as const) {}
 
-
 export class UpdateFullNameDto {
   @IsNotEmpty({ message: 'First name không được để trống' })
   @IsString()

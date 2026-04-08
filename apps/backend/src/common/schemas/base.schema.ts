@@ -32,10 +32,10 @@ export abstract class BaseSchema {
   @Prop({ type: UserMeta, default: null })
   deletedBy: UserMeta;
 
-  @Prop({ default: false, index: true })
-  isDeleted: boolean;
+  @Prop({ default: false })
+  deleted: boolean;
 
-  @Prop()
+  @Prop({ default: null })
   deletedAt: Date;
 
   @Prop()

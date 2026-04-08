@@ -4,7 +4,7 @@ import { ActiveStatus } from '@common/constants/common-constant';
 import { BaseSchema } from '@common/schemas/base.schema';
 
 @Schema({ timestamps: true })
-export class Permission extends BaseSchema{
+export class Permission extends BaseSchema {
   @Prop({ required: true, trim: true })
   name: string;
 

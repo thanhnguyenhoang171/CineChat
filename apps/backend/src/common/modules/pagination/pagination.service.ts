@@ -24,8 +24,8 @@ export class PaginationService {
   ): Promise<PaginatedResponse<T>> {
     const { page, limit } = dto;
 
-    let query: any = {};
-    let options: any = buildBaseOptions(page, limit);
+    const query: any = {};
+    const options: any = buildBaseOptions(page, limit);
 
     handleFilters(dto, query, options);
 

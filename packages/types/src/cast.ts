@@ -1,4 +1,4 @@
-import { PaginationMeta } from './common.js';
+import type { PaginationMeta } from './common.js';
 
 export interface Cast {
   _id: string;

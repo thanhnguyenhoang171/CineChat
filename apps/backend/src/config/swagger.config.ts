@@ -23,7 +23,7 @@ export function setupSwagger(app: INestApplication): void {
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // Giữ token khi F5
-      withCredentials: true,      // Bắt Swagger gửi Cookie đi
+      withCredentials: true, // Bắt Swagger gửi Cookie đi
     },
   });
 }

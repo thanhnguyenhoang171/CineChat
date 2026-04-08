@@ -6,7 +6,7 @@ import { BaseSchema } from '@common/schemas/base.schema';
 export type RoleDocument = HydratedDocument<Role>;
 
 @Schema({ timestamps: true })
-export class Role extends BaseSchema{
+export class Role extends BaseSchema {
   @Prop({ required: true, unique: true, trim: true, uppercase: true })
   name: string;
 

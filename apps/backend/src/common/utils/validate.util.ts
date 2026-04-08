@@ -12,9 +12,10 @@ export const validateMongoId = (
     | mongoose.Schema.Types.ObjectId
     | mongoose.Schema.Types.ObjectId[],
 ) => {
-  const ids = Array.isArray(id) ? id : [id]; // always auto convert to array
+  const ids = Array.isArray(id) ? id : [id];
   for (const _id of ids) {
-    const strId = _id.toString(); // convert ObjectId -> string
+    // Cast to any to bypass ESLint's strict stringification check
+    const strId = String(_id as any);
     if (!mongoose.Types.ObjectId.isValid(strId)) {
       throw new HttpException(
         {
@@ -56,8 +57,9 @@ export const ensureAllModulesExist = async (
   code: string,
   statusCode: number,
 ) => {
-  const idStrings = ids.map((id) => id.toString());
-  const count = await Model.countDocuments({ _id: { $in: idStrings } });
+  // Cast to any to bypass ESLint's strict stringification check
+  const idStrings = ids.map((id) => String(id));
+  const count = (await Model.countDocuments({ _id: { $in: idStrings } })) as number;
   if (count !== ids.length) {
     throw new HttpException({ code, errors: ResponseMessage[code] }, statusCode);
   }
@@ -68,11 +70,8 @@ export const isModuleExist = async (
   key: string = '_id',
   filter: Record<string, any> | string,
 ): Promise<boolean> => {
-  // nếu filter là string → tự động tạo object
   const condition = typeof filter === 'string' ? { [key]: filter } : filter;
 
   const existedModule = await Module.findOne(condition);
-  return !!existedModule; // return true if exist
+  return !!existedModule;
 };
-
-

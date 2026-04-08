@@ -1,6 +1,6 @@
 import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
 import { Logger } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 const logger = new Logger('CleanupFile');
 export async function cleanupFiles(
@@ -22,12 +22,13 @@ export async function cleanupFiles(
 
   logger.warn(`Error detected! Cleaning up ${filesToDelete.length} file(s)...`);
 
-  await Promise.all(
-    filesToDelete.map((file) => {
-      const publicId = file.filename || file.public_id;
-      if (publicId) {
-        return cloudinaryService.deleteFile(publicId);
-      }
-    }),
-  );
+  // Ensure all elements in Promise.all are Promises
+  const deletePromises = filesToDelete
+    .map((file) => {
+      const publicId = (file.filename || file.public_id) as string;
+      return publicId ? cloudinaryService.deleteFile(publicId) : null;
+    })
+    .filter((promise): promise is Promise<any> => promise !== null);
+
+  await Promise.all(deletePromises);
 }

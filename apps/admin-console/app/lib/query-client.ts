@@ -1,20 +1,19 @@
 import { QueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // Data fresh for 5 minutes
-      retry: (failureCount, error) => {
-        // console.log(`Retry check lần ${failureCount + 1}`, error);
-
+      retry: (failureCount, error: any) => {
+        const axiosError = error as AxiosError<any>;
         // Block retry after 2 failures
         if (failureCount > 2) return false;
 
-        if (error?.response?.data?.status) {
-          const status = error.response.data.status;
+        if (axiosError?.response?.data?.status) {
+          const status = axiosError.response.data.status;
           // 3. Error 4xx (except 429 - Too Many Requests) -> No retry
           if (status >= 400 && status < 500 && status !== 429) {
-            // console.log('>>> Gặp lỗi 4xx, hủy Retry!');
             return false;
           }
         }
@@ -29,7 +28,7 @@ export const queryClient = new QueryClient({
 // Configure tanstack query client on the window object for debugging
 declare global {
   interface Window {
-    __TANSTACK_QUERY_CLIENT__: import('@tanstack/query-core').QueryClient;
+    __TANSTACK_QUERY_CLIENT__: QueryClient;
   }
 }
 

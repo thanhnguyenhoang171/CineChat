@@ -10,8 +10,9 @@ interface AppSearchBarProps {
   initialValue?: string;
   onSearch: (value: string) => void;
   placeholder?: string;
-  totalSearchResult: number;
-  isLoading: boolean;
+  totalSearchResult?: number;
+  isLoading?: boolean;
+  className?: string;
 }
 
 export function AppSearchBar({
@@ -20,6 +21,7 @@ export function AppSearchBar({
   initialValue = '',
   onSearch,
   placeholder = 'Tìm kiếm...',
+  className,
 }: AppSearchBarProps) {
   const [value, setValue] = useState(initialValue);
 

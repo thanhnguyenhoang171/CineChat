@@ -149,6 +149,7 @@ interface GetUsersParams {
   roleId?: string;
   sortBy?: string;
   sortDir?: 'asc' | 'desc';
+  projections?: string;
 }
 
 export const userService = {

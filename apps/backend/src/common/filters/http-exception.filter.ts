@@ -1,5 +1,5 @@
 import { BusinessCode } from '@common/constants/business-code';
-import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service'; 
+import { CloudinaryService } from '@common/modules/cloudinary/cloudinary.service';
 import { cleanupFiles } from '@common/utils/file-uploaded-cleanup.util';
 import {
   ArgumentsHost,

@@ -16,7 +16,6 @@ export class Genre extends BaseSchema {
   })
   slug: string;
 
-
   @Prop()
   order: number;
 }

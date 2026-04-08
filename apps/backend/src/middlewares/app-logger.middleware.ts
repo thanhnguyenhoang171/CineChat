@@ -1,4 +1,3 @@
-
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
@@ -11,7 +10,7 @@ export class AppLoggerMiddleware implements NestMiddleware {
   use(request: Request, response: Response, next: NextFunction): void {
     const { method, originalUrl: url } = request;
     const userAgent = request.get('user-agent') || '';
-    let ip = getClientIpUtil(request);
+    const ip = getClientIpUtil(request);
 
     response.on('close', () => {
       const { statusCode } = response;

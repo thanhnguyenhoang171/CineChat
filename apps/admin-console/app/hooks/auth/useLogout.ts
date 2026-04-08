@@ -26,7 +26,7 @@ export function useLogout() {
       toast.info(t('logout.success') || `${response?.message}`);
     },
 
-    onError: (error) => {
+    onError: (error: any) => {
       const msg = error.response?.data?.errors || 'Internal Server Error!';
       toast.error(msg);
     },

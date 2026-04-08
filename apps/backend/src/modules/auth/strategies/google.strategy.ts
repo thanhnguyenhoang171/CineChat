@@ -5,7 +5,6 @@ import { ConfigEnv } from '@config/env.config';
 import { Strategy, Profile } from 'passport-google-oauth20';
 import { RoleLevel } from '@common/constants/common-constant';
 
-
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private configService: ConfigService<ConfigEnv, true>) {

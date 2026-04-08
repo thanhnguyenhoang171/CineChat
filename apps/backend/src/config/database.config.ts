@@ -1,7 +1,7 @@
 import { MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Connection } from 'mongoose';
-import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
+import mongooseDelete from 'mongoose-delete';
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('MongoDB');
@@ -29,7 +29,13 @@ export const DatabaseConfig: MongooseModuleAsyncOptions = {
         return connection;
       },
       connectionFactory: (connection: any) => {
-        connection.plugin(softDeletePlugin);
+        connection.plugin(mongooseDelete, {
+          deletedAt: true,
+          overrideMethods: 'all',
+          deletedBy: true,
+          indexFields: 'all',
+          deletedByType: String, // Có thể chỉnh type nếu cần
+        });
         return connection;
       },
     };

@@ -1,0 +1,102 @@
+name: CineChat CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # ==========================================
+  # JOB 1: KIỂM TRA CHẤT LƯỢNG CODE & BUILD
+  # ==========================================
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint Code
+        run: pnpm turbo lint
+
+      - name: Type Check
+        run: pnpm turbo type-check
+
+      - name: Run Tests
+        run: pnpm turbo test
+
+      - name: Build All Apps
+        run: pnpm turbo build
+
+  # ==========================================
+  # JOB 2: BUILD DOCKER & PUSH LÊN GHCR
+  # ==========================================
+  deploy:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: backend
+            dockerfile: ./apps/backend/Dockerfile
+            image: ghcr.io/${{ github.repository }}/backend
+          - name: admin-console
+            dockerfile: ./apps/admin-console/Dockerfile
+            image: ghcr.io/${{ github.repository }}/admin-console
+          - name: user-console
+            dockerfile: ./apps/user-console/Dockerfile
+            image: ghcr.io/${{ github.repository }}/user-console
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . 
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

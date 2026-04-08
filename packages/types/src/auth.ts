@@ -1,4 +1,4 @@
-import { IUser } from './user.js';
+import type { IUser } from './user.js';
 
 export interface LoginRequest {
   username?: string;
@@ -7,17 +7,21 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: IUser;
+  access_token: string;
+  level?: number;
+  refreshToken?: string;
+  user?: IUser;
 }
 
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
   password?: string;
   username?: string;
+  gender?: number;
+  dateOfBirth?: Date | string;
+  phoneNumber?: string;
 }
 
 export interface RegisterAccountResponse {

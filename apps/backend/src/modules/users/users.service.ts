@@ -3,7 +3,7 @@ import { CreateUserDto, RegisterAccountDto, RegisterGGAccountDto } from './dto/c
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import * as SoftDeleteMongoosePlugin from 'soft-delete-plugin-mongoose';
+import type { SoftDeleteModel } from 'mongoose-delete';
 import mongoose from 'mongoose';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
@@ -24,9 +24,9 @@ export class UsersService {
     private readonly cloudinaryService: CloudinaryService,
 
     @InjectModel(User.name)
-    private readonly userModel: SoftDeleteMongoosePlugin.SoftDeleteModel<UserDocument>,
+    private readonly userModel: SoftDeleteModel<UserDocument>,
     @InjectModel(Role.name)
-    private readonly roleModel: SoftDeleteMongoosePlugin.SoftDeleteModel<RoleDocument>,
+    private readonly roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
 
   // Use for logic Authentication
@@ -81,55 +81,7 @@ export class UsersService {
     }
   }
 
-  // Remove later
-  // async findUserByUsername(username: string) {
-  //   try {
-  //     const user = await this.userModel
-  //       .findOne({ username })
-  //       .populate({
-  //         path: 'role',
-  //         model: 'Role',
-  //         populate: {
-  //           path: 'permissions',
-  //           model: 'Permission',
-  //           select: '_id name method apiPath module',
-  //         },
-  //       })
-  //       .lean()
-  //       .exec();
-
-  //     if (!user) {
-  //       return null;
-  //     }
-
-  //     const { password, role, ...userInfo } = user;
-
-  //     // Handle safe casting
-  //     const roleObj = role as any;
-  //     const permissions = roleObj?.permissions ?? [];
-
-  //     return {
-  //       ...userInfo,
-  //       password: password, // Need return password to compare
-  //       role: {
-  //         _id: roleObj?._id,
-  //         level: roleObj?.level,
-  //       },
-  //       permissions: permissions,
-  //     };
-  //   } catch (error) {
-  //     console.error('Error in findUserByUsername:', error);
-  //     throw new HttpException(
-  //       {
-  //         code: BusinessCode.INTERNAL_SERVER_ERROR,
-  //         errors: ResponseMessage[BusinessCode.INTERNAL_SERVER_ERROR],
-  //       },
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
-
-  // Use for logic 3rd Authentication
+  // use for logic 3rd Authentication
   async findUserByEmailAndGoogleId(email: string, googleId: string) {
     try {
       const user = await this.userModel
@@ -395,7 +347,7 @@ export class UsersService {
   }
 
   // use for Account
-  async findUserById(id: string) {
+  async findUserById(id: string): Promise<any> {
     try {
       const user = await this.userModel
         .findOne({ _id: id })
@@ -532,7 +484,7 @@ export class UsersService {
   // use for Account
   async deleteUser(id: string): Promise<boolean> {
     validateMongoId(id);
-    const user = (await this.userModel.findById(id).populate('role').lean()) as IUser;
+    const user = (await this.userModel.findById(id).populate('role').lean()) as unknown as IUser;
 
     if (!user) {
       throw new HttpException(
@@ -549,7 +501,7 @@ export class UsersService {
       const adminRoleIds = adminRoles.map((role) => role._id.toString());
       const adminCount = await this.userModel.countDocuments({
         role: { $in: adminRoleIds },
-        isDeleted: false,
+        deleted: false,
       });
 
       if (adminCount <= 1) {
@@ -562,10 +514,11 @@ export class UsersService {
         );
       }
     }
-    const result = await this.userModel.softDelete({ _id: id });
+    const result = await this.userModel.delete({ _id: id });
 
     console.log('Checking delete user result = ', result);
-    if (!result?.deleted) {
+    // mongoose-delete's delete method returns the updated document or result
+    if (!result) {
       throw new HttpException(
         {
           code: BusinessCode.CANCEL_ACCOUNT_FAILD,
@@ -772,11 +725,7 @@ export class UsersService {
         HttpStatus.NOT_FOUND,
       );
 
-      const result = await this.userModel.updateMany(
-        { _id: { $in: userIds } },
-        { role: role._id },
-        { new: true },
-      );
+      const result = await this.userModel.updateMany({ _id: { $in: userIds } }, { role: role._id });
 
       return {
         code: BusinessCode.USER_SIGNED_ROLE_SUCCESS,

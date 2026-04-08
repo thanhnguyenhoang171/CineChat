@@ -1,13 +1,18 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IUser } from '@cinechat/types';
 import { ConfigEnv } from '@config/env.config';
 import RolesService from '@modules/roles/roles.service';
 import { UsersService } from '@modules/users/users.service';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
+
+interface JwtPayload {
+  sub: string;
+  r: string;
+  v: number;
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,9 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private usersService: UsersService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Lấy chuỗi token thô
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      // Với RS256 dùng publicKey
       secretOrKey: configService
         .get<string>('jwt.publicKey', { infer: true })
         .replace(/\\n/g, '\n'),
@@ -27,13 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  //     const payload = {
-  //       sub: _id,
-  //       r: role._id,
-  //       v: userRequest.tokenVersion || 0, // Thêm tokenVersion vào payload để kiểm soát token cũ
-  //     };
-
-  async validate(payload: any) {
+  async validate(payload: JwtPayload) {
     const user = await this.usersService.findUserByIdForValidate(payload.sub);
 
     if (!user) {
@@ -45,8 +43,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    console.log('>>> JWT STRATEGY isDeleted USER = ', user.isDeleted);
-    if (user.isDeleted) {
+
+    if (user.deleted) {
       throw new HttpException(
         {
           code: BusinessCode.ACCOUNT_DELETED,
@@ -55,8 +53,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    console.log('>>> JWT STRATEGY isActive USER = ', user.isActive);
-    if (user.isActive === 0) {
+
+    if (Number(user.isActive) === 0) {
       throw new HttpException(
         {
           code: BusinessCode.ACCOUNT_DISABLED,
@@ -76,14 +74,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    const RoleWithPermissions = await this.rolesService.findRoleWithPermissionsById(
+    const roleWithPermissions = await this.rolesService.findRoleWithPermissionsById(
       payload.r.toString(),
     );
 
     return {
       _id: payload.sub,
       role: payload.r,
-      permissions: RoleWithPermissions?.permissions ?? [],
+      permissions: roleWithPermissions?.permissions ?? [],
     };
   }
 }

@@ -6,7 +6,7 @@ import { Movie } from '@modules/movies/schemas/movie.schema';
 import { BaseSchema } from '@common/schemas/base.schema';
 
 @Schema({ timestamps: true })
-export class Casting extends BaseSchema{
+export class Casting extends BaseSchema {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Cast.name })
   castId: mongoose.Schema.Types.ObjectId;
 

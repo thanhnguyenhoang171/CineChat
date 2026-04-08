@@ -23,4 +23,3 @@ export class CreateRoleDto {
   @IsArray({ message: 'permissions phải là một mảng' })
   permissions: mongoose.Schema.Types.ObjectId[];
 }
-

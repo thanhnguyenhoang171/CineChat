@@ -50,7 +50,8 @@ export class PaginationQueryDto {
   projections?: string;
 
   @ApiProperty({
-    description: 'Các trường quan hệ cần lấy thông tin chi tiết (populate). Ví dụ: `permissions` hoặc `permissions,user`',
+    description:
+      'Các trường quan hệ cần lấy thông tin chi tiết (populate). Ví dụ: `permissions` hoặc `permissions,user`',
     required: false,
     example: 'permissions',
   })

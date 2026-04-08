@@ -1,6 +1,5 @@
 import { Request } from 'express';
 
-
 // Helper method để match permission với endpoint
 export const matchPermission = (permission: any, method: string, endpoint: string): boolean => {
   // Check method trước (case insensitive)
@@ -34,4 +33,4 @@ export const matchPermission = (permission: any, method: string, endpoint: strin
   }
 
   return false;
-}
+};

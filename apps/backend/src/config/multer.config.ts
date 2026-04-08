@@ -6,7 +6,6 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { BusinessCode } from '@common/constants/business-code';
 import { ResponseMessage } from '@common/constants/response-message';
 
-
 export const MulterConfig = (cloudinaryInstance: any) => {
   return {
     storage: new CloudinaryStorage({
