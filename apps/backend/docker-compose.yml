@@ -41,7 +41,7 @@ services:
       - .env.docker
     environment:
       # - MONGODB_URI=mongodb://mongodb:27017/cinechat
-      - MONGODB_URI=mongodb+srv://thanhnguyen:Thanh123258789@mcadb.o8hebz8.mongodb.net/mcadb
+      - MONGODB_URI=${MONGODB_URI}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
