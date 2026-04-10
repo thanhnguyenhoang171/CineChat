@@ -34,7 +34,7 @@ export const DatabaseConfig: MongooseModuleAsyncOptions = {
           overrideMethods: 'all',
           deletedBy: true,
           indexFields: 'all',
-          deletedByType: String, // Có thể chỉnh type nếu cần
+          deletedByType: String,
         });
         return connection;
       },
