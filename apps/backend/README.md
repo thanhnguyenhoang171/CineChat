@@ -1,75 +1,66 @@
-# CineChat Backend
+<div align="center">
+  <h1>🎬 CineChat Backend Service</h1>
+  <p>The core RESTful API service for CineChat</p>
 
-A NestJS-based backend API for the CineChat application, providing authentication, role-based access control (RBAC), and user management.
+  <img src="https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=flat-square&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white" />
+</div>
 
-## Features
+## 🚀 Tech Stack
 
-- Modular NestJS architecture.
-- JWT-based authentication with Access and Refresh tokens.
-- Role-Based Access Control (RBAC) with Users, Roles, and Permissions.
-- MongoDB integration using Mongoose.
-- Global validation pipes and transformation interceptors.
-- Automated API documentation with Swagger.
-- Configurable security headers, CORS, and versioning.
+- **Framework**: NestJS (Node.js)
+- **Database**: MongoDB (via Mongoose)
+- **Caching**: Redis (via `ioredis`)
+- **Authentication**: Passport.js (JWT, Local, Google OAuth20)
+- **Uploads & Storage**: Cloudinary
+- **Shared Package**: `@cinechat/types` (from workspace)
 
-## Technology Stack
+## 📁 Environment Variables
 
-- **Framework**: NestJS
-- **Language**: TypeScript
-- **Database**: MongoDB
-- **Authentication**: Passport.js (Local and JWT)
-- **Validation**: class-validator and Joi
-- **Documentation**: Swagger
+Copy the `.env.example` file to `.env` in the `apps/backend` directory and fill in the necessary values:
 
-## Setup and Installation
+```env
+PORT=3001
+NODE_ENV=development
+MONGO_URI=mongodb://localhost:27017/cinechat
+REDIS_HOST=localhost
+REDIS_PORT=6379
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd CineChat/backend
-   ```
+JWT_SECRET=your_jwt_secret
+```
+*(Add your OAuth and Cloudinary keys as well)*
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+## 🛠️ Scripts
 
-3. **Environment Configuration**:
-   Create a `.env` file in the root directory and define the following variables:
-   ```env
-   HOST=0.0.0.0
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/cinechat
-   JWT_PUBLIC_KEY="your-rsa-public-key"
-   JWT_PRIVATE_KEY="your-rsa-private-key"
-   JWT_EXPIRES_IN=1h
-   JWT_REFRESH_EXPIRES_IN=7d
-   ```
+You can run these scripts from the **monorepo root** utilizing Turborepo:
 
-4. **Initialize Database**:
-   Run the seed script to populate initial roles and permissions:
-   ```bash
-   npm run seed
-   ```
+- `pnpm dev:be` - Start the backend in watch mode
+- `pnpm build:be` - Build the backend for production
+- `pnpm type-check:be` - Run TypeScript type-checking
+- `pnpm lint:be` - Lint the codebase
+- `pnpm clean:be` - Clean the output directories
 
-## Running the Application
+Or directly from this folder (`apps/backend`):
+```bash
+pnpm dev        # Starts `nest start --watch`
+pnpm build      # Compiles the application
+pnpm seed       # Runs the database seed script
+pnpm test       # Runs jest tests
+```
 
-- **Development**: `npm run dev`
-- **Build**: `npm run build`
-- **Production**: `npm run start:prod`
-- **Linting**: `npm run lint`
+## 🧩 Database Seeding
 
-## API Documentation
+To seed your local database with initial mock data:
+```bash
+pnpm seed
+```
 
-Once the server is running, the Swagger UI is accessible at:
-`http://localhost:3000/api/docs`
+## 📚 API Documentation
 
-## Testing
-
-- **Unit tests**: `npm run test`
-- **E2E tests**: `npm run test:e2e`
-- **Coverage**: `npm run test:cov`
-
-## License
-
-This project is UNLICENSED.
+When the backend server is running in development mode, you can view the fully interactive Swagger API documentation at:
+```text
+http://localhost:3001/api/docs
+```
+*(Port depends on your `.env` configuration)*

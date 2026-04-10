@@ -1,83 +1,48 @@
-# CineChat Admin Console
+<div align="center">
+  <h1>🎬 CineChat Admin Console</h1>
+  <p>The centralized administration dashboard for CineChat operators</p>
 
-A modern administration dashboard for the CineChat platform, built with React Router 7, TypeScript, and Tailwind CSS.
+  <img src="https://img.shields.io/badge/React_Router_7-CA4245?style=flat-square&logo=react-router&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" />
+  <img src="https://img.shields.io/badge/Radix_UI-161618?style=flat-square&logo=radix-ui&logoColor=white" />
+  <img src="https://img.shields.io/badge/Zustand-4A3C29?style=flat-square&logo=react&logoColor=white" />
+</div>
 
-## Overview
+## 🚀 Tech Stack
 
-The CineChat Admin Console provides a robust interface for managing users, movies, and platform analytics. It features a secure authentication system, data visualization, and a responsive UI designed for administrative efficiency.
+- **Framework**: React Router v7 (React 19)
+- **Bundler**: Vite
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI
+- **State Management**: Zustand
+- **Data Fetching/Caching**: TanStack React Query v5
+- **Animations**: Framer Motion
+- **Shared Package**: `@cinechat/types` (from workspace)
 
-## Tech Stack
+## 📁 Environment Variables
 
-- **Framework:** React Router 7
-- **Styling:** Tailwind CSS v4, Shadcn UI, Framer Motion
-- **State Management:** Zustand & TanStack Query v5
-- **Forms & Validation:** React Hook Form & Zod
-- **Networking:** Axios with interceptors for token management
-- **Data Display:** TanStack Table v8 & Recharts
-- **Icons:** Lucide React
+Copy the `.env.example` file to `.env` in the `apps/admin-console` directory and populate it:
 
-## Key Features
-
-- **Authentication:** JWT-based login and registration with automated silent token refresh.
-- **Route Protection:** Built-in AuthGuard and GuestGuard for access control.
-- **Dashboard Overview:** Platform statistics visualized through interactive charts.
-- **User Management:** Comprehensive management of user accounts and roles.
-- **Movie Management:** Interface for cataloging and updating movie content.
-- **Responsive Design:** Optimized layouts for various screen sizes.
-- **Transitions:** Smooth UI interactions powered by Framer Motion.
-
-## Project Structure
-
-```text
-app/
-├── components/       # Reusable UI components (Shadcn UI, Animations)
-├── features/         # Domain-driven feature modules (Auth, User)
-├── hooks/            # Custom React hooks (useLogin, useLogout)
-├── layouts/          # Layout wrappers (AdminLayout, AuthLayout)
-├── lib/              # Shared utilities and API clients
-├── queries/          # TanStack Query definitions
-├── routes/           # Page components and route guards
-├── services/         # API service layers
-├── store/            # Global state (Zustand)
-└── types/            # TypeScript interfaces and schemas
+```env
+VITE_API_URL=http://localhost:3001/api
+PORT=3000
 ```
 
-## Getting Started
+## 🛠️ Scripts
 
-### Prerequisites
+You can run these scripts from the **monorepo root** utilizing Turborepo:
 
-- Node.js (Latest LTS recommended)
-- npm
+- `pnpm dev:fe-admin` - Start the Vite development server
+- `pnpm build:fe-admin` - Build the admin application
+- `pnpm type-check:fe-admin` - Pre-compile routes & run TypeScript type-checking
+- `pnpm lint:fe-admin` - Lint the codebase
+- `pnpm clean:fe-admin` - Clean the output directories
 
-### Installation
-
+Or directly from this folder (`apps/admin-console`):
 ```bash
-npm install
-```
-
-### Development
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-### Building for Production
-
-```bash
-# Type-check and build the application
-npm run build
-
-# Start the production server
-npm start
-```
-
-## Docker Support
-
-Build and run the admin console using Docker:
-
-```bash
-docker build -t cinechat-admin .
-docker run -p 3000:3000 cinechat-admin
+pnpm dev        # Start the dev server
+pnpm build      # Build the application
+pnpm start      # Serve the built application with React Router Serve
+pnpm typecheck  # Trigger route generation and type validations
 ```
