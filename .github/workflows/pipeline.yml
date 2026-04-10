@@ -105,37 +105,44 @@ jobs:
   # JOB 3: DEPLOY TRỰC TIẾP VỀ LAPTOP ASUS
   # ==========================================
   deploy-to-laptop:
-    needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Cloudflared
-        run: |
-          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-          sudo dpkg -i cloudflared.deb
+      needs: deploy
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Deploy via SSH over Cloudflare Tunnel
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          # SỬA TẠI ĐÂY: Dùng lệnh đơn giản nhất, không cần Service Token
-          proxy_command: /usr/local/bin/cloudflared access ssh --hostname %h
-          # Tăng timeout lên một chút nếu mạng ở nhà không ổn định
-          command_timeout: 10m 
-          script: |
-            # 1. Di chuyển vào thư mục dự án
-            cd ~/CineChat
+        - name: Install Cloudflared
+          run: |
+            curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+            sudo dpkg -i cloudflared.deb
+
+        - name: Deploy via SSH
+          env:
+            SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+            SERVER_HOST: ${{ secrets.SERVER_HOST }}
+            SERVER_USER: ${{ secrets.SERVER_USER }}
+          run: |
+            # 1. Thiết lập thư mục SSH và lưu Private Key
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
             
-            # 2. Đăng nhập GHCR
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            # 3. Kéo image mới về
-            docker compose pull
-            
-            # 4. Cập nhật container (Dùng --force-recreate để chắc chắn ăn code mới)
-            docker compose up -d --remove-orphans
-            
-            # 5. Dọn dẹp hệ thống
-            docker image prune -f
+            # 2. Tạo file config SSH để ép dùng Cloudflared làm Proxy
+            cat <<EOF > ~/.ssh/config
+            Host asus-server
+                HostName $SERVER_HOST
+                User $SERVER_USER
+                IdentityFile ~/.ssh/id_rsa
+                ProxyCommand /usr/local/bin/cloudflared access ssh --hostname %h
+                StrictHostKeyChecking no
+            EOF
+
+            # 3. Chạy lệnh deploy từ xa qua SSH
+            ssh asus-server << 'ENDSSH'
+              cd ~/CineChat
+              echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+              docker compose pull
+              docker compose up -d --remove-orphans
+              docker image prune -f
+            ENDSSH
